@@ -20,6 +20,7 @@ export interface IClient extends IPreventiveDate, IStatus {
   name: string;
   code: string;
   cnpj: string;
+  store: string;
   city: string;
   uf: string;
   item?: string;

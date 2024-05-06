@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Table } from '@mantine/core';
+import { Box, Button, Flex, Loader, Table } from '@mantine/core';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -22,23 +22,23 @@ interface ITableComponent extends ITableHeader {
 }
 
 const token = localStorage.getItem('access_token');
-
-/*if (token) {
-  api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-}*/
+//if (token) {
+//  api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+//}
 
 export function TableClients({ result, title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
   const [clients, setClients] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortName] = useState('name'); 
-  const [setSortOrder] = useState('asc'); 
+  const [sortOrder, setSortOrder] = useState('asc'); 
+  const [loading, setLoading] = useState(false);
 
-  const clientsPerPage = 12;
+  const clientsPerPage = 3;
   
   const fetchClients = useCallback(async (page: number, size: number) => {
-  
+    setLoading(true);
     const response = await api.get('/api/v1/clients', {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -50,7 +50,7 @@ export function TableClients({ result, title }: ITableComponent) {
       name: searchTerm,
     },
   });
-  
+  setLoading(false);
   return response.data;
   
 }, [currentPage, searchTerm, sortName]);
@@ -123,13 +123,14 @@ const handleSortChange = (selectedOption) => {
               <PreventiveDate preventiveDate={(client as IClient).preventiveDate} />
               <Park parks={(client as IClient).parks || []} />    
               <Status
-                status="Pausa"
+                status={(client as IClient).status}
                 isFulfilled={(client as IClient).status === 'Atendido'}
               />
             </Table.Tr>
         ))}
         </Table.Tbody>
       </Table>
+      {loading && <Loader />}
       <Flex h={40} mt={10} align={'center'}>
       <Button       
         variant="filled"
