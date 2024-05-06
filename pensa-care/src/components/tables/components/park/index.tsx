@@ -1,0 +1,57 @@
+import { Avatar, Flex, Indicator, Table, Text } from '@mantine/core';
+
+import { IPark } from '../../../../interfaces/table/IClient';
+
+interface ParkProps {
+  parks: IPark[];
+  withIndicator?: boolean;
+}
+
+export function Park({ parks, withIndicator }: ParkProps) {
+  return (
+    <Table.Td>
+      <Flex align={'center'}>
+        {parks.map((park) => (
+          <Flex
+            maw={'100px'}
+            key={park.serialNumber}
+            c="#999"
+            direction={'column'}
+          >
+            {withIndicator ? (
+              <Indicator
+                color="#115A91" // Precisar variar de acordo com o tipo de produto
+                offset={10}
+                size={'18px'}
+                position="bottom-center"
+                mb={6}
+                withBorder
+              >
+                <Avatar src={park.icon} size="lg" />
+              </Indicator>
+            ) : (
+              <Avatar src={park.icon} size="lg" />
+            )}
+            <Text size="sm" truncate>
+              {park.serialNumber}
+            </Text>
+            <Text size="sm" truncate>
+              {park.name}
+            </Text>
+          </Flex>
+        ))}
+        <Avatar
+          size="lg"
+          ml={10}
+          styles={{
+            placeholder: {
+              fontWeight: '400',
+            },
+          }}
+        >
+          +5
+        </Avatar>
+      </Flex>
+    </Table.Td>
+  );
+}

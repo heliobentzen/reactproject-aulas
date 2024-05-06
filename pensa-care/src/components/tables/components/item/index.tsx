@@ -1,0 +1,11 @@
+import { Table } from '@mantine/core';
+
+interface IItem {
+  withIcon?: boolean;
+  text: string;
+  icon?: string;
+}
+
+export function Item({ withIcon, text }: IItem) {
+  return <Table.Td>{text}</Table.Td>;
+}
