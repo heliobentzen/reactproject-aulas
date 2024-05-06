@@ -41,7 +41,7 @@ export const mockClientData: IClient[] = [
     uf: 'MG',
     preventiveDate: '25/10/2023',
     item: 'Spectro-M/C/R-W',
-    status: 'Pausa por 10 dias',
+    status: 'Pausa por 5 dias',
     modality: 'Corretiva',
     parks: [
       {

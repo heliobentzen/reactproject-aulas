@@ -1,10 +1,10 @@
 import { Box, Flex } from '@mantine/core';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { Header } from '../../components/header';
 import { TableClients } from '../../components/tables';
 
-import { useEffect, useState } from 'react';
-
+const token = localStorage.getItem('access_token');
 
 // Create an axios instance
 const api = axios.create({
@@ -12,20 +12,36 @@ const api = axios.create({
 });
 
 export function ClientsPage() {
-  const [data, setData] = useState([]); // State para armazenar os dados
-  const [totalElements, setTotalElements] = useState(0); // State para armazenar total_elements
+  const [data, setData] = useState([]); 
+  const [clients, setClients] = useState([]);
+  const [totalElements, setTotalElements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortName] = useState('name'); 
+
   useEffect(() => {
 
-  // Função para buscar os dados da API
-  const fetchData = async () => {
-    const result = await api.get('/api/v1/clients'); // Substitua 'URL_DA_API' pela URL da sua API
+  const clientsPerPage = 15;
+  
+  const fetchClients = async () => {
+    const result = await api.get('/api/v1/clients', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+      page: currentPage - 1,
+      size: clientsPerPage,
+      sort: sortName,
+      name: searchTerm,
+    },
+    });
     setData(result.data);
-    setTotalElements(result.data.total_elements); // Definindo o estado de totalElements
+    setTotalElements(result.data.total_elements);
 
   };
 
-  fetchData();
-  }, []); // O array vazio como segundo argumento faz com que o useEffect seja executado apenas uma vez, quando o componente é montado
+  fetchClients();
+  }, [currentPage, searchTerm, sortName]);
 
 
   return (
@@ -37,6 +53,8 @@ export function ClientsPage() {
           result={totalElements} 
           data={data} 
           searchPlaceholder={''}       
+          clients={clients}
+          setClients={setClients}
         />
       </Flex>
     </Box>

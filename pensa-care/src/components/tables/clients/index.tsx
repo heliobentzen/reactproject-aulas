@@ -35,7 +35,7 @@ export function TableClients({ result, title }: ITableComponent) {
   const [sortOrder, setSortOrder] = useState('asc'); 
   const [loading, setLoading] = useState(false);
 
-  const clientsPerPage = 3;
+  const clientsPerPage = 12;
   
   const fetchClients = useCallback(async (page: number, size: number) => {
     setLoading(true);
@@ -123,7 +123,8 @@ const handleSortChange = (selectedOption) => {
               <PreventiveDate preventiveDate={(client as IClient).preventiveDate} />
               <Park parks={(client as IClient).parks || []} />    
               <Status
-                status={(client as IClient).status}
+                status="Pausa"
+                //status={(client as IClient).status}
                 isFulfilled={(client as IClient).status === 'Atendido'}
               />
             </Table.Tr>
