@@ -21,39 +21,42 @@ interface ITableComponent extends ITableHeader {
   data: IClient[];
 }
 
-//const token = localStorage.getItem('access_token');
-//if (token) {
-//  api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-//}
+const token = localStorage.getItem('access_token');
+
+/*if (token) {
+  api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}*/
 
 export function TableClients({ result, title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
   const [clients, setClients] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortName] = useState('name'); 
   const [setSortOrder] = useState('asc'); 
 
-  const clientsPerPage = 50;
+  const clientsPerPage = 12;
   
   const fetchClients = useCallback(async (page: number, size: number) => {
   
     const response = await api.get('/api/v1/clients', {
-    params: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
       page: currentPage - 1,
       size: clientsPerPage,
       sort: sortName,
       name: searchTerm,
     },
   });
-  //const totalPages = response.data.total_pages;
+  
   return response.data;
   
 }, [currentPage, searchTerm, sortName]);
 
 useEffect(() => {
   const fetchAndSetClients = async () => {
-
     const newClients = await fetchClients(currentPage - 1, clientsPerPage);
     setClients(newClients.content);
   };
@@ -81,7 +84,6 @@ const handleSortChange = (selectedOption) => {
 
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    debugger
     setSearchTerm(event.target.value);
   };
 
@@ -129,7 +131,10 @@ const handleSortChange = (selectedOption) => {
         </Table.Tbody>
       </Table>
       <Flex h={40} mt={10} align={'center'}>
-      <Button variant="filled" onClick={handleClick}>
+      <Button       
+        variant="filled"
+        onClick={handleClick}
+      >
         Ver mais
       </Button>
     </Flex>
