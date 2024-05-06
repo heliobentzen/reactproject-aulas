@@ -29,4 +29,7 @@ public class Client {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "client")
     @ToString.Exclude
     private List<Item> items;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "client", orphanRemoval = true)
+    private List<Contact> contacts;
 }

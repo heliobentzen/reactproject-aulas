@@ -3,8 +3,8 @@ spring:
     name: pensacare
   datasource:
     url: "jdbc:postgresql://localhost:5432/pensacare"
-    username: postgres
-    password: root
+    username: pensacare
+    password: pensacare
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

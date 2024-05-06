@@ -1,5 +1,8 @@
 package br.com.pensalab.pensacare.config;
 
+import br.com.pensalab.pensacare.service.security.AuthService;
+import br.com.pensalab.pensacare.service.security.JwtSigner;
+import io.jsonwebtoken.lang.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,10 +23,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import br.com.pensalab.pensacare.service.security.AuthService;
-import br.com.pensalab.pensacare.service.security.JwtSigner;
-import io.jsonwebtoken.lang.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -66,7 +65,7 @@ public class SecurityConfig {
                                         .requestMatchers(HttpMethod.OPTIONS)
                                         .permitAll()
                                         .anyRequest()
-                                        .permitAll()
+                                        .authenticated()
 
                 )
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

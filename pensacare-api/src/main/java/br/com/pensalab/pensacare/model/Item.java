@@ -1,10 +1,7 @@
 package br.com.pensalab.pensacare.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -29,7 +26,9 @@ public class Item {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ItemId implements Serializable {
+        @EqualsAndHashCode.Include
         private String code; // AA3_CODPRO
+        @EqualsAndHashCode.Include
         private String serialNumber; // AA3_NUMSER
     }
 }

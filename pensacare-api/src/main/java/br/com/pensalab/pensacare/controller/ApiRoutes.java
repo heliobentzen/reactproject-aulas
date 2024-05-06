@@ -9,6 +9,7 @@ class ApiRoutes {
     static final String AUTH_LOGIN = AUTH + "/login";
     static final String IMPORT = BASE + "/import";
     static final String CLIENT = BASE + "/clients";
+    static final String CLIENT_CONTACT = "/api/v1/clients/{id}/contacts";
     static final String ITEM = BASE + "/items";
     static final String SERVICE = BASE + "/services";
 }

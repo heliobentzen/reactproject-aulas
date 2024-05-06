@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ClientService {
     private final ClientRepository clientRepository;
@@ -21,4 +23,7 @@ public class ClientService {
         return clientRepository.findAll(pageable);
     }
 
+    public Optional<Client> findById(String cnpj) {
+        return clientRepository.findById(cnpj);
+    }
 }

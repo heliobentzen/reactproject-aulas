@@ -1,9 +1,6 @@
 package br.com.pensalab.pensacare.config.mapper;
 
-import br.com.pensalab.pensacare.controller.dto.mapper.ClientToClientOutputDtoConverter;
-import br.com.pensalab.pensacare.controller.dto.mapper.ItemToItemOutputDtoConverter;
-import br.com.pensalab.pensacare.controller.dto.mapper.UserInputDtoToUserConverter;
-import br.com.pensalab.pensacare.controller.dto.mapper.UserToUserOutputDtoConverter;
+import br.com.pensalab.pensacare.controller.dto.mapper.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +20,8 @@ public class MapperConfig {
         this.modelMapper.addConverter(new UserToUserOutputDtoConverter());
         this.modelMapper.addConverter(new ClientToClientOutputDtoConverter());
         this.modelMapper.addConverter(new ItemToItemOutputDtoConverter());
+        this.modelMapper.addConverter(new ServiceToServiceOutputDto());
+        this.modelMapper.addConverter(new ContactToClientContactOutputDtoConverter());
     }
 
     @Bean
