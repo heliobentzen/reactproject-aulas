@@ -11,6 +11,7 @@ import {
   TableHeader,
 } from '../components';
 
+import { useState } from 'react';
 import { IClient } from '../../../interfaces/table/IClient';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 
@@ -20,13 +21,16 @@ interface ITableComponent extends ITableHeader {
 
 export function TableServices({ data, result, title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
-
+  const [clients, setClients] = useState([]);
+  
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
       <TableHeader
         title={title}
         result={result}
         searchPlaceholder="Pesquisar por Nome/Serial Number"
+        clients={clients}
+        setClients={setClients}
       />
       <Table mt={16}>
         <Table.Thead>

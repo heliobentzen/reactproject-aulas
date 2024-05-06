@@ -8,6 +8,7 @@ import {
   TableHeader,
 } from '../components';
 
+import { useState } from 'react';
 import { IClient } from '../../../interfaces/table/IClient';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { Price } from '../components/price';
@@ -18,6 +19,7 @@ interface ITableComponent extends ITableHeader {
 
 export function TableItens({ data, result, title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
+  const [clients, setClients] = useState([]);
 
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
@@ -25,6 +27,8 @@ export function TableItens({ data, result, title }: ITableComponent) {
         title={title}
         result={result}
         searchPlaceholder="Pesquisar por Nome/CNPJ"
+        clients={clients}
+        setClients={setClients}
       />
       <Flex align={'center'} gap={5}>
         <Text mr={10}>Categoria: </Text>
