@@ -53,10 +53,10 @@ export function TableServices({ data, result, title }: ITableComponent) {
                 city={client.city}
                 uf={client.uf}
                 />
-              <Date preventiveDate={client.preventiveDate} preventiveHour="8" />
+              <Date preventiveDate={client.preventiveDate} preventiveHour="x" />
               <Item text={client.item || ''} />
               <Modality text={client.modality || ''} />
-              <ServiceOrder number={'12345678910'} />
+              <ServiceOrder number={'nulo'} />
               <SerialNumber number={'12345678910'} />
             </Table.Tr>
           ))}

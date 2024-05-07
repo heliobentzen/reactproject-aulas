@@ -1,10 +1,8 @@
 import {
   ColorSwatch,
   Flex,
-  Select,
   Text,
-  TextInput,
-  Title,
+  Title
 } from '@mantine/core';
 
 export function GridHeader({ title, searchPlaceholder }) {
@@ -30,40 +28,6 @@ export function GridHeader({ title, searchPlaceholder }) {
           <Text size="sm" mr={5}>
             mais de 120 dias
           </Text>
-        </Flex>
-      </Flex>
-
-      <Flex direction={'column'} align={'flex-end'}>
-        <TextInput miw={'260px'} placeholder={searchPlaceholder} />
-
-        <Flex align={'center'} mt={6}>
-          <Text>ordernar por</Text>
-          <Select
-            styles={{
-              input: {
-                border: 'none',
-                paddingLeft: 10,
-              },
-              dropdown: {
-                fontWeight: 900,
-              },
-              root: {
-                fontWeight: 900,
-              },
-              section: {
-                paddingLeft: 10,
-              },
-            }}
-            miw={'70px'}
-            w={'70px'}
-            withCheckIcon={false}
-            defaultValue="1"
-            allowDeselect={false}
-            data={[
-              { value: '1', label: `A-Z` },
-              { value: '2', label: 'Z-A' },
-            ]}
-          />
         </Flex>
       </Flex>
     </Flex>

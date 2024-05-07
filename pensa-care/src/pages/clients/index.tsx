@@ -15,33 +15,27 @@ export function ClientsPage() {
   const [data, setData] = useState([]); 
   const [clients, setClients] = useState([]);
   const [totalElements, setTotalElements] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
+  //const [currentPage, setCurrentPage] = useState(1);
+  //const [searchTerm, setSearchTerm] = useState('');
   const [sortName] = useState('name'); 
 
   useEffect(() => {
 
-  const clientsPerPage = 15;
+  //const clientsPerPage = 15;
   
   const fetchClients = async () => {
-    const result = await api.get('/api/v1/clients', {
+    /*const result = await api.get('/api/v1/clients', {
       headers: {
         Authorization: `Bearer ${token}`,
-      },
-      params: {
-      page: currentPage - 1,
-      size: clientsPerPage,
-      sort: sortName,
-      name: searchTerm,
-    },
-    });
+      }
+    });*/
     setData(result.data);
     setTotalElements(result.data.total_elements);
 
   };
 
   fetchClients();
-  }, [currentPage, searchTerm, sortName]);
+  }, []);
 
 
   return (

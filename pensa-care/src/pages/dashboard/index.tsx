@@ -33,13 +33,13 @@ export function DashboardPage() {
         <CardNumber
           Icon={LeadIcon}
           number={12}
-          text="leads contatados nos últimos"
+          text="leads de manutenção contatados nos últimos"
           days={30}
         />
         <CardNumber
           Icon={SaleIcon}
           number={9}
-          text="vendas fechadas nos últimos"
+          text="leads de compras contatados nos últimos"
           days={30}
         />
       </Flex>

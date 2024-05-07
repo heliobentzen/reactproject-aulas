@@ -1,4 +1,4 @@
-import { Box, ColorSwatch, Flex, Table, Text } from '@mantine/core';
+import { Box, Table } from '@mantine/core';
 import {
   Client,
   Footer,
@@ -30,12 +30,6 @@ export function TableItens({ data, result, title }: ITableComponent) {
         clients={clients}
         setClients={setClients}
       />
-      <Flex align={'center'} gap={5}>
-        <Text mr={10}>Categoria: </Text>
-        <ColorSwatch size={'16px'} color="#115A91" />{' '}
-        <Text mr={5}>Equipamento</Text>
-        <ColorSwatch size={'16px'} color="#B3B3BF" /> Peça
-      </Flex>
       <Table mt={16}>
         <Table.Thead>
           <Table.Tr>
@@ -57,8 +51,8 @@ export function TableItens({ data, result, title }: ITableComponent) {
               />
               <PreventiveDate preventiveDate={client.preventiveDate} done />
               <Park parks={client.parks || []} withIndicator />
-              <ServiceOrder number={'12345678910'} />
-              <Price number={1000000} />
+              <ServiceOrder number={'0'} />
+              <Price number={0} />
             </Table.Tr>
           ))}
         </Table.Tbody>

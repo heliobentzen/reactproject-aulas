@@ -1,8 +1,8 @@
 import { Box, SimpleGrid } from '@mantine/core';
-import { ClientInfo } from '../info';
-import { GridHeader } from '../grid-header';
-import { GridCard } from '../cards/clients/details/grid-card';
 import { useDisclosure } from '@mantine/hooks';
+import { GridCard } from '../cards/clients/details/grid-card';
+import { GridHeader } from '../grid-header';
+import { ClientInfo } from '../info';
 import { ModalComponent } from '../modal';
 
 export function ClientDetails() {
@@ -13,8 +13,7 @@ export function ClientDetails() {
     <Box>
       <ClientInfo />
       <GridHeader
-        title={`Parques Instalados (${8})`}
-        searchPlaceholder="Pesquisar Nome/ Serial number"
+        title={`Parques Instalados (${4})`}
       />
       <SimpleGrid
         cols={{ base: 3, sm: 4, lg: 4 }}
@@ -24,7 +23,7 @@ export function ClientDetails() {
         style={{ borderRadius: '10px' }}
       >
         {/* Temporário */}
-        {Array(8).fill(<GridCard open={open}/>)}
+        {Array(4).fill(<GridCard open={open}/>)}
       </SimpleGrid>
 
       <ModalComponent

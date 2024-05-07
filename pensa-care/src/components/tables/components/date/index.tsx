@@ -10,12 +10,12 @@ export function Date({ preventiveDate, preventiveHour }: IPreventiveDate) {
           Início
         </Text>
         <Text>
-          {preventiveDate} {preventiveHour}h
+          {preventiveDate} nulo h
         </Text>
         <Text c="#999" size="sm">
           Fim
         </Text>
-        <Text>{preventiveDate}</Text>
+        <Text>nulo</Text>
       </Flex>
     </Table.Td>
   );

@@ -5,7 +5,6 @@ import {
   Client,
   Park,
   PreventiveDate,
-  Status,
   TableHeader
 } from '../components';
 
@@ -37,7 +36,7 @@ export function TableClients({ result, title }: ITableComponent) {
 
   const clientsPerPage = 12;
   
-  const fetchClients = useCallback(async (page: number, size: number) => {
+  const fetchClients = useCallback(async () => {
     setLoading(true);
     const response = await api.get('/api/v1/clients', {
       headers: {
@@ -92,7 +91,7 @@ const handleSortChange = (selectedOption) => {
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
       <TableHeader
         title={title}
-        result={result}
+        result="839"
         searchPlaceholder="Pesquisar por Nome/CNPJ"
         onSearchChange={handleSearchChange} 
         onSortChange={handleSortChange}
@@ -105,9 +104,6 @@ const handleSortChange = (selectedOption) => {
             <Table.Th style={weightRegular}>Cliente/CNPJ</Table.Th>
             <Table.Th style={weightRegular}>Próx. preventiva</Table.Th>
             <Table.Th style={weightRegular}>Parque Instalado</Table.Th>            
-            <Table.Th pl={40} style={weightRegular}>
-              Status
-            </Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -115,18 +111,13 @@ const handleSortChange = (selectedOption) => {
             <Table.Tr key={(client as IClient).cnpj || index}>
               <Client
               name={(client as IClient).name}
-              cnpj={'CNPJ: ' + (client as IClient).cnpj}
+              cnpj={(client as IClient).cnpj}
               city={(client as IClient).city}
               uf={(client as IClient).uf} 
               code={''}              
               />
               <PreventiveDate preventiveDate={(client as IClient).preventiveDate} />
               <Park parks={(client as IClient).parks || []} />    
-              <Status
-                status="Pausa"
-                //status={(client as IClient).status}
-                isFulfilled={(client as IClient).status === 'Atendido'}
-              />
             </Table.Tr>
         ))}
         </Table.Tbody>
