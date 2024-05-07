@@ -43,7 +43,7 @@ export function TableDashboard({ data, result, title }: ITableComponent) {
         </Table.Thead>
         <Table.Tbody>
           {data.map((client) => (
-            <Table.Tr key={client.cnpj}>
+            <Table.Tr key={`${client.cnpj}-${client.name}`}>
               <Client
                 code={client.code}              
                 name={client.name}
