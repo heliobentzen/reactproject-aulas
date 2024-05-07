@@ -2,11 +2,13 @@ import { Box, Table, Text } from '@mantine/core';
 import { Footer, TableHeader } from '../../components';
 import { Maintenance } from '../../components/maintenance';
 
+import { useState } from 'react';
 import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
 import { Model } from '../../components/model';
 
 export function TableDetails({ title, result }) {
   const weightRegular = { fontWeight: 400 };
+  const [clients, setClients] = useState([]);
 
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
@@ -15,6 +17,8 @@ export function TableDetails({ title, result }) {
         result={result}
         searchPlaceholder="Pesquisar Nome/Serial Number"
         columnMode
+        clients={clients}
+        setClients={setClients}
       />
 
       <Table mt={16}>
