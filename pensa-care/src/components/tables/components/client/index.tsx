@@ -8,8 +8,8 @@ export function Client({ cnpj, name, city, uf }: IClient) {
       <Flex direction={'column'} gap={4}>
         <Text
           component={Link}
-          to={'/clients/' + `?cnpj=${cnpj}`}
-          fw={'bold'}
+          to={'/clients/' + `${cnpj}`}
+          fw={'bold'} 
           c="#005FA9"
           size="lg"
         >

@@ -7,29 +7,29 @@ export function TableHeader({
   result,
   searchPlaceholder,
   columnMode,
-  clients,
-  setClients
+  data,
+  setData
 }: ITableHeader & { onSortChange?: (value: string) => void }) {
   const [sortOrder, setSortOrder] = useState('name');
   const [searchValue, setSearchValue] = useState('');
-  const [initialClients, setInitialClients] = useState([]);
+  const [initialData, setInitialData] = useState([]);
 
   useEffect(() => {
-    setInitialClients([...clients]);
-  }, [clients]);
+    setInitialData([...data]);
+  }, [data]);
 
   const handleSortChange = (selectedOption) => {
     const sortValue = selectedOption;
     setSortOrder(sortValue);
     
-    const sortedClients = [...clients].sort((a, b) => {
+    const sortedData = [...data].sort((a, b) => {
       if (sortValue == 1) {
         return a.name.localeCompare(b.name);
       } else {
         return b.name.localeCompare(a.name);
       }
     });
-      setClients(sortedClients);
+      setData(sortedData);
     };
 
     const handleSearchChange = (event) => {
@@ -37,12 +37,12 @@ export function TableHeader({
       setSearchValue(newSearchValue);
      
       if (newSearchValue === '') {
-        setClients(clients);
+        setData(data);
       } else {
-        const newFilteredClients = clients.filter(client =>
-          client.name.toLowerCase().includes(newSearchValue.toLowerCase())
+        const newFilteredData = data.filter(data =>
+          data.name.toLowerCase().includes(newSearchValue.toLowerCase())
         );
-        setClients(newFilteredClients);
+        setData(newFilteredData);
       }
      
     };

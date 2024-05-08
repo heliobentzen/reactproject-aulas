@@ -14,6 +14,7 @@ export function ClientDetails() {
       <ClientInfo />
       <GridHeader
         title={`Parques Instalados (${4})`}
+        searchPlaceholder="Pesquisar Nome/ Serial number"
       />
       <SimpleGrid
         cols={{ base: 3, sm: 4, lg: 4 }}

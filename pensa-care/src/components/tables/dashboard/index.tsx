@@ -26,9 +26,8 @@ export function TableDashboard({ data, result, title }: ITableComponent) {
         title={title}
         result={result}
         searchPlaceholder="Pesquisar por Nome/CNPJ"
-        clients={clients}
-        setClients={setClients}
-
+        data={clients}
+        setData={setClients}
       />
       <Table mt={16}>
         <Table.Thead>
@@ -45,12 +44,13 @@ export function TableDashboard({ data, result, title }: ITableComponent) {
           {data.map((client) => (
             <Table.Tr key={`${client.cnpj}-${client.name}`}>
               <Client
-                code={client.code}              
+                code={client.code}
                 name={client.name}
                 cnpj={client.cnpj}
                 city={client.city}
                 uf={client.uf} 
-                />
+                store={''}                
+              />
               <PreventiveDate preventiveDate={client.preventiveDate} />
               <Item text={client.item || ''} />
               <Status

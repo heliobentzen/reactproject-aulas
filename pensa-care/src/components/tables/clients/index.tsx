@@ -95,8 +95,8 @@ const handleSortChange = (selectedOption) => {
         searchPlaceholder="Pesquisar por Nome/CNPJ"
         onSearchChange={handleSearchChange} 
         onSortChange={handleSortChange}
-        clients={clients}
-        setClients={setClients}
+        data={clients}
+        setData={setClients}
       />
       <Table mt={16}>
         <Table.Thead>
@@ -110,11 +110,12 @@ const handleSortChange = (selectedOption) => {
           {clients.map((client: IClient, index) => (
             <Table.Tr key={(client as IClient).cnpj || index}>
               <Client
-              name={(client as IClient).name}
-              cnpj={(client as IClient).cnpj}
-              city={(client as IClient).city}
-              uf={(client as IClient).uf} 
-              code={''}              
+                name={(client as IClient).name}
+                cnpj={(client as IClient).cnpj}
+                city={(client as IClient).city}
+                uf={(client as IClient).uf}
+                code={''} 
+                store={''}              
               />
               <PreventiveDate preventiveDate={(client as IClient).preventiveDate} />
               <Park parks={(client as IClient).parks || []} />    

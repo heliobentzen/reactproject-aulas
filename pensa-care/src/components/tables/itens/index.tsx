@@ -27,8 +27,8 @@ export function TableItens({ data, result, title }: ITableComponent) {
         title={title}
         result={result}
         searchPlaceholder="Pesquisar por Nome/CNPJ"
-        clients={clients}
-        setClients={setClients}
+        data={clients}
+        setData={setClients}
       />
       <Table mt={16}>
         <Table.Thead>
