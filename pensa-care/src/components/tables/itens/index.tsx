@@ -1,11 +1,11 @@
 import { Box, Table } from '@mantine/core';
 import {
-  Client,
-  Footer,
-  Park,
-  PreventiveDate,
-  ServiceOrder,
-  TableHeader,
+    Client,
+    Footer,
+    Park,
+    PreventiveDate,
+    ServiceOrder,
+    TableHeader,
 } from '../components';
 
 import { useState } from 'react';
@@ -26,14 +26,14 @@ export function TableItens({ data, result, title }: ITableComponent) {
       <TableHeader
         title={title}
         result={result}
-        searchPlaceholder="Pesquisar por Nome/CNPJ"
+        searchPlaceholder="Pesquisar por Nome/"
         data={clients}
         setData={setClients}
       />
       <Table mt={16}>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th style={weightRegular}>Cliente/CNPJ</Table.Th>
+            <Table.Th style={weightRegular}>Cliente/</Table.Th>
             <Table.Th style={weightRegular}>Data</Table.Th>
             <Table.Th style={weightRegular}>Item</Table.Th>
             <Table.Th style={weightRegular}>Código</Table.Th>

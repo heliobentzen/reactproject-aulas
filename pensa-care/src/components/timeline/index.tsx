@@ -125,42 +125,6 @@ export function ClientTimeline() {
             </Box>
           </Timeline>
         </Box>
-
-        <Box>
-          <Title c={'#112F59'} size={'h3'}>
-            Análise de Troca de Peças
-          </Title>
-
-          <Timeline
-            bulletSize={28}
-            lineWidth={3}
-            pt={33}
-            styles={{
-              itemBullet: {
-                border: 'none',
-              },
-            }}
-          >
-            <Timeline.Item
-              bullet={<StepIcon color={'#C3C985'} />}
-              title={<Text fw={'bold'}>28 de outubro de 2023</Text>}
-              lineVariant="dashed"
-              h={50}
-            >
-              <Text size="md" c={'#88960E'}>
-                Preventiva
-              </Text>
-              <Text size="xs" mt={4}>
-                Alguma descrição...
-              </Text>
-            </Timeline.Item>
-
-            <br />
-            <Box style={{ marginLeft: '-15px' }} pt={4}>
-              <Footer color={'#E6E6E8'} radius={'lg'} />
-            </Box>
-          </Timeline>
-        </Box>
       </Flex>
     </Box>
   );

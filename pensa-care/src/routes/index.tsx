@@ -4,6 +4,7 @@ import { Login, NewPassword, Recover, Signup } from '../components/forms';
 import { Layout } from '../layouts';
 import { ClientsPage } from '../pages/clients';
 import { ClientDetailsPage } from '../pages/clients/client-details';
+import { ConfigPage } from '../pages/config';
 import { DashboardPage } from '../pages/dashboard';
 import { ItensPage } from '../pages/itens';
 import { ServicesPage } from '../pages/services';
@@ -14,6 +15,7 @@ const ProtectedClients = withAuthProtection(ClientsPage);
 const ProtectedClientDetails = withAuthProtection(ClientDetailsPage);
 const ProtectedItens = withAuthProtection(ItensPage);
 const ProtectedServices = withAuthProtection(ServicesPage);
+const ProtectedConfig = withAuthProtection(ConfigPage);
 
 export function Router() {
   return (
@@ -34,6 +36,7 @@ export function Router() {
           <Route path="/clients/:id" element={<ProtectedClientDetails />} />
           <Route path="/itens" element={<ProtectedItens />} />
           <Route path="/services" element={<ProtectedServices />} />
+          <Route path="/config" element={<ProtectedConfig />} />
         </Route>
       </Routes>
     </BrowserRouter>

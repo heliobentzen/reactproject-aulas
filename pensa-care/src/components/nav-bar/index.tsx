@@ -1,14 +1,15 @@
 import { AppShell, Box, NavLink } from '@mantine/core';
-import { Logo } from '../logo';
-import {
-  DashBoardIcon,
-  ClientsIcon,
-  ItensIcon,
-  ServicesIcon,
-} from '../../assets/icons/nav';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  ClientsIcon,
+  ConfigIcon,
+  DashBoardIcon,
+  ItensIcon,
+  ServicesIcon
+} from '../../assets/icons/nav';
 import { NavIcon } from '../../interfaces/NavIcon';
+import { Logo } from '../logo';
 
 interface INavLink {
   Icon: ({ active }: NavIcon) => React.ReactElement;
@@ -37,6 +38,11 @@ const data: INavLink[] = [
     title: 'Serviços',
     src: '/services',
   },
+  {
+    Icon: ConfigIcon,
+    title: 'Configurações',
+    src: '/config',
+  }
 ];
 
 export function NavBar() {

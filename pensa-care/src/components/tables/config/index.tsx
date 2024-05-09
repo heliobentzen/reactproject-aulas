@@ -3,17 +3,13 @@ import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Client,
-  Date,
   Footer,
-  Item,
-  Modality,
-  SerialNumber,
-  ServiceOrder,
-  TableHeader,
+  TableHeader
 } from '../components';
 
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { IService } from '../../../interfaces/table/IService';
+import { User } from '../../user';
 
 interface ITableComponent extends ITableHeader {
   data: IService[];
@@ -25,24 +21,24 @@ const api = axios.create({
 
 const token = localStorage.getItem('access_token');
 
-export function TableServices({ title }: ITableComponent) {
+export function TableConfig({ title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
-  const [service, setService] = useState([]);
+  const [user, setUser] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sort] = useState('date'); 
   const [sortOrder, setSortOrder] = useState('asc'); 
   
-  const servicesPerPage = 12;
+  const userPerPage = 12;
   
-  const fetchServices = useCallback(async () => {
-    const response = await api.get('/api/v1/services', {
+  const fetchUsers = useCallback(async () => {
+    const response = await api.get('/api/v1/users', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
       params: {
       page: currentPage - 1,
-      size: servicesPerPage,
+      size: userPerPage,
       sort: sort,
       name: searchTerm,
     },
@@ -51,20 +47,20 @@ export function TableServices({ title }: ITableComponent) {
 }, [currentPage, searchTerm, sort]);
 
 useEffect(() => {
-  const fetchAndSetServices = async () => {
-    const newServices = await fetchServices(currentPage - 1, servicesPerPage);
-    setService(newServices.content);
+  const fetchAndSetUsers = async () => {
+    const newUsers = await fetchUsers();
+    setUser(newUsers.content);
   };
-  fetchAndSetServices();
+  fetchAndSetUsers();
 }, []);
 
 useEffect(() => {
   if(currentPage<2) return;
-  const fetchAndSetServices = async () => {
-    const newServices = await fetchServices(currentPage - 1, servicesPerPage);
-    setService(prevServices => [...prevServices, ...newServices.content]);
+  const fetchAndSetUsers = async () => {
+    const newUsers = await fetchUsers();
+    setUser(prevUsers => [...prevUsers, ...newUsers.content]);
   };
-  fetchAndSetServices();
+  fetchAndSetUsers();
 }, [currentPage]);
 
 const handleSortChange = (selectedOption) => {
@@ -86,37 +82,28 @@ const handleSortChange = (selectedOption) => {
       
       <TableHeader
         title={title}
-        searchPlaceholder="Pesquisar por Nome/Serial Number"
-        data={service}
-        setData={setService}
+        searchPlaceholder="Pesquisar por Vendedor"
+        data={user}
+        setData={setUser}
       />
       <Table mt={16}>
         <Table.Thead>
           <Table.Tr>
+            <Table.Th style={weightRegular}>Vendedor</Table.Th>
             <Table.Th style={weightRegular}>Cliente</Table.Th>
-            <Table.Th style={weightRegular}>Data</Table.Th>
-            <Table.Th style={weightRegular}>Item</Table.Th>
-            <Table.Th style={weightRegular}>Modalidade</Table.Th>
-            <Table.Th style={weightRegular}>Ordem de serviço</Table.Th>
-            <Table.Th style={weightRegular}>Serial number</Table.Th>
+            <Table.Th style={weightRegular}>UF</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {service.map((service: IService) => (
+          {user.map((service: IService) => (
             <Table.Tr key={service.client_cnpj}>
+              <User>
+                name={service.user_name}
+              </User>
               <Client
-                code={''}
-                cnpj={service.client_cnpj}
-                name={service.name}
-                store={''} 
-                city={''} 
-                uf={''}              
+                name={user.client_name}
+                uf={user.uf}
               />
-              <Date preventiveDate={service.date} preventiveHour="x" />
-              <Item text={service.item_description || ''} />
-              <Modality text={service.description} />
-              <ServiceOrder number={service.order_number} />
-              <SerialNumber number={service.item_serial_number} />
             </Table.Tr>
           ))}
         </Table.Tbody>

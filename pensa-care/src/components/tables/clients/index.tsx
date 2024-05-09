@@ -92,7 +92,7 @@ const handleSortChange = (selectedOption) => {
       <TableHeader
         title={title}
         result="839"
-        searchPlaceholder="Pesquisar por Nome/CNPJ"
+        searchPlaceholder="Pesquisar por Nome/"
         onSearchChange={handleSearchChange} 
         onSortChange={handleSortChange}
         data={clients}
@@ -101,7 +101,7 @@ const handleSortChange = (selectedOption) => {
       <Table mt={16}>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th style={weightRegular}>Cliente/CNPJ</Table.Th>
+            <Table.Th style={weightRegular}>Cliente/</Table.Th>
             <Table.Th style={weightRegular}>Próx. preventiva</Table.Th>
             <Table.Th style={weightRegular}>Parque Instalado</Table.Th>            
           </Table.Tr>

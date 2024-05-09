@@ -1,11 +1,11 @@
 import { Box, Flex } from '@mantine/core';
 import { Breadcrumbs } from '../../../components/breadcrumbs';
 import { ClientDetails } from '../../../components/details/index';
-import { ClientTimeline } from '../../../components/timeline';
 import { TableDetails } from '../../../components/tables/clients/details';
+import { ClientTimeline } from '../../../components/timeline';
 
-import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 export function ClientDetailsPage() {
@@ -112,7 +112,7 @@ export function ClientDetailsPage() {
       >
         <ClientDetails />
         <TableDetails title={'Histórico de Manutenções'} result={56} />
-        <TableDetails title={'Histórico de Peças e Equipamentos'} result={56} />
+        <TableDetails title={'Histórico de Peças e Equipamentos' result={56} />
       </Flex>
     </Box>
   );
