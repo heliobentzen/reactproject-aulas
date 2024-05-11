@@ -18,9 +18,9 @@ export interface IPark {
 
 export interface IClient extends IPreventiveDate, IStatus {
   name: string;
-  code: string;
+  code?: string;
   cnpj: string;
-  store: string;
+  store?: string;
   city: string;
   uf: string;
   item?: string;

@@ -28,6 +28,7 @@ const token = localStorage.getItem('access_token');
 export function TableClients({ result, title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
   const [clients, setClients] = useState([]);
+  const [filteredClients, setFilteredClients] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortName] = useState('name'); 
@@ -54,68 +55,70 @@ export function TableClients({ result, title }: ITableComponent) {
   
 }, [currentPage, searchTerm, sortName]);
 
-useEffect(() => {
-  const fetchAndSetClients = async () => {
-    const newClients = await fetchClients(currentPage - 1, clientsPerPage);
-    setClients(newClients.content);
-  };
+  useEffect(() => {
+    const fecthReloadClient = async ()=> {
+      const data = await fetchClients()
+        setClients(data.content);
+        setFilteredClients(data.content);
+    }
+    fecthReloadClient();
+  }, []);
   
-  fetchAndSetClients();
-}, []);
-
-useEffect(() => {
-  if(currentPage<2) return;
-  const fetchAndSetClients = async () => {
-    const newClients = await fetchClients(currentPage - 1, clientsPerPage);
-    setClients(prevClients => [...prevClients, ...newClients.content]);
-  };
-  fetchAndSetClients();
-}, [currentPage]);
-
-const handleSortChange = (selectedOption) => {
-  const sortValue = selectedOption.value;
-  setSortOrder(sortValue); 
-}
-
+  useEffect(() => {
+    if(currentPage<2) return;
+    const fetchAndSetClients = async () => {
+      const newClients = await fetchClients(currentPage - 1, clientsPerPage);
+      setClients(prevClients => [...prevClients, ...newClients.content]);
+      setFilteredClients(prevClients => [...prevClients, ...newClients.content]);
+    };
+    fetchAndSetClients();
+  }, [currentPage, searchTerm]);
+  
   const handleClick = () => {
     setCurrentPage(prevPage => prevPage + 1); 
   };
 
+  const handleTableHeaderChange = (headerChange) => {
+    const { sortOrder, searchValue } = headerChange;
+    const filteredClients = (clients || []).filter((client: IClient) => {
+      return client.name?.toLowerCase().includes(searchValue?.toLowerCase());
+    }) || [];
+    
+    const sortFilteredClients = filteredClients.sort((a: IClient, b: IClient) => {        
+      if (sortOrder === '1') {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-
+    setFilteredClients(sortFilteredClients || []);
+  }
 
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
       <TableHeader
         title={title}
         result="839"
-        searchPlaceholder="Pesquisar por Nome/"
-        onSearchChange={handleSearchChange} 
-        onSortChange={handleSortChange}
-        data={clients}
-        setData={setClients}
+        onHandleTableHeaderChange={handleTableHeaderChange}
+        searchPlaceholder="Pesquisar por Nome"
       />
       <Table mt={16}>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th style={weightRegular}>Cliente/</Table.Th>
+            <Table.Th style={weightRegular}>Cliente</Table.Th>
             <Table.Th style={weightRegular}>Próx. preventiva</Table.Th>
             <Table.Th style={weightRegular}>Parque Instalado</Table.Th>            
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {clients.map((client: IClient, index) => (
+          {filteredClients.map((client: IClient, index) => (
             <Table.Tr key={(client as IClient).cnpj || index}>
               <Client
                 name={(client as IClient).name}
                 cnpj={(client as IClient).cnpj}
                 city={(client as IClient).city}
                 uf={(client as IClient).uf}
-                code={''} 
-                store={''}              
               />
               <PreventiveDate preventiveDate={(client as IClient).preventiveDate} />
               <Park parks={(client as IClient).parks || []} />    

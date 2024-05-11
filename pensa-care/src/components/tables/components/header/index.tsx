@@ -7,47 +7,27 @@ export function TableHeader({
   result,
   searchPlaceholder,
   columnMode,
-  data,
-  setData
-}: ITableHeader & { onSortChange?: (value: string) => void }) {
-  const [sortOrder, setSortOrder] = useState('name');
+  onHandleTableHeaderChange,
+}: ITableHeader & { onHandleTableHeaderChange?: ({ sortOrder, searchValue }: { sortOrder: string, searchValue: string }) => void }) {
+  const [sortOrder, setSortOrder] = useState('1');
   const [searchValue, setSearchValue] = useState('');
-  const [initialData, setInitialData] = useState([]);
+  
+  
+  const onSortOrderChange = (value) => {
+    setSortOrder(value);
+  }
+
+  const onSearchChange = (event) => {
+    setSearchValue(event.target.value);
+    
+  }
 
   useEffect(() => {
-    setInitialData([...data]);
-  }, [data]);
-
-  const handleSortChange = (selectedOption) => {
-    const sortValue = selectedOption;
-    setSortOrder(sortValue);
-    
-    const sortedData = [...data].sort((a, b) => {
-      if (sortValue == 1) {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
-    });
-      setData(sortedData);
-    };
-
-    const handleSearchChange = (event) => {
-      const newSearchValue = event.target.value;
-      setSearchValue(newSearchValue);
-     
-      if (newSearchValue === '') {
-        setData(data);
-      } else {
-        const newFilteredData = data.filter(data =>
-          data.name.toLowerCase().includes(newSearchValue.toLowerCase())
-        );
-        setData(newFilteredData);
-      }
-     
-    };
-
-    
+    if (onHandleTableHeaderChange) {
+      onHandleTableHeaderChange({ sortOrder, searchValue });
+    }
+  }, [sortOrder, searchValue]);
+  
   return (
     <Flex pt={30} pb={16} justify={'space-between'}>
       <Flex direction={'column'}>
@@ -64,6 +44,7 @@ export function TableHeader({
           <Flex align={'center'} mt={6}>
             <Text>ordernar por</Text>
             <Select
+              onChange={onSortOrderChange}
               styles={{
                 input: {
                   border: 'none',
@@ -96,7 +77,7 @@ export function TableHeader({
         <Flex align={'center'}>
           <Text>ordernar por</Text>
           <Select
-            onChange={handleSortChange}
+            onChange={onSortOrderChange}
             styles={{
               input: {
                 border: 'none',
@@ -118,9 +99,8 @@ export function TableHeader({
               { value: '1', label: `A-Z` },
               { value: '2', label: 'Z-A' },
             ]}
-            
           />
-        <TextInput miw={'260px'} placeholder={searchPlaceholder} value={searchValue} onChange={handleSearchChange} />
+        <TextInput miw={'260px'} placeholder={searchPlaceholder} value={searchValue} onChange={onSearchChange} />
         </Flex>
       )}
     </Flex>
