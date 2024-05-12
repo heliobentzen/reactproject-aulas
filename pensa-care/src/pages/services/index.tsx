@@ -3,7 +3,6 @@ import { Box, Flex } from '@mantine/core';
 import { Header } from '../../components/header';
 import { TableServices } from '../../components/tables';
 
-import { mockClientData } from '../../__mock__/data';
 
 export function ServicesPage() {
   return (
@@ -11,10 +10,10 @@ export function ServicesPage() {
       <Header title="Serviços" />
       <Flex direction="column" gap={24}>
         <TableServices
-          title="Lista de serviços prestados"
-          result={56} // data.length
-          data={mockClientData} 
-          searchPlaceholder={''}        
+          title="Lista de Serviços prestados"
+          result={0}
+          searchPlaceholder={''} 
+          data={[]}        
         />
       </Flex>
     </Box>

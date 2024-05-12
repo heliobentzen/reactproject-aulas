@@ -1,4 +1,4 @@
-import { Box, Table } from '@mantine/core';
+import { Box, Button, Flex, Table } from '@mantine/core';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -7,9 +7,8 @@ import {
   Footer,
   Item,
   Modality,
-  SerialNumber,
   ServiceOrder,
-  TableHeader,
+  TableHeader
 } from '../components';
 
 import { ITableHeader } from '../../../interfaces/table/IHeader';
@@ -28,7 +27,9 @@ const token = localStorage.getItem('access_token');
 export function TableServices({ title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
   const [service, setService] = useState([]);
+  const [filteredService, setFilteredService] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalElements, setTotalElements] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sort] = useState('date'); 
   const [sortOrder, setSortOrder] = useState('asc'); 
@@ -47,13 +48,15 @@ export function TableServices({ title }: ITableComponent) {
       name: searchTerm,
     },
   });
+  setTotalElements(response.data.total_elements);
   return response.data;
 }, [currentPage, searchTerm, sort]);
 
 useEffect(() => {
   const fetchAndSetServices = async () => {
-    const newServices = await fetchServices(currentPage - 1, servicesPerPage);
-    setService(newServices.content);
+    const data = await fetchServices(currentPage - 1, servicesPerPage);
+    setService(data.content);
+    setFilteredService(data.content);
   };
   fetchAndSetServices();
 }, []);
@@ -63,32 +66,42 @@ useEffect(() => {
   const fetchAndSetServices = async () => {
     const newServices = await fetchServices(currentPage - 1, servicesPerPage);
     setService(prevServices => [...prevServices, ...newServices.content]);
+    setFilteredService(prevServices => [...prevServices, ...newServices.content]);
   };
   fetchAndSetServices();
 }, [currentPage]);
 
-const handleSortChange = (selectedOption) => {
-  const sortValue = selectedOption.value;
-  setSortOrder(sortValue); 
-}
 
   const handleClick = () => {
     setCurrentPage(prevPage => prevPage + 1); 
   };
 
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
+  const handleTableHeaderChange = (headerChange) => {
+    const { sortOrder, searchValue } = headerChange;
+    const filteredServices = (service || []).filter((service: IService) => {
+      return service.name?.toLowerCase().includes(searchValue?.toLowerCase());
+    }) || [];
+    
+    const sortFilteredServices = filteredServices.sort((a: IService, b: IService) => {        
+      if (sortOrder === '1') {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
+
+    setFilteredService(sortFilteredServices || []);
+  }
 
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
       
       <TableHeader
         title={title}
+        result={totalElements}
         searchPlaceholder="Pesquisar por Nome/Serial Number"
-        data={service}
-        setData={setService}
+        onHandleTableHeaderChange={handleTableHeaderChange}
       />
       <Table mt={16}>
         <Table.Thead>
@@ -98,29 +111,33 @@ const handleSortChange = (selectedOption) => {
             <Table.Th style={weightRegular}>Item</Table.Th>
             <Table.Th style={weightRegular}>Modalidade</Table.Th>
             <Table.Th style={weightRegular}>Ordem de serviço</Table.Th>
-            <Table.Th style={weightRegular}>Serial number</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {service.map((service: IService) => (
-            <Table.Tr key={service.client_cnpj}>
+          {filteredService.map((service: IService) => (
+            <Table.Tr key={`${service.name}-${service.cnpj}`}>
               <Client
-                code={''}
-                cnpj={service.client_cnpj}
-                name={service.name}
-                store={''} 
-                city={''} 
-                uf={''}              
+                cnpj={service.cnpj}
+                name={service.name} 
+                city={service.city} 
+                uf={service.state}              
               />
               <Date preventiveDate={service.date} preventiveHour="x" />
-              <Item text={service.item_description || ''} />
+              <Item text={service.items?.map(item => item.description).join('\n')} />
               <Modality text={service.description} />
               <ServiceOrder number={service.order_number} />
-              <SerialNumber number={service.item_serial_number} />
             </Table.Tr>
           ))}
         </Table.Tbody>
       </Table>
+      <Flex h={40} mt={10} align={'center'}>
+      <Button       
+        variant="filled"
+        onClick={handleClick}
+      >
+        Ver mais
+      </Button>
+      </Flex>
       <Footer color={undefined} radius={undefined} />
     </Box>
   );

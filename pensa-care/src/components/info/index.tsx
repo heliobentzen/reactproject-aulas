@@ -1,6 +1,15 @@
 import { Flex, Text, Title } from '@mantine/core';
 
-export function ClientInfo() {
+interface Client {
+  name: string;
+  // Adicione outras propriedades aqui conforme necessário
+}
+
+interface ClientInfoProps {
+  objClient: Client;
+}
+
+export function ClientInfo({ objClient }: ClientInfoProps) {
   return (
     <Flex
       direction={'column'}
@@ -11,7 +20,7 @@ export function ClientInfo() {
       c={'#030229'}
     >
       <Title mb={8} c={'#0855A3'} size={'h1'}>
-        SENAI - São Paulo - Ipiranga
+        {objClient.name}
       </Title>
       <Text> XX.XXX.XXX/0001-XX</Text>
       <Text>

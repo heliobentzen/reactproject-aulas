@@ -17,8 +17,6 @@ export function TableDetails({ title, result }) {
         result={result}
         searchPlaceholder="Pesquisar Nome/Serial Number"
         columnMode
-        data={clients}
-        setData={setClients}
       />
 
       <Table mt={16}>

@@ -26,9 +26,7 @@ export function TableItens({ data, result, title }: ITableComponent) {
       <TableHeader
         title={title}
         result={result}
-        searchPlaceholder="Pesquisar por Nome/"
-        data={clients}
-        setData={setClients}
+        searchPlaceholder="Pesquisar por Nome"
       />
       <Table mt={16}>
         <Table.Thead>

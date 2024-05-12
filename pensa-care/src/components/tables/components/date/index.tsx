@@ -2,7 +2,7 @@ import { Flex, Table, Text } from '@mantine/core';
 
 import { IPreventiveDate } from '../../../../interfaces/table/IClient';
 
-export function Date({ preventiveDate, preventiveHour }: IPreventiveDate) {
+export function Date({ preventiveDate }: IPreventiveDate) {
   return (
     <Table.Td>
       <Flex direction={'column'} gap={4}>
@@ -10,7 +10,7 @@ export function Date({ preventiveDate, preventiveHour }: IPreventiveDate) {
           Início
         </Text>
         <Text>
-          {preventiveDate} nulo h
+          {preventiveDate}
         </Text>
         <Text c="#999" size="sm">
           Fim

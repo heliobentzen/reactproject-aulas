@@ -2,10 +2,13 @@ import { Table } from '@mantine/core';
 
 interface IItem {
   withIcon?: boolean;
-  text: string;
+  text?: string;
   icon?: string;
 }
 
 export function Item({ withIcon, text }: IItem) {
-  return <Table.Td>{text}</Table.Td>;
+  return <Table.Td><div style={{ whiteSpace: 'pre-wrap' }}>{text}</div></Table.Td>;
 }
+
+
+

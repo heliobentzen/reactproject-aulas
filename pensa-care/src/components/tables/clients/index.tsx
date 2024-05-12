@@ -30,6 +30,7 @@ export function TableClients({ result, title }: ITableComponent) {
   const [clients, setClients] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalElements, setTotalElements] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortName] = useState('name'); 
   const [sortOrder, setSortOrder] = useState('asc'); 
@@ -51,6 +52,7 @@ export function TableClients({ result, title }: ITableComponent) {
     },
   });
   setLoading(false);
+  setTotalElements(response.data.total_elements);
   return response.data;
   
 }, [currentPage, searchTerm, sortName]);
@@ -99,7 +101,7 @@ export function TableClients({ result, title }: ITableComponent) {
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
       <TableHeader
         title={title}
-        result="839"
+        result={totalElements}
         onHandleTableHeaderChange={handleTableHeaderChange}
         searchPlaceholder="Pesquisar por Nome"
       />
