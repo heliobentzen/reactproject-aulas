@@ -1,8 +1,9 @@
-import { Box, Button, Flex, Loader, Table } from '@mantine/core';
+import { Box, Loader, Table } from '@mantine/core';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Client,
+  Footer,
   Park,
   PreventiveDate,
   TableHeader
@@ -25,7 +26,7 @@ const token = localStorage.getItem('access_token');
 //  api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 //}
 
-export function TableClients({ result, title }: ITableComponent) {
+export function TableClients({ title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
   const [clients, setClients] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
@@ -51,8 +52,10 @@ export function TableClients({ result, title }: ITableComponent) {
       name: searchTerm,
     },
   });
+
   setLoading(false);
   setTotalElements(response.data.total_elements);
+  
   return response.data;
   
 }, [currentPage, searchTerm, sortName]);
@@ -60,8 +63,8 @@ export function TableClients({ result, title }: ITableComponent) {
   useEffect(() => {
     const fecthReloadClient = async ()=> {
       const data = await fetchClients()
-        setClients(data.content);
-        setFilteredClients(data.content);
+      setClients(data.content);
+      setFilteredClients(data.content);
     }
     fecthReloadClient();
   }, []);
@@ -96,7 +99,6 @@ export function TableClients({ result, title }: ITableComponent) {
 
     setFilteredClients(sortFilteredClients || []);
   }
-
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
       <TableHeader
@@ -122,22 +124,14 @@ export function TableClients({ result, title }: ITableComponent) {
                 city={(client as IClient).city}
                 uf={(client as IClient).uf}
               />
-              <PreventiveDate preventiveDate={(client as IClient).preventiveDate} />
+              <PreventiveDate preventiveDate={(client as IClient).equipments.next_service} done />
               <Park parks={(client as IClient).parks || []} />    
             </Table.Tr>
         ))}
         </Table.Tbody>
       </Table>
       {loading && <Loader />}
-      <Flex h={40} mt={10} align={'center'}>
-      <Button       
-        variant="filled"
-        onClick={handleClick}
-      >
-        Ver mais
-      </Button>
-    </Flex>
-
+      <Footer color={''} radius={''} onHandleClick={handleClick}></Footer>
     </Box>
   );
 }

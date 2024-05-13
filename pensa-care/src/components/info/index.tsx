@@ -28,11 +28,9 @@ export function ClientInfo({ client, contacts }: ClientInfoProps) {
             <Accordion.Panel>
               <Text>{contact.email_primary}</Text>
               <Text>{contact.email_secondary}</Text>
-              <Text>{contact.country_code}</Text>
-              <Text>{contact.area_code}</Text>
-              <Text>{contact.mobile_number}</Text>
-              <Text>{contact.commercial_number1}</Text>
-              <Text>{contact.commercial_number2}</Text>
+              {contact.mobile_number && <Text>{contact.country_code} {contact.area_code} {contact.mobile_number}</Text>}
+              {contact.commercial_number1 && <Text>{contact.country_code} {contact.area_code} {contact.commercial_number1}</Text>}
+              {contact.commercial_number2 &&<Text>{contact.country_code} {contact.area_code} {contact.commercial_number2}</Text>}
             </Accordion.Panel>
         </Accordion.Item>
         ))}

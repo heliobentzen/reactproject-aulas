@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Table } from '@mantine/core';
+import { Box, Table } from '@mantine/core';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -130,15 +130,7 @@ useEffect(() => {
           ))}
         </Table.Tbody>
       </Table>
-      <Flex h={40} mt={10} align={'center'}>
-      <Button       
-        variant="filled"
-        onClick={handleClick}
-      >
-        Ver mais
-      </Button>
-      </Flex>
-      <Footer color={undefined} radius={undefined} />
+      <Footer color={''} radius={''} onHandleClick={handleClick}></Footer>
     </Box>
   );
 }
