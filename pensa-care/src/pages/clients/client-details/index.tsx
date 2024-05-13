@@ -1,4 +1,7 @@
 import { Box, Flex } from '@mantine/core';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Breadcrumbs } from '../../../components/breadcrumbs';
 import { ClientDetails } from '../../../components/details/index';
 import { TableDetails } from '../../../components/tables/clients/details';
@@ -6,6 +9,27 @@ import { ClientTimeline } from '../../../components/timeline';
 
 
 export function ClientDetailsPage() {
+  const [client, setClient] = useState({});
+  const token = localStorage.getItem('access_token');
+  const api = axios.create({ baseURL: 'http://localhost:8080', });
+  const { id } = useParams<{ id: string }>();
+  const cnpj = id;
+  
+  useEffect(() => {
+    const fetchClient = async () => {
+      try {
+        const responseClient = await api.get(`/api/v1/clients/${cnpj}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        setClient(responseClient.data);
+      } catch (error) {
+        console.error('Erro ao obter os dados:', error);
+      }
+    };
+    fetchClient();
+  }, [id]);
 
     
   return (
@@ -13,8 +37,8 @@ export function ClientDetailsPage() {
       style={{ overflowY: 'auto', borderRadius: '10px' }}
       h={'calc(100vh - 50px)'}
     >
-      <Breadcrumbs />
-      <ClientTimeline />
+      <Breadcrumbs client={client}  />
+      <ClientTimeline client={client} />
 
       <Flex
         direction={'column'}
@@ -26,7 +50,7 @@ export function ClientDetailsPage() {
         mx={4}
         gap={20}
       >
-        <ClientDetails />
+        <ClientDetails client={client} />
         <TableDetails title={'Histórico de Manutenções'} result={56} />
         <TableDetails title={'Histórico de Itens'} result={10} />
       </Flex>

@@ -1,7 +1,7 @@
 import { Anchor, Button, Center, Checkbox, PasswordInput, Text, TextInput, Title, } from '@mantine/core';
+import axios from 'axios';
 import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 export function Signup() {
 
@@ -138,7 +138,3 @@ export function Signup() {
     </>
   );
 }
-function setEmailError(arg0: string) {
-  throw new Error('Function not implemented.');
-}
-

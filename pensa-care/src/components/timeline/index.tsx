@@ -1,9 +1,15 @@
 import { Box, Flex, Text, Timeline, Title } from '@mantine/core';
 
 import { StepIcon } from '../../assets/icons/timeline/step';
+import { IClient } from '../../interfaces/table/IClient';
 import { Footer } from '../tables/components';
 
-export function ClientTimeline() {
+interface ClientTimelineProps {
+  client: IClient;
+}
+
+
+export function ClientTimeline({client}: ClientTimelineProps) {
   return (
     <Box
       style={{ zIndex: 3, overflowY: 'auto' }}
@@ -20,7 +26,7 @@ export function ClientTimeline() {
             Histórico de Relacionamento
           </Title>
           <Text c={'#112F59'} size="sm">
-            SENAI - São Paulo - Ipiranga
+            {client.name}
           </Text>
 
           <Timeline

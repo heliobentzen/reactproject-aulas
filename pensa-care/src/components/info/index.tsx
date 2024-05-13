@@ -1,15 +1,13 @@
-import { Flex, Text, Title } from '@mantine/core';
-
-interface Client {
-  name: string;
-  // Adicione outras propriedades aqui conforme necessário
-}
+import { Accordion, Flex, Text, Title } from '@mantine/core';
+import { IClient } from '../../interfaces/table/IClient';
+import { IContact } from '../../interfaces/table/IContact';
 
 interface ClientInfoProps {
-  objClient: Client;
+  client: IClient;
+  contacts: IContact;
 }
 
-export function ClientInfo({ objClient }: ClientInfoProps) {
+export function ClientInfo({ client, contacts }: ClientInfoProps) {
   return (
     <Flex
       direction={'column'}
@@ -19,16 +17,26 @@ export function ClientInfo({ objClient }: ClientInfoProps) {
       px={24}
       c={'#030229'}
     >
-      <Title mb={8} c={'#0855A3'} size={'h1'}>
-        {objClient.name}
-      </Title>
-      <Text> XX.XXX.XXX/0001-XX</Text>
-      <Text>
-        R. Moreira de Godói, 226 - Ipiranga, São Paulo - SP, 04266-060
-      </Text>
-      <Text>Carine Santos</Text>
-      <Text>carine.santos@senai.sp.br</Text>
-      <Text>+55 00000-0000</Text>
+      <Title mb={8} c={'#0855A3'} size={'h1'}>{client.name}</Title>
+      <Text>CNPJ: {client.cnpj}</Text>
+      <Text>{client.city} / {client.uf}</Text>
+      <Text>Contatos:</Text>
+      <Accordion>
+        {Array.isArray(contacts) && contacts.map((contact, index) => (
+          <Accordion.Item key={index} value={contact.name}>
+            <Accordion.Control>{contact.name}</Accordion.Control>
+            <Accordion.Panel>
+              <Text>{contact.email_primary}</Text>
+              <Text>{contact.email_secondary}</Text>
+              <Text>{contact.country_code}</Text>
+              <Text>{contact.area_code}</Text>
+              <Text>{contact.mobile_number}</Text>
+              <Text>{contact.commercial_number1}</Text>
+              <Text>{contact.commercial_number2}</Text>
+            </Accordion.Panel>
+        </Accordion.Item>
+        ))}
+      </Accordion>
     </Flex>
   );
 }

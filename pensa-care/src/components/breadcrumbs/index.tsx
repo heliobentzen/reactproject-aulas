@@ -1,7 +1,12 @@
 import { Flex, Text, Title } from '@mantine/core';
 import { Link } from 'react-router-dom';
+import { IClient } from '../../interfaces/table/IClient';
 
-export function Breadcrumbs() {
+interface BreadcrumbsProps {
+  client: IClient;
+}
+
+export function Breadcrumbs({client}: BreadcrumbsProps) {
   return (
     <Flex
       pos={'absolute'}
@@ -25,7 +30,7 @@ export function Breadcrumbs() {
         {'>'}
       </Text>
       <Title c={'#112F59'} size={'h2'}>
-        SENAI - São Paulo - Ipiranga
+        {client.name}
       </Title>
     </Flex>
   );

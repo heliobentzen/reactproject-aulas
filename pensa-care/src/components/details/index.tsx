@@ -3,33 +3,31 @@ import { useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { IClient } from '../../interfaces/table/IClient';
 import { GridCard } from '../cards/clients/details/grid-card';
 import { GridHeader } from '../grid-header';
 import { ClientInfo } from '../info';
 import { ModalComponent } from '../modal';
 
-export function ClientDetails() {
+interface ClientDetailsProps {
+  client: IClient;
+}
+
+
+export function ClientDetails({client}: ClientDetailsProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const token = localStorage.getItem('access_token');
   const api = axios.create({ baseURL: 'http://localhost:8080', });
   
   const { id } = useParams<{ id: string }>();
-  const cnpj = 94813102000846;
+  const cnpj = id;
 
-  const [client, setClient] = useState({});
+  
   const [contacts, setContacts] = useState([]);
   const [items, setItems] = useState([]);
   const [services, setServices] = useState([]);
 
-  useEffect(() => {
-    setClient({
-      cnpj: cnpj,
-      name: "objClient.name",
-      city: "objClient.city",
-      uf: "objClient.uf"
-    });
-  }, []);
-
+  
   useEffect(() => {
     const fetchContacts = async () => {
       try {
@@ -39,7 +37,6 @@ export function ClientDetails() {
           }
         });
         setContacts(responseContacts.data);
-        console.log('CONTATOS: ' + contacts);
       } catch (error) {
         console.error('Erro ao obter os dados:', error);
       }
@@ -58,14 +55,11 @@ export function ClientDetails() {
           }
         });
         setItems(resItems.data.content);
-        console.log("ITEMS: " + items);
       } catch (error) {
         console.error('Erro ao obter os dados:', error);
       }
     };
-
     fetchItems();
-
   }, [id]);
 
   useEffect(() => {
@@ -88,7 +82,12 @@ export function ClientDetails() {
 
   return (
     <Box>
-      <ClientInfo client={client} />
+      
+
+      <ClientInfo 
+        client={client} 
+        contacts={contacts}
+      />
       <GridHeader
         title={`Parques Instalados (${4})`}
         searchPlaceholder="Pesquisar Nome/ Serial number"
