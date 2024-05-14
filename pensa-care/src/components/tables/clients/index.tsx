@@ -117,8 +117,17 @@ export function TableClients({ title }: ITableComponent) {
         </Table.Thead>
         <Table.Tbody>
           {filteredClients.map((client: IClient, index) => {
-          const nextServiceDates = (client as IClient).equipments?.map(equipment => new Date(equipment.next_service));
-          const minNextServiceDate = nextServiceDates?.reduce((minDate, current) => current < minDate ? current : minDate, nextServiceDates[0]);
+          const nextServiceDates = (client as IClient).equipments
+          .map(equipment => equipment.next_service ? new Date(equipment.next_service) : null)
+          .filter(date => date !== null);
+        
+        let minNextServiceDate;
+        
+        if (nextServiceDates.length > 0) {
+          minNextServiceDate = nextServiceDates.reduce((minDate, current) => current < minDate ? current : minDate);
+        } else {
+          minNextServiceDate = 'N/A'; // Or any other default value
+        }
           return (
             <Table.Tr key={(client as IClient).cnpj || index}>
               <Client
@@ -127,7 +136,7 @@ export function TableClients({ title }: ITableComponent) {
                 city={(client as IClient).city}
                 uf={(client as IClient).uf}
                 />
-              <PreventiveDate preventiveDate={minNextServiceDate} done />
+              <PreventiveDate preventiveDate={minNextServiceDate instanceof Date && !isNaN(minNextServiceDate) ? minNextServiceDate : 'Não há'} done />
               <Park parks={(client as IClient).parks || []} />    
             </Table.Tr>
           );
