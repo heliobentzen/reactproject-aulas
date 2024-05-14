@@ -10,6 +10,8 @@ import { ClientTimeline } from '../../../components/timeline';
 
 export function ClientDetailsPage() {
   const [client, setClient] = useState({});
+  const [services, setServices] = useState([]);
+  const [itens, setItens] = useState([]);
   const token = localStorage.getItem('access_token');
   const api = axios.create({ baseURL: 'http://localhost:8080', });
   const { id } = useParams<{ id: string }>();
@@ -28,7 +30,36 @@ export function ClientDetailsPage() {
         console.error('Erro ao obter os dados:', error);
       }
     };
+
+    const fetchServices = async () => {
+      try {
+        const responseService = await api.get(`/api/v1/clients/${cnpj}/services`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        setServices(responseService.data.content);
+      } catch (error) {
+        console.error('Erro ao obter os dados:', error);
+      }
+    };
+
+    const fetchItens = async () => {
+      try {
+        const responseItens = await api.get(`/api/v1/clients/${cnpj}/equipments`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        setItens(responseItens.data.content);
+      } catch (error) {
+        console.error('Erro ao obter os dados:', error);
+      }
+    };
+
     fetchClient();
+    fetchServices();
+    fetchItens();
   }, [id]);
 
     
@@ -51,8 +82,8 @@ export function ClientDetailsPage() {
         gap={20}
       >
         <ClientDetails client={client} />
-        <TableDetails title={'Histórico de Manutenções'} result={56} />
-        <TableDetails title={'Histórico de Itens'} result={10} />
+        <TableDetails title={'Histórico de Manutenções'} data={services} result={services.length} />
+        {/* <TableDetails title={'Histórico de Itens'} data={itens} result={itens.length} /> */}
       </Flex>
     </Box>
   );

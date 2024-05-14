@@ -21,8 +21,8 @@ export function ClientsPage() {
       <Flex direction="column" gap={24}>
         <TableClients
           title="Todos os seus clientes"
-          data={data}
-          searchPlaceholder={''}
+          data={data} 
+          searchPlaceholder={''}       
         />
       </Flex>
     </Box>

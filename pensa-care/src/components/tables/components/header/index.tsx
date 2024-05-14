@@ -34,7 +34,7 @@ export function TableHeader({
         <Title c="#030229" size={'h3'}>
           {title}
         </Title>
-        <Text c="#999">{result} resultados</Text>
+        <Text c="#999">{result} {result <= 1 ? 'resultado' : 'resultados'}</Text>
       </Flex>
 
       {columnMode ? (

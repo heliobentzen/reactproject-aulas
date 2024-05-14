@@ -23,10 +23,12 @@ const token = localStorage.getItem('access_token');
 export function TableConfig({ title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
   const [user, setUser] = useState([]);
+  const [filteredUser, setFilteredUser] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sort] = useState('date'); 
   const [sortOrder, setSortOrder] = useState('asc'); 
+  const [totalElements, setTotalElements] = useState(1);
   
   const userPerPage = 12;
   
@@ -42,6 +44,8 @@ export function TableConfig({ title }: ITableComponent) {
       name: searchTerm,
     },
   });
+  setTotalElements(response.data.total_elements);
+  
   return response.data;
 }, [currentPage, searchTerm, sort]);
 
@@ -62,28 +66,36 @@ useEffect(() => {
   fetchAndSetUsers();
 }, [currentPage]);
 
-const handleSortChange = (selectedOption) => {
-  const sortValue = selectedOption.value;
-  setSortOrder(sortValue); 
-}
 
   const handleClick = () => {
     setCurrentPage(prevPage => prevPage + 1); 
   };
 
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
+  const handleTableHeaderChange = (headerChange) => {
+    const { sortOrder, searchValue } = headerChange;
+    const filteredUser = (user || []).filter((user: IUser) => {
+      return user.name?.toLowerCase().includes(searchValue?.toLowerCase());
+    }) || [];
+    
+    const sortFilteredUser = filteredUser.sort((a: IUser, b: IUser) => {        
+      if (sortOrder === '1') {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
 
+    setFilteredUser(sortFilteredUser || []);
+  }
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
       
       <TableHeader
         title={title}
         searchPlaceholder="Pesquisar por Vendedor"
-        data={user}
-        setData={setUser}
+        onHandleTableHeaderChange={handleTableHeaderChange}
+        result={totalElements}
       />
       <Table mt={16}>
         <Table.Thead>

@@ -2,13 +2,14 @@ import { Box, Table, Text } from '@mantine/core';
 import { Footer, TableHeader } from '../../components';
 import { Maintenance } from '../../components/maintenance';
 
-import { useState } from 'react';
 import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
 import { Model } from '../../components/model';
+import { useState } from 'react';
 
-export function TableDetails({ title, result }) {
+export function TableDetails({ title, result, data }) {
   const weightRegular = { fontWeight: 400 };
-  const [clients, setClients] = useState([]);
+  const [originalData, setOriginalData] = useState(data);
+  const [filteredData, setFilteredData] = useState(data);
 
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
@@ -33,31 +34,29 @@ export function TableDetails({ title, result }) {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {Array(5).fill(
+          {data.map((d) => (
             <Table.Tr>
-              <Maintenance
-                data={'27 de junho de 2023'}
-                type={'Corretiva'}
-                client={'Client SP (Time Sampaio)'}
+            <Maintenance
+                data={d.date ? d.date : 'N/D'}
+                type={d.type}
+                client={d.name}
               />
 
               <Model
                 image={sulfIcon}
-                serial={'S/N: 000X0X0000000'}
-                name={
-                  'Banho Circulador Modelo TLV40-11 para baixas temperaturas'
-                }
+                serial={`S/N: ${d.items[0].serial_number}`}
+                name={d.items[0].model}
               />
 
               <Table.Td>
-                <Text>Não operacional XXXX</Text>
+                <Text>{'N/D'}</Text>
               </Table.Td>
 
               <Table.Td>
-                <Text>12345678910</Text>
+                <Text>{d.order_number}</Text>
               </Table.Td>
-            </Table.Tr>
-          )}
+          </Table.Tr>
+          ))}
         </Table.Tbody>
       </Table>
       <Footer />
