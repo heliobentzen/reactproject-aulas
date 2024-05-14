@@ -2,14 +2,13 @@ import { Box, Table } from '@mantine/core';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import {
-  Client,
   Footer,
   TableHeader
 } from '../components';
 
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { IService } from '../../../interfaces/table/IService';
-import { User } from '../../user';
+import { IUser } from '../../../interfaces/table/IUser';
 
 interface ITableComponent extends ITableHeader {
   data: IService[];
@@ -89,26 +88,26 @@ const handleSortChange = (selectedOption) => {
       <Table mt={16}>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th style={weightRegular}>Vendedor</Table.Th>
-            <Table.Th style={weightRegular}>Cliente</Table.Th>
-            <Table.Th style={weightRegular}>UF</Table.Th>
+            <Table.Th style={weightRegular}>Usuário</Table.Th>
+            <Table.Th style={weightRegular}>Cliente(s)</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {user.map((service: IService) => (
-            <Table.Tr key={service.client_cnpj}>
-              <User>
-                name={service.user_name}
-              </User>
-              <Client
-                name={user.client_name}
-                uf={user.uf}
-              />
+          {user.map((u: IUser) => (
+            <Table.Tr key={u.id}>
+              <Table.Td>{u.username}</Table.Td>
+              <Table.Td>
+                {u.clients?.map((client) => (
+                  <div key={`${client.name}-${client.uf}`}>
+                    {client.name} - {client.uf}
+                  </div>
+                ))}
+              </Table.Td>
             </Table.Tr>
           ))}
         </Table.Tbody>
       </Table>
-      <Footer color={undefined} radius={undefined} />
+      <Footer color={undefined} radius={undefined} onHandleClick={handleClick} />
     </Box>
   );
 }
