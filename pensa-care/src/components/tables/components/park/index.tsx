@@ -11,7 +11,7 @@ export function Park({ parks, withIndicator }: ParkProps) {
   return (
     <Table.Td>
       <Flex align={'center'}>
-        {parks.map((park) => (
+        {parks.slice(0, 3).map((park) => (
           <Flex
             maw={'100px'}
             key={park.serialNumber}
@@ -40,17 +40,19 @@ export function Park({ parks, withIndicator }: ParkProps) {
             </Text>
           </Flex>
         ))}
-        <Avatar
-          size="lg"
-          ml={10}
-          styles={{
-            placeholder: {
-              fontWeight: '400',
-            },
-          }}
-        >
-          +5
-        </Avatar>
+        {parks.length > 3 && (
+          <Avatar
+            size="lg"
+            ml={10}
+            styles={{
+              placeholder: {
+                fontWeight: '400',
+              },
+            }}
+          >
+            +{parks.length-3}
+          </Avatar>
+        )}
       </Flex>
     </Table.Td>
   );

@@ -2,16 +2,17 @@ import { Flex, Table, Text } from '@mantine/core';
 
 import { IPreventiveDate } from '../../../../interfaces/table/IClient';
 
-export function Date({ preventiveDate }: IPreventiveDate) {
+export function DateComponent({ preventiveDate }: IPreventiveDate) {
+  const date = new Date(preventiveDate);
+  const formattedDate = !isNaN(date.getTime()) ? date.toLocaleDateString() : 'N/A';
+  
   return (
     <Table.Td>
       <Flex direction={'column'} gap={4}>
         <Text c="#999" size="sm">
           Início
         </Text>
-        <Text>
-          {preventiveDate}
-        </Text>
+        <Text>{formattedDate}</Text>
         <Text c="#999" size="sm">
           Fim
         </Text>

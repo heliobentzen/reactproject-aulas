@@ -116,19 +116,23 @@ export function TableClients({ title }: ITableComponent) {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {filteredClients.map((client: IClient, index) => (
+          {filteredClients.map((client: IClient, index) => {
+          const nextServiceDates = (client as IClient).equipments?.map(equipment => new Date(equipment.next_service));
+          const minNextServiceDate = nextServiceDates?.reduce((minDate, current) => current < minDate ? current : minDate, nextServiceDates[0]);
+          return (
             <Table.Tr key={(client as IClient).cnpj || index}>
               <Client
                 name={(client as IClient).name}
                 cnpj={(client as IClient).cnpj}
                 city={(client as IClient).city}
                 uf={(client as IClient).uf}
-              />
-              <PreventiveDate preventiveDate={(client as IClient).equipments.next_service} done />
+                />
+              <PreventiveDate preventiveDate={minNextServiceDate} done />
               <Park parks={(client as IClient).parks || []} />    
             </Table.Tr>
-        ))}
-        </Table.Tbody>
+          );
+          })}
+          </Table.Tbody>
       </Table>
       {loading && <Loader />}
       <Footer color={''} radius={''} onHandleClick={handleClick}></Footer>

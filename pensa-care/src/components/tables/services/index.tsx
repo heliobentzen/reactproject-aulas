@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Client,
-  Date,
   Footer,
   Item,
   Modality,
@@ -13,6 +12,7 @@ import {
 
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { IService } from '../../../interfaces/table/IService';
+import { DateComponent } from '../components/date';
 
 interface ITableComponent extends ITableHeader {
   data: IService[];
@@ -115,14 +115,14 @@ useEffect(() => {
         </Table.Thead>
         <Table.Tbody>
           {filteredService.map((service: IService) => (
-            <Table.Tr key={`${service.name}-${service.cnpj}`}>
+            <Table.Tr key={`${service.order_number}-${service.cnpj}`}>
               <Client
                 cnpj={service.cnpj}
                 name={service.name} 
                 city={service.city} 
                 uf={service.state}              
               />
-              <Date preventiveDate={service.date} preventiveHour="x" />
+              <DateComponent preventiveDate={service.date} preventiveHour="x" />
               <Item text={service.items?.map(item => item.description).join('\n')} />
               <Modality text={service.description} />
               <ServiceOrder number={service.order_number} />

@@ -119,6 +119,7 @@ const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: an
                 city={(equipment as IEquipment).city}
                 uf={(equipment as IEquipment).state}
               />
+              
               <PreventiveDate preventiveDate={(equipment as IEquipment).date} done />
               <Park parks={(equipment as IEquipment).items || []} withIndicator />
               <ServiceOrder number={(equipment as IEquipment).order_number} />
