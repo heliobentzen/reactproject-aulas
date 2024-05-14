@@ -16,8 +16,8 @@ export function Client({ cnpj, name, city, uf }: IClient) {
         >
           {name}
         </Text>
-        <Text>CNPJ {cnpj}</Text>
-        <Text>{city}/{uf}</Text>
+        <Text size="sm">CNPJ {cnpj}</Text>
+        <Text size="sm">{city}/{uf}</Text>
       </Flex>
     </Table.Td>
   );

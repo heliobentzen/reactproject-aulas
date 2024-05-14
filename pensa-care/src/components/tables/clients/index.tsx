@@ -136,7 +136,7 @@ export function TableClients({ title }: ITableComponent) {
                 city={(client as IClient).city}
                 uf={(client as IClient).uf}
                 />
-              <PreventiveDate preventiveDate={minNextServiceDate instanceof Date && !isNaN(minNextServiceDate) ? minNextServiceDate : 'Não há'} done />
+              <PreventiveDate preventiveDate={minNextServiceDate} done />
               <Park parks={(client as IClient).parks || []} />    
             </Table.Tr>
           );

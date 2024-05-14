@@ -7,7 +7,7 @@ interface IItem {
 }
 
 export function Item({ withIcon, text }: IItem) {
-  return <Table.Td><div style={{ whiteSpace: 'pre-wrap' }}>{text}</div></Table.Td>;
+  return <Table.Td><div style={{ whiteSpace: 'pre-wrap', fontSize: '0.9em' }}>{text}</div></Table.Td>;
 }
 
 

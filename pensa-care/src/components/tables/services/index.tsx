@@ -116,7 +116,7 @@ useEffect(() => {
         <Table.Tbody>
           {filteredService.map((service: IService) => (
             <Table.Tr key={`${service.order_number}-${service.cnpj}`}>
-              <Client
+              <Client 
                 cnpj={service.cnpj}
                 name={service.name} 
                 city={service.city} 
