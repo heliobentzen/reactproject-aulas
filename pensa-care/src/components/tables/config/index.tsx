@@ -1,10 +1,8 @@
-import { Box, Table } from '@mantine/core';
+import { Box, Table, Flex, Button, Text } from '@mantine/core';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Footer,
-  TableHeader
-} from '../components';
+import { Link } from 'react-router-dom';
+import { Footer, TableHeader } from '../components';
 
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { IService } from '../../../interfaces/table/IService';
@@ -26,49 +24,49 @@ export function TableConfig({ title }: ITableComponent) {
   const [filteredUser, setFilteredUser] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sort] = useState('date'); 
-  const [sortOrder, setSortOrder] = useState('asc'); 
+  const [sort] = useState('date');
+  const [sortOrder, setSortOrder] = useState('asc');
   const [totalElements, setTotalElements] = useState(1);
-  
+
   const userPerPage = 12;
-  
+
   const fetchUsers = useCallback(async () => {
     const response = await api.get('/api/v1/users', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
       params: {
-      page: currentPage - 1,
-      size: userPerPage,
-      sort: sort,
-      name: searchTerm,
-    },
-  });
-  setTotalElements(response.data.total_elements);
-  
-  return response.data;
-}, [currentPage, searchTerm, sort]);
+        page: currentPage - 1,
+        size: userPerPage,
+        sort: sort,
+        name: searchTerm,
+      },
+    });
+    setTotalElements(response.data.total_elements);
 
-useEffect(() => {
-  const fetchAndSetUsers = async () => {
-    const newUsers = await fetchUsers();
-    setUser(newUsers.content);
-  };
-  fetchAndSetUsers();
-}, []);
+    return response.data;
+  }, [currentPage, searchTerm, sort]);
 
-useEffect(() => {
-  if(currentPage<2) return;
-  const fetchAndSetUsers = async () => {
-    const newUsers = await fetchUsers();
-    setUser(prevUsers => [...prevUsers, ...newUsers.content]);
-  };
-  fetchAndSetUsers();
-}, [currentPage]);
+  useEffect(() => {
+    const fetchAndSetUsers = async () => {
+      const newUsers = await fetchUsers();
+      setUser(newUsers.content);
+    };
+    fetchAndSetUsers();
+  }, []);
+
+  useEffect(() => {
+    if (currentPage < 2) return;
+    const fetchAndSetUsers = async () => {
+      const newUsers = await fetchUsers();
+      setUser(prevUsers => [...prevUsers, ...newUsers.content]);
+    };
+    fetchAndSetUsers();
+  }, [currentPage]);
 
 
   const handleClick = () => {
-    setCurrentPage(prevPage => prevPage + 1); 
+    setCurrentPage(prevPage => prevPage + 1);
   };
 
 
@@ -77,8 +75,8 @@ useEffect(() => {
     const filteredUser = (user || []).filter((user: IUser) => {
       return user.name?.toLowerCase().includes(searchValue?.toLowerCase());
     }) || [];
-    
-    const sortFilteredUser = filteredUser.sort((a: IUser, b: IUser) => {        
+
+    const sortFilteredUser = filteredUser.sort((a: IUser, b: IUser) => {
       if (sortOrder === '1') {
         return a.name.localeCompare(b.name);
       } else {
@@ -90,13 +88,20 @@ useEffect(() => {
   }
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
-      
+
       <TableHeader
         title={title}
         searchPlaceholder="Pesquisar por Vendedor"
         onHandleTableHeaderChange={handleTableHeaderChange}
         result={totalElements}
       />
+
+      <Flex h={40} mt={10} align={'center'} justify={'flex-end'}>
+        <Button>
+          <Text c="#030229" component={Link} to={'/signup'}>Adicionar</Text>
+        </Button>
+      </Flex>
+
       <Table mt={16}>
         <Table.Thead>
           <Table.Tr>
