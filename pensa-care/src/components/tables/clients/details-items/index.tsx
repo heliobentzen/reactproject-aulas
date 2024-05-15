@@ -5,9 +5,8 @@ import { Maintenance } from '../../components/maintenance';
 import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
 import { Model } from '../../components/model';
 import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { IService } from '../../../../interfaces/table/IService';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 // Create an axios instance
 const api = axios.create({
@@ -16,7 +15,7 @@ const api = axios.create({
 
 const token = localStorage.getItem('access_token');
 
-export function TableDetails({ title, result, client }) {
+export function TableDetailsItems({ title, result, client }) {
   const weightRegular = { fontWeight: 400 };
   const [equipment, setEquipment] = useState([]);
   const [filteredEquipment, setFilteredEquipment] = useState([]);
@@ -32,7 +31,7 @@ export function TableDetails({ title, result, client }) {
   const equipmentPerPage = 12;
   
   const fetchItens = useCallback(async () => {
-    api.get(`/api/v1/clients/${cnpj}/services`, {
+    api.get(`/api/v1/clients/${cnpj}/equipments`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -69,11 +68,11 @@ export function TableDetails({ title, result, client }) {
 
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
-    const filteredItens = (equipment || []).filter((item: IService) => {
+    const filteredItens = (equipment || []).filter((item: IEquipment) => {
       return item.description?.toLowerCase().includes(searchValue?.toLowerCase());
     }) || [];
     
-    const sortFilteredItens = filteredItens.sort((a: IService, b: IService) => {        
+    const sortFilteredItens = filteredItens.sort((a: IEquipment, b: IEquipment) => {        
       if (sortOrder === '1') {
         return a.description.localeCompare(b.description);
       } else {
@@ -97,37 +96,37 @@ export function TableDetails({ title, result, client }) {
       <Table mt={16}>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th style={weightRegular}>Data</Table.Th>
+            <Table.Th style={weightRegular}>Código</Table.Th>
             <Table.Th pl={50} style={weightRegular}>
               Serial/Modelo
             </Table.Th>
             <Table.Th pl={10} style={weightRegular}>
-              Status/Lansolver
+              Descrição
             </Table.Th>
-            <Table.Th style={weightRegular}>Ordem de serviço</Table.Th>
+            <Table.Th pl={10} style={weightRegular}>
+              Próxima Manutenção
+            </Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
           {filteredEquipment.map((d) => (
             <Table.Tr>
-            <Maintenance
-                data={d.date ? d.date : 'N/D'}
-                type={d.type === 'MAINTENANCE' ? 'Corretiva' : 'Preventiva'}
-                client={d.name}
-              />
+              <Table.Td>
+                <Text>{d.code}</Text>
+              </Table.Td>
 
               <Model
                 image={sulfIcon}
-                serial={`S/N: ${d.items[0].serial_number}`}
-                name={d.items[0].model}
+                serial={`S/N: ${d.serial_number}`}
+                name={d.model}
               />
 
               <Table.Td>
-                <Text>{'N/D'}</Text>
+                <Text>{d.description}</Text>
               </Table.Td>
 
               <Table.Td>
-                <Text>{d.order_number}</Text>
+                <Text>{d.next_service ? new Date(d.next_service).toLocaleDateString() : "N/D"}</Text>
               </Table.Td>
           </Table.Tr>
           ))}

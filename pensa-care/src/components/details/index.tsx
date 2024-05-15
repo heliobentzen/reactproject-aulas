@@ -89,7 +89,7 @@ export function ClientDetails({client}: ClientDetailsProps) {
         contacts={contacts}
       />
       <GridHeader
-        title={`Parques Instalados (${4})`}
+        title={`Parques Instalados (${items.length})`}
         searchPlaceholder="Pesquisar Nome/ Serial number"
       />
       <SimpleGrid
@@ -99,8 +99,10 @@ export function ClientDetails({client}: ClientDetailsProps) {
         px={8}
         style={{ borderRadius: '10px' }}
       >
-        {/* Temporário */}
-        {Array(4).fill(<GridCard open={open}/>)}
+
+        {items.map((d) => (
+            <GridCard open={open} item={d}/>
+          ))}
       </SimpleGrid>
 
       <ModalComponent

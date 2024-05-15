@@ -3,6 +3,8 @@ import { Box, Flex, Text, Timeline, Title } from '@mantine/core';
 import { StepIcon } from '../../assets/icons/timeline/step';
 import { IClient } from '../../interfaces/table/IClient';
 import { Footer } from '../tables/components';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 interface ClientTimelineProps {
   client: IClient;
@@ -10,6 +12,29 @@ interface ClientTimelineProps {
 
 
 export function ClientTimeline({client}: ClientTimelineProps) {
+  const [services, setServices] = useState([]);
+  const token = localStorage.getItem('access_token');
+  const api = axios.create({ baseURL: 'http://localhost:8080', });
+  const cnpj = client.cnpj;
+  
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const responseService = await api.get(`/api/v1/clients/${cnpj}/services`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        setServices(responseService.data.content);
+      } catch (error) {
+        console.error('Erro ao obter os dados:', error);
+      }
+    };
+
+    fetchServices();
+  });
+
+
   return (
     <Box
       style={{ zIndex: 3, overflowY: 'auto' }}
@@ -39,92 +64,24 @@ export function ClientTimeline({client}: ClientTimelineProps) {
               },
             }}
           >
+
+          {services.slice(0, 5).map((d) => (
             <Timeline.Item
-              bullet={<StepIcon color={'#C3C985'} />}
-              title={<Text fw={'bold'}>28 de outubro de 2023</Text>}
+              bullet={<StepIcon color={d.type === 'MAINTENANCE' ? '#A32219' : '#C3C985'} />}
+              title={<Text fw={'bold'}>{d.date ? new Date(d.date).toLocaleDateString() : 'N/D'}</Text>}
               lineVariant="dashed"
               opacity={0.8}
               c={'dimmed'}
             >
-              <Text size="md" c={'#88960E'}>
-                Preventiva
+              <Text size="md" c={d.type === 'MAINTENANCE' ? '#A32219' : '#88960E'}>
+                {d.type === 'MAINTENANCE' ? 'Corretiva' : 'Preventiva'}
               </Text>
               <Text size="xs" mt={4}>
-                Alguma descrição...
+                {d.description}
               </Text>
+
             </Timeline.Item>
-
-            <Timeline.Item
-              bullet={<StepIcon color={'#A32219'} />}
-              title={
-                <>
-                  <Text fw={'bold'}>27 de Junho de 2023</Text>
-                  <Text fw={'bold'}>
-                    Analisador de Enxofre Total Horizontal 230V
-                  </Text>
-                </>
-              }
-            >
-              <Text size="md" c={'#A32219'}>
-                Corretiva
-              </Text>
-              <Text size="sm" mt={4}>
-                <Text tt="uppercase" component="span">
-                  Nome do cliente{' '}
-                </Text>
-                (Time Sampaio)
-              </Text>
-              <Text size="sm" component="span" mr={87}>
-                Modelo: XXXX
-              </Text>
-              <Text size="sm" component="span">
-                Serial: XXXX
-              </Text>
-
-              <br />
-
-              <Text size="sm" component="span" mr={20}>
-                Status: Não Operacional
-              </Text>
-              <Text size="sm" component="span">
-                Lansolver: XXXX
-              </Text>
-
-              <Text size="sm">Ordem de Serviço: XXXX</Text>
-            </Timeline.Item>
-
-            <Timeline.Item
-              bullet={<StepIcon color={'#C3C985'} />}
-              title={<Text fw={'bold'}>02 de Março de 2023</Text>}
-            >
-              <Text size="md" c={'#88960E'}>
-                Preventiva
-              </Text>
-              <Text size="xs" mt={4}>
-                Alguma descrição...
-              </Text>
-            </Timeline.Item>
-
-            <Timeline.Item
-              bullet={<StepIcon color={'#A32219'} />}
-              title={<Text fw={'bold'}>06 de Setembro de 2022</Text>}
-            >
-              <Text size="md" c={'#A32219'}>
-                Corretiva
-              </Text>
-              <Text size="xs" mt={4}>
-                Alguma descrição...
-              </Text>
-            </Timeline.Item>
-            <Timeline.Item
-              bullet={<StepIcon color={'#C3C985'} />}
-              title={<Text fw={'bold'}>14 de Fevereiro de 2022</Text>}
-              mah={'25px'}
-            >
-              <Text size="md" c={'#88960E'}>
-                Preventiva
-              </Text>
-            </Timeline.Item>
+          ))}
             <br />
             <Box style={{ marginLeft: '-15px' }} pt={4}>
               <Footer color={'#E6E6E8'} radius={'lg'} />

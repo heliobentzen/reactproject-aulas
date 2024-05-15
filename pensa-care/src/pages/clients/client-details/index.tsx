@@ -6,6 +6,7 @@ import { Breadcrumbs } from '../../../components/breadcrumbs';
 import { ClientDetails } from '../../../components/details/index';
 import { TableDetails } from '../../../components/tables/clients/details';
 import { ClientTimeline } from '../../../components/timeline';
+import { TableDetailsItems } from '../../../components/tables/clients/details-items';
 
 
 export function ClientDetailsPage() {
@@ -82,8 +83,8 @@ export function ClientDetailsPage() {
         gap={20}
       >
         <ClientDetails client={client} />
-        <TableDetails title={'Histórico de Manutenções'} data={services} result={services.length} />
-        {/* <TableDetails title={'Histórico de Itens'} data={itens} result={itens.length} /> */}
+        <TableDetails title={'Histórico de Manutenções'} client={client} result={services.length} />
+        <TableDetailsItems title={'Histórico de Itens'} client={client} result={itens.length} />
       </Flex>
     </Box>
   );
