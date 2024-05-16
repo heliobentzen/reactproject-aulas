@@ -23,6 +23,7 @@ export interface IEquipments {
   description: string;
   last_service: Date;
   next_service: Date;
+  icon: string;
 }
 
 export interface IClient extends IEquipments, IPreventiveDate, IStatus{

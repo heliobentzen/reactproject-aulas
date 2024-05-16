@@ -5,7 +5,8 @@ import {
   Title
 } from '@mantine/core';
 
-export function GridHeader({ title, searchPlaceholder }) {
+export function GridHeader({ title, searchPlaceholder }: any) {
+  searchPlaceholder
   return (
     <Flex px={24} pt={30} pb={16} justify={'space-between'}>
       <Flex direction={'column'}>

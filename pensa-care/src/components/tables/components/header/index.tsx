@@ -13,11 +13,11 @@ export function TableHeader({
   const [searchValue, setSearchValue] = useState('');
   
   
-  const onSortOrderChange = (value) => {
+  const onSortOrderChange = (value: any) => {
     setSortOrder(value);
   }
 
-  const onSearchChange = (event) => {
+  const onSearchChange = (event: any) => {
     setSearchValue(event.target.value);
     
   }

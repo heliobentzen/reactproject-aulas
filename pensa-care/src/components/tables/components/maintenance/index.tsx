@@ -1,6 +1,6 @@
 import { Flex, Table, Text } from '@mantine/core';
 
-export function Maintenance({ data, type, client }) {
+export function Maintenance({ data, type, client }: any) {
   return (
     <Table.Td>
       <Flex direction={'column'} mt={10}>

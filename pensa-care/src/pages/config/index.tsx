@@ -11,6 +11,8 @@ export function ConfigPage() {
       <Flex direction="column" gap={24}>
         <TableConfig
           title="Lista de vendedores e clientes"
+          data={[]}
+          result={1}
           searchPlaceholder={''}        
         />
       </Flex>

@@ -1,7 +1,7 @@
 import { Flex, Image, Table, Text } from '@mantine/core';
 
 
-export function Model({ image, serial, name }) {
+export function Model({ image, serial, name }: any) {
   return (
     <Table.Td>
       <Flex gap={2} direction={'column'} mt={10} align={'center'} >

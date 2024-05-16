@@ -3,8 +3,8 @@ import { Box, Flex, Text, Timeline, Title } from '@mantine/core';
 import { StepIcon } from '../../assets/icons/timeline/step';
 import { IClient } from '../../interfaces/table/IClient';
 import { Footer } from '../tables/components';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
+import ApiService from '../../services/ApiService';
 
 interface ClientTimelineProps {
   client: IClient;
@@ -12,19 +12,14 @@ interface ClientTimelineProps {
 
 
 export function ClientTimeline({client}: ClientTimelineProps) {
-  const [services, setServices] = useState([]);
-  const token = localStorage.getItem('access_token');
-  const api = axios.create({ baseURL: 'http://localhost:8080', });
+  const [services, setServices] = useState<any>([]);
+  const api = new ApiService('');
   const cnpj = client.cnpj;
   
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const responseService = await api.get(`/api/v1/clients/${cnpj}/services`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
+        const responseService = await api.get(`/api/v1/clients/${cnpj}/services`);
         setServices(responseService.data.content);
       } catch (error) {
         console.error('Erro ao obter os dados:', error);
@@ -34,6 +29,9 @@ export function ClientTimeline({client}: ClientTimelineProps) {
     fetchServices();
   });
 
+  const handleClick = () => {
+    
+  };
 
   return (
     <Box
@@ -65,7 +63,7 @@ export function ClientTimeline({client}: ClientTimelineProps) {
             }}
           >
 
-          {services.slice(0, 5).map((d) => (
+          {services.slice(0, 5).map((d: { type: string; date: string | number | Date; description: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }) => (
             <Timeline.Item
               bullet={<StepIcon color={d.type === 'MAINTENANCE' ? '#A32219' : '#C3C985'} />}
               title={<Text fw={'bold'}>{d.date ? new Date(d.date).toLocaleDateString() : 'N/D'}</Text>}
@@ -84,7 +82,7 @@ export function ClientTimeline({client}: ClientTimelineProps) {
           ))}
             <br />
             <Box style={{ marginLeft: '-15px' }} pt={4}>
-              <Footer color={'#E6E6E8'} radius={'lg'} />
+              <Footer onHandleClick={handleClick} color={'#E6E6E8'} radius={'lg'} />
             </Box>
           </Timeline>
         </Box>

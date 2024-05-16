@@ -13,16 +13,9 @@ interface TimelineCardBodyProps {
   lansolver: string;
 }
 
-function TimelineCardBody({
-  technician,
-  time,
-  model,
-  status,
-  serviceOrder,
-  serial,
-  lansolver,
-}: TimelineCardBodyProps) {
+function TimelineCardBody(props: TimelineCardBodyProps) {
   // TODO: Add the props in the component
+  props
   return (
     <Flex maw={520} pos={'relative'}>
       <Flex direction="column" gap={2}>
@@ -107,13 +100,9 @@ interface ModalDetailsCardProps {
   }>;
 }
 
-export function ModalDetailsCard({
-  title,
-  subTitle,
-  client,
-  maintenanceHistory,
-}: ModalDetailsCardProps) {
+export function ModalDetailsCard(card: ModalDetailsCardProps) {
   // TODO: Add the props in the component
+  card
   return (
     <Flex
       style={{ borderRadius: '10px' }}
@@ -179,7 +168,7 @@ export function ModalDetailsCard({
               </Text>
             </Flex>
 
-            <TimelineCardBody />
+            <TimelineCardBody lansolver='' model='' serial='' serviceOrder='' status='' technician='' time='' />
           </Timeline.Item>
 
           <Timeline.Item
@@ -198,7 +187,7 @@ export function ModalDetailsCard({
             </Flex>
 
             {/* TODO: Add the props in the component */}
-            <TimelineCardBody />
+            <TimelineCardBody lansolver='' model='' serial='' serviceOrder='' status='' technician='' time='' />
           </Timeline.Item>
         </Timeline>
       </Flex>

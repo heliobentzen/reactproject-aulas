@@ -1,6 +1,5 @@
 import { Box, SimpleGrid } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { IClient } from '../../interfaces/table/IClient';
@@ -8,6 +7,8 @@ import { GridCard } from '../cards/clients/details/grid-card';
 import { GridHeader } from '../grid-header';
 import { ClientInfo } from '../info';
 import { ModalComponent } from '../modal';
+import ApiService from '../../services/ApiService';
+import { IContact } from '../../interfaces/table/IContact';
 
 interface ClientDetailsProps {
   client: IClient;
@@ -16,26 +17,25 @@ interface ClientDetailsProps {
 
 export function ClientDetails({client}: ClientDetailsProps) {
   const [opened, { open, close }] = useDisclosure(false);
-  const token = localStorage.getItem('access_token');
-  const api = axios.create({ baseURL: 'http://localhost:8080', });
+  const api = new ApiService('');
   
   const { id } = useParams<{ id: string }>();
   const cnpj = id;
 
   
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState<IContact[]>([]);
   const [items, setItems] = useState([]);
-  const [services, setServices] = useState([]);
+  const [selectedItem, setSelectedItem] = useState();
 
+  const openModal = (item: any) => {
+    setSelectedItem(item);
+    open();
+  }
   
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const responseContacts = await api.get(`/api/v1/clients/${cnpj}/contacts`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
+        const responseContacts = await api.get(`/api/v1/clients/${cnpj}/contacts`);
         setContacts(responseContacts.data);
       } catch (error) {
         console.error('Erro ao obter os dados:', error);
@@ -49,36 +49,14 @@ export function ClientDetails({client}: ClientDetailsProps) {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const resItems = await api.get(`/api/v1/clients/${cnpj}/equipments`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
+        const resItems = await api.get(`/api/v1/clients/${cnpj}/equipments`);
         setItems(resItems.data.content);
       } catch (error) {
         console.error('Erro ao obter os dados:', error);
       }
     };
     fetchItems();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const resServices = await api.get(`/api/v1/clients/${cnpj}/services`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
-        setServices(resServices.data.content);
-        console.log("SERVICOS: " + services);
-      } catch (error) {
-        console.error('Erro ao obter os dados:', error);
-      }
-    };
-    fetchServices();
-  }, [id]);
-  
+  }, [id]);  
 
   return (
     <Box>
@@ -101,14 +79,15 @@ export function ClientDetails({client}: ClientDetailsProps) {
       >
 
         {items.map((d) => (
-            <GridCard open={open} item={d}/>
+            <GridCard open={openModal} item={d}/>
           ))}
       </SimpleGrid>
 
       <ModalComponent
         config={{ opened, close }}
-        clientName={'Teste nome'}
+        clientName={client.name}
         informationalOnly
+        equipment={selectedItem}
       />
     </Box>
   );

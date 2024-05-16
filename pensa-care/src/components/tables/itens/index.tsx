@@ -8,27 +8,23 @@ import {
   TableHeader,
 } from '../components';
 
-import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { IEquipment } from '../../../interfaces/table/IEquipment';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { Price } from '../components/price';
+import ApiService from '../../../services/ApiService';
 
 interface ITableComponent extends ITableHeader {
   data: IEquipment[];
 }
 
 // Create an axios instance
-const api = axios.create({
-  baseURL: 'http://localhost:8080',
-});
-
-const token = localStorage.getItem('access_token');
+const api = new ApiService('');
 
 export function TableItens({ title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
-  const [equipment, setEquipment] = useState([]);
-  const [filteredEquipment, setFilteredEquipment] = useState([]);
+  const [equipment, setEquipment] = useState<any>([]);
+  const [filteredEquipment, setFilteredEquipment] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalElements, setTotalElements] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -37,24 +33,22 @@ export function TableItens({ title }: ITableComponent) {
   const equipmentPerPage = 12;
   
   const fetchItens = useCallback(async () => {
-    const response = await api.get('/api/v1/equipments', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
+    setSearchTerm(searchTerm)
+    const response = await api.get('/api/v1/equipments',
+      {
         page: currentPage - 1,
         size: equipmentPerPage,
         sort: sort,
         name: searchTerm,
     },
-  });
+  );
   setTotalElements(response.data.total_elements);
   return response.data;
 }, [currentPage, searchTerm, sort]);
 
 useEffect(() => {
   const fetchAndSetItens = async () => {
-    const data = await fetchItens(currentPage - 1, equipmentPerPage);
+    const data = await fetchItens();
     setEquipment(data.content);
     setFilteredEquipment(data.content);
   };
@@ -64,9 +58,9 @@ useEffect(() => {
 useEffect(() => {
   if(currentPage<2) return;
   const fetchAndSetItens = async () => {
-    const newItens = await fetchItens(currentPage - 1, equipmentPerPage);
-    setEquipment(prevItens => [...prevItens, ...newItens.content]);
-    setFilteredEquipment(prevItens => [...prevItens, ...newItens.content]);
+    const newItens = await fetchItens();
+    setEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
+    setFilteredEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
   };
   fetchAndSetItens();
 }, [currentPage]);
@@ -111,13 +105,20 @@ const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: an
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {filteredEquipment.map((equipment) => (
+          {filteredEquipment.map((equipment: IEquipment) => (
             <Table.Tr key={`${(equipment as IEquipment).name}-${(equipment as IEquipment).cnpj}`}>
               <Client
                 name={(equipment as IEquipment).name}
                 cnpj={(equipment as IEquipment).cnpj}
                 city={(equipment as IEquipment).city}
                 uf={(equipment as IEquipment).state}
+                code=''
+                description=''
+                last_service={new Date()}
+                model=''
+                next_service={new Date()}
+                serial_number=''
+                icon=''
               />
               
               <PreventiveDate preventiveDate={(equipment as IEquipment).date} done />

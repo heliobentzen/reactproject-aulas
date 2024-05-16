@@ -1,13 +1,13 @@
 import { Avatar, Flex, Indicator, Table, Text } from '@mantine/core';
 
-import { IItem } from '../../../../interfaces/table/IEquipment';
+import { IEquipments } from '../../../../interfaces/table/IClient';
 
 interface ParkProps {
-  parks: IItem[];
+  parks: IEquipments[];
   withIndicator?: boolean;
 }
 
-export function Park({ parks, withIndicator }: ParkProps) {
+export function ParkClient({ parks, withIndicator }: ParkProps) {
   return (
     <Table.Td>
       <Flex align={'center'}>

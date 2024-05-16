@@ -62,6 +62,7 @@ export function Status({ isFulfilled = false, status, clientName }: IStatus) {
       <ModalComponent
         config={{ opened, close }}
         clientName={clientName || ''}
+        equipment={undefined}
       />
     </Table.Td>
   );

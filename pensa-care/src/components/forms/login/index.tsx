@@ -9,17 +9,12 @@ import {
   Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import axios from 'axios';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
-// Create an axios instance
-const api = axios.create({
-  baseURL: 'http://localhost:8080',
-});
+import AuthenticationApiService from '../../../services/AuthenticationApiService';
 
 export function Login() {
-
+  const authentication = new AuthenticationApiService()
   const navigate = useNavigate();
 
   const form = useForm({
@@ -46,32 +41,13 @@ export function Login() {
       }
 
       try {
-        const response = await api.post('/api/v1/auth/login', {
+        await authentication.login(
           username,
           password
-      });
-        
-    
-      if (response.status !== 200) {
-        throw new Error('Falha na autenticação.');
-      }
-  
-      const data = response.data;
-      
-      // Store the access_token and expires_at in localStorage
-      localStorage.setItem('access_token', data.access_token);
-      localStorage.setItem('expires_at', data.expires_at);
-      
-      localStorage.setItem('username', username);
-
-      // Set the Authorization header for all future requests
-      api.defaults.headers.common['Authorization'] = `Bearer ${data.access_token}`;
+      );
   
       // Redirect to /dashboard
       navigate('/dashboard');
-      
-
-
     } catch (error) {
       console.error('An error occurred:', error);
       setError("Falha na autenticação. Por favor, tente novamente.");

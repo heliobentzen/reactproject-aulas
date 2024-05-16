@@ -4,7 +4,7 @@ import sulfIcon from '../../../../../assets/icons/tables/sulf.svg';
 import { useHover } from '@mantine/hooks';
 import { differenceInDays } from 'date-fns';
 
-export function GridCard({ open, item }) {
+export function GridCard({ open, item }: any) {
   const { hovered, ref } = useHover();
   const today = new Date();
   const nextService = item.next_service ? new Date(item.next_service) : null;
@@ -36,7 +36,7 @@ export function GridCard({ open, item }) {
           direction={'column'}
           align={'center'}
           maw={{ sm: '155px', lg: '200px' }}
-          onClick={() => open()}
+          onClick={() => open(item)}
         >
           <Image src={sulfIcon} maw={'90px'} />
           <Flex direction={'column'} align={'center'} gap={10}>

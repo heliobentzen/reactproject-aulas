@@ -50,12 +50,12 @@ export function DashboardPage() {
           data={mockClientData} 
           searchPlaceholder={''} 
         />
-        <TableDashboard
+        {/* <TableDashboard
           title="Leads de Venda"
           result={56} // data.length
           data={mockClientData} 
           searchPlaceholder={''}        
-        />
+        /> */}
       </Flex>
     </Box>
   );

@@ -3,7 +3,7 @@ import { Flex, Table, Text } from '@mantine/core';
 import { IPreventiveDate } from '../../../../interfaces/table/IClient';
 
 export function DateComponent({ preventiveDate }: IPreventiveDate) {
-  const date = new Date(preventiveDate);
+  const date = new Date(preventiveDate as string);
   const formattedDate = !isNaN(date.getTime()) ? date.toLocaleDateString() : 'N/A';
   
   return (

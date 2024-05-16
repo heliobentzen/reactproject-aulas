@@ -1,5 +1,4 @@
-import { Box, Table, Flex, Button, Modal, Text, Title, Container, Center } from '@mantine/core';
-import axios from 'axios';
+import { Box, Table, Flex, Button, Modal, Title } from '@mantine/core';
 import { useCallback, useEffect, useState } from 'react';
 import { Footer, TableHeader } from '../components';
 import { useDisclosure } from '@mantine/hooks';
@@ -8,42 +7,36 @@ import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { IService } from '../../../interfaces/table/IService';
 import { IUser } from '../../../interfaces/table/IUser';
 import { Signup } from '../../forms';
+import ApiService from '../../../services/ApiService';
 
 interface ITableComponent extends ITableHeader {
   data: IService[];
 }
 
-const api = axios.create({
-  baseURL: 'http://localhost:8080',
-});
-
-const token = localStorage.getItem('access_token');
+const api = new ApiService('');
 
 export function TableConfig({ title }: ITableComponent) {
   const [opened, { open, close }] = useDisclosure(false);
 
   const weightRegular = { fontWeight: 400 };
-  const [user, setUser] = useState([]);
-  const [filteredUser, setFilteredUser] = useState([]);
+  const [user, setUser] = useState<any>([]);
+  const [filteredUser, setFilteredUser] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sort] = useState('date');
-  const [sortOrder, setSortOrder] = useState('asc');
   const [totalElements, setTotalElements] = useState(1);
 
   const userPerPage = 12;
   const fetchUsers = useCallback(async () => {
-    const response = await api.get('/api/v1/users', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
+    setSearchTerm(searchTerm)
+    const response = await api.get('/api/v1/users', 
+      {
         page: currentPage - 1,
         size: userPerPage,
         sort: sort,
         name: searchTerm,
       },
-    });
+    );
     setTotalElements(response.data.total_elements);
 
     return response.data;
@@ -62,7 +55,7 @@ export function TableConfig({ title }: ITableComponent) {
     if (currentPage < 2) return;
     const fetchAndSetUsers = async () => {
       const newUsers = await fetchUsers();
-      setUser(prevUsers => [...prevUsers, ...newUsers.content]);
+      setUser((prevUsers: any) => [...prevUsers, ...newUsers.content]);
     };
     fetchAndSetUsers();
   }, [currentPage]);
@@ -71,7 +64,7 @@ export function TableConfig({ title }: ITableComponent) {
     setCurrentPage(prevPage => prevPage + 1);
   };
 
-  const handleTableHeaderChange = (headerChange) => {
+  const handleTableHeaderChange = (headerChange: any) => {
     const { sortOrder, searchValue } = headerChange;
     const filteredUser = (user || []).filter((user: IUser) => {
       return user.username?.toLowerCase().includes(searchValue?.toLowerCase());

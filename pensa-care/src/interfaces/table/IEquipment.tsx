@@ -5,6 +5,7 @@ export interface IItem {
   description: string;
   last_service?: string;
   next_service?: string;
+  icon: string;
 }
 
 export interface IEquipment extends IItem {

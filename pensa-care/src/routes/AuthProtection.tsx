@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function withAuthProtection(WrappedComponent: React.ComponentType) {
-  return function ProtectedRoute(props) {
+  return function ProtectedRoute(props: any) {
 
     const navigate = useNavigate();
     const token = localStorage.getItem('access_token');

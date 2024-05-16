@@ -4,7 +4,7 @@ import { IContact } from '../../interfaces/table/IContact';
 
 interface ClientInfoProps {
   client: IClient;
-  contacts: IContact;
+  contacts: IContact[];
 }
 
 export function ClientInfo({ client, contacts }: ClientInfoProps) {

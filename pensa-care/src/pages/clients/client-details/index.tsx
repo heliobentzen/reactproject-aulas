@@ -1,5 +1,4 @@
 import { Box, Flex } from '@mantine/core';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Breadcrumbs } from '../../../components/breadcrumbs';
@@ -7,25 +6,21 @@ import { ClientDetails } from '../../../components/details/index';
 import { TableDetails } from '../../../components/tables/clients/details';
 import { ClientTimeline } from '../../../components/timeline';
 import { TableDetailsItems } from '../../../components/tables/clients/details-items';
+import ApiService from '../../../services/ApiService';
 
 
 export function ClientDetailsPage() {
-  const [client, setClient] = useState({});
-  const [services, setServices] = useState([]);
+  const [client, setClient] = useState<any>({});
+  const [services, setServices] = useState<any>([]);
   const [itens, setItens] = useState([]);
-  const token = localStorage.getItem('access_token');
-  const api = axios.create({ baseURL: 'http://localhost:8080', });
+  const api = new ApiService('');
   const { id } = useParams<{ id: string }>();
   const cnpj = id;
   
   useEffect(() => {
     const fetchClient = async () => {
       try {
-        const responseClient = await api.get(`/api/v1/clients/${cnpj}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
+        const responseClient = await api.get(`/api/v1/clients/${cnpj}`);
         setClient(responseClient.data);
       } catch (error) {
         console.error('Erro ao obter os dados:', error);
@@ -34,11 +29,7 @@ export function ClientDetailsPage() {
 
     const fetchServices = async () => {
       try {
-        const responseService = await api.get(`/api/v1/clients/${cnpj}/services`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
+        const responseService = await api.get(`/api/v1/clients/${cnpj}/services`);
         setServices(responseService.data.content);
       } catch (error) {
         console.error('Erro ao obter os dados:', error);
@@ -47,11 +38,7 @@ export function ClientDetailsPage() {
 
     const fetchItens = async () => {
       try {
-        const responseItens = await api.get(`/api/v1/clients/${cnpj}/equipments`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
+        const responseItens = await api.get(`/api/v1/clients/${cnpj}/equipments`);
         setItens(responseItens.data.content);
       } catch (error) {
         console.error('Erro ao obter os dados:', error);

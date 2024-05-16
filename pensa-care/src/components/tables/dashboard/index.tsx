@@ -11,75 +11,66 @@ import { useCallback, useEffect, useState } from 'react';
 import { IClient } from '../../../interfaces/table/IClient';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { Item } from '../components/item';
-import axios from 'axios';
+import ApiService from '../../../services/ApiService';
 
 interface ITableComponent extends ITableHeader {
   data: IClient[];
 }
 
 // Create an axios instance
-const api = axios.create({
-  baseURL: 'http://localhost:8080',
-});
-
-const token = localStorage.getItem('access_token');
+const api = new ApiService('');
 
 export function TableDashboard({ data, result, title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
+  data
+  result
 
-  const [leads, setLeads] = useState([]);
-  const [filteredLeads, setFilteredLeads] = useState([]);
+  const [leads, setLeads] = useState<any>([]);
+  const [filteredLeads, setFilteredLeads] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalElements, setTotalElements] = useState(1);
-  const [totalPages, setTotalPages] = useState(100);
-  const [searchTerm, setSearchTerm] = useState('');
   const [sort] = useState('date'); 
 
   const leadsPerPage = 12;
   
   const fetchItens = useCallback(async () => {
-    api.get(`/api/v1/leads`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
+    api.get(`/api/v1/leads`,
+      {
         page: currentPage - 1,
         size: leadsPerPage
     },
-  }).then((response) => {
+  ).then((response) => {
     setTotalElements(response.data.total_elements);
-    setTotalPages(response.data.total_pages);
 
     setLeads(response.data.content);
     setFilteredLeads(response.data.content);
 
     const newItens = response.data;
-    setLeads(prevItens => [...prevItens, ...newItens.content]);
-    setFilteredLeads(prevItens => [...prevItens, ...newItens.content]);
+    setLeads((prevItens: any) => [...prevItens, ...newItens.content]);
+    setFilteredLeads((prevItens: any) => [...prevItens, ...newItens.content]);
   });
   
-  }, [currentPage, searchTerm, sort]);
+  }, [currentPage, sort]);
 
   useEffect(() => {
-    fetchItens(currentPage - 1, leadsPerPage);
+    fetchItens();
   }, []);
 
   useEffect(() => {
-      fetchItens(currentPage - 1, leadsPerPage);
+      fetchItens();
   }, [currentPage]);
 
   const handleClick = () => {
-    const nextPage = currentPage < totalPages ? currentPage + 1 : 1;
-    setCurrentPage(nextPage); 
+    setCurrentPage(currentPage + 1); 
   };
 
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
-    const filteredItens = (leads || []).filter((item) => {
+    const filteredItens = (leads || []).filter((item: { item: string; }) => {
       return item.item?.toLowerCase().includes(searchValue?.toLowerCase());
     }) || [];
     
-    const sortFilteredItens = filteredItens.sort((a, b) => {        
+    const sortFilteredItens = filteredItens.sort((a: { item: string; }, b: { item: string; }) => {        
       if (sortOrder === '1') {
         return a.item.localeCompare(b.item);
       } else {
@@ -110,17 +101,23 @@ export function TableDashboard({ data, result, title }: ITableComponent) {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {filteredLeads.map((d) => (
+          {filteredLeads.map((d: { client_cnpj: string; client_name: string | undefined; item_code: string; client_city: string; client_state: string; next_service: string | undefined; item: any; status: string | null | undefined; }) => (
             <Table.Tr key={`${d.client_cnpj}-${d.client_name}`}>
               <Client
                 code={d.item_code}
-                name={d.client_name}
+                name={d.client_name ? d.client_name : ''}
                 cnpj={d.client_cnpj}
                 city={d.client_city}
                 uf={d.client_state} 
-                store={''}                
+                store={''}      
+                serial_number=''
+                model=''
+                description=''
+                last_service={new Date()}
+                next_service={new Date()}
+                icon=''
               />
-              <PreventiveDate preventiveDate={d.next_service ? d.next_service : null} />
+              <PreventiveDate preventiveDate={d.next_service ? d.next_service : undefined} />
               <Item text={d.item || 'N/D'} />
               <Status
                 status={d.status != null && d.status !== 'null' ? d.status : "N/D"}

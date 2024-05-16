@@ -11,6 +11,8 @@ export function ItensPage() {
       <Flex direction="column" gap={24}>
         <TableItens
           title="Produtos Vendidos"
+          data={[]}
+          result={1}
           searchPlaceholder={''} 
         />
       </Flex>

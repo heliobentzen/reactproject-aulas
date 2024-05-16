@@ -1,24 +1,20 @@
 import { Box, Table, Text } from '@mantine/core';
 import { Footer, TableHeader } from '../../components';
-import { Maintenance } from '../../components/maintenance';
 
 import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
 import { Model } from '../../components/model';
 import { useCallback, useEffect, useState } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import ApiService from '../../../../services/ApiService';
+import { IEquipment } from '../../../../interfaces/table/IEquipment';
 
 // Create an axios instance
-const api = axios.create({
-  baseURL: 'http://localhost:8080',
-});
+const api = new ApiService('');
 
-const token = localStorage.getItem('access_token');
-
-export function TableDetailsItems({ title, result, client }) {
+export function TableDetailsItems({ title, result, client }: any) {
   const weightRegular = { fontWeight: 400 };
-  const [equipment, setEquipment] = useState([]);
-  const [filteredEquipment, setFilteredEquipment] = useState([]);
+  const [equipment, setEquipment] = useState<any>([]);
+  const [filteredEquipment, setFilteredEquipment] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalElements, setTotalElements] = useState(1);
   const [totalPages, setTotalPages] = useState(100);
@@ -28,18 +24,18 @@ export function TableDetailsItems({ title, result, client }) {
   const { id } = useParams<{ id: string }>();
   const cnpj = id;
 
+  result
+  client
   const equipmentPerPage = 12;
   
   const fetchItens = useCallback(async () => {
-    api.get(`/api/v1/clients/${cnpj}/equipments`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
+    setSearchTerm(searchTerm)
+    api.get(`/api/v1/clients/${cnpj}/equipments`,
+      {
         page: currentPage - 1,
         size: equipmentPerPage
     },
-  }).then((response) => {
+  ).then((response) => {
     setTotalElements(response.data.total_elements);
     setTotalPages(response.data.total_pages);
 
@@ -47,18 +43,18 @@ export function TableDetailsItems({ title, result, client }) {
     setFilteredEquipment(response.data.content);
 
     const newItens = response.data;
-    setEquipment(prevItens => [...prevItens, ...newItens.content]);
-    setFilteredEquipment(prevItens => [...prevItens, ...newItens.content]);
+    setEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
+    setFilteredEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
   });
   
   }, [currentPage, searchTerm, sort]);
 
   useEffect(() => {
-    fetchItens(currentPage - 1, equipmentPerPage);
+    fetchItens();
   }, []);
 
   useEffect(() => {
-      fetchItens(currentPage - 1, equipmentPerPage);
+      fetchItens();
   }, [currentPage]);
 
   const handleClick = () => {
@@ -109,7 +105,7 @@ export function TableDetailsItems({ title, result, client }) {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {filteredEquipment.map((d) => (
+          {filteredEquipment.map((d: any) => (
             <Table.Tr>
               <Table.Td>
                 <Text>{d.code}</Text>
@@ -132,7 +128,7 @@ export function TableDetailsItems({ title, result, client }) {
           ))}
         </Table.Tbody>
       </Table>
-      <Footer onHandleClick={handleClick}/>
+      <Footer color={undefined} radius={undefined} onHandleClick={handleClick}/>
     </Box>
   );
 }

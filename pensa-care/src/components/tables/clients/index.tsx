@@ -1,57 +1,47 @@
 import { Box, Loader, Table } from '@mantine/core';
-import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Client,
   Footer,
-  Park,
   PreventiveDate,
   TableHeader
 } from '../components';
 
 import { IClient } from '../../../interfaces/table/IClient';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
+import ApiService from '../../../services/ApiService';
+import { ParkClient } from '../components/park-client';
 
 // Create an axios instance
-const api = axios.create({
-  baseURL: 'http://localhost:8080',
-});
+const api = new ApiService('');
 
 interface ITableComponent extends ITableHeader {
   data: IClient[];
 }
 
-const token = localStorage.getItem('access_token');
-//if (token) {
-//  api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-//}
-
 export function TableClients({ title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
-  const [clients, setClients] = useState([]);
-  const [filteredClients, setFilteredClients] = useState([]);
+  const [clients, setClients] = useState<any>([]);
+  const [filteredClients, setFilteredClients] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalElements, setTotalElements] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortName] = useState('name'); 
-  const [sortOrder, setSortOrder] = useState('asc'); 
   const [loading, setLoading] = useState(false);
 
   const clientsPerPage = 12;
   
   const fetchClients = useCallback(async () => {
+    setSearchTerm(searchTerm)
     setLoading(true);
-    const response = await api.get('/api/v1/clients', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
+    const response = await api.get('/api/v1/clients',
+      {
       page: currentPage - 1,
       size: clientsPerPage,
       sort: sortName,
       name: searchTerm,
     },
-  });
+  );
 
   setLoading(false);
   setTotalElements(response.data.total_elements);
@@ -72,9 +62,9 @@ export function TableClients({ title }: ITableComponent) {
   useEffect(() => {
     if(currentPage<2) return;
     const fetchAndSetClients = async () => {
-      const newClients = await fetchClients(currentPage - 1, clientsPerPage);
-      setClients(prevClients => [...prevClients, ...newClients.content]);
-      setFilteredClients(prevClients => [...prevClients, ...newClients.content]);
+      const newClients = await fetchClients();
+      setClients((prevClients: any) => [...prevClients, ...newClients.content]);
+      setFilteredClients((prevClients: any) => [...prevClients, ...newClients.content]);
     };
     fetchAndSetClients();
   }, [currentPage, searchTerm]);
@@ -83,7 +73,7 @@ export function TableClients({ title }: ITableComponent) {
     setCurrentPage(prevPage => prevPage + 1); 
   };
 
-  const handleTableHeaderChange = (headerChange) => {
+  const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
     const filteredClients = (clients || []).filter((client: IClient) => {
       return client.name?.toLowerCase().includes(searchValue?.toLowerCase());
@@ -116,15 +106,15 @@ export function TableClients({ title }: ITableComponent) {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {filteredClients.map((client: IClient, index) => {
-          const nextServiceDates = (client as IClient).equipments
-          .map(equipment => equipment.next_service ? new Date(equipment.next_service) : null)
+          {filteredClients.map((client: IClient, index: any) => {
+          const nextServiceDates = (client as IClient).equipments!
+          .map((equipment : any) => equipment.next_service ? new Date(equipment.next_service) : null)
           .filter(date => date !== null);
         
         let minNextServiceDate;
         
         if (nextServiceDates.length > 0) {
-          minNextServiceDate = nextServiceDates.reduce((minDate, current) => current < minDate ? current : minDate);
+          minNextServiceDate = nextServiceDates.reduce((minDate, current) => current && minDate && current < minDate ? current : minDate);
         } else {
           minNextServiceDate = 'N/A'; // Or any other default value
         }
@@ -135,9 +125,16 @@ export function TableClients({ title }: ITableComponent) {
                 cnpj={(client as IClient).cnpj}
                 city={(client as IClient).city}
                 uf={(client as IClient).uf}
+                code=''
+                description=''
+                last_service={new Date()}
+                next_service={new Date()}
+                model=''
+                serial_number=''
+                icon=''
                 />
-              <PreventiveDate preventiveDate={minNextServiceDate} done />
-              <Park parks={(client as IClient).parks || []} />    
+              <PreventiveDate preventiveDate={minNextServiceDate ? minNextServiceDate.toString() : "N/D"} done />
+              <ParkClient parks={(client as IClient).equipments || []} />    
             </Table.Tr>
           );
           })}

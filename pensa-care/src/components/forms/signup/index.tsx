@@ -3,7 +3,7 @@ import axios from 'axios';
 import { FormEvent, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-export function Signup(props) {
+export function Signup(props: any) {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [nome, setNome] = useState('');

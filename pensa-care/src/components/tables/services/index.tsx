@@ -1,5 +1,4 @@
 import { Box, Table } from '@mantine/core';
-import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Client,
@@ -13,48 +12,42 @@ import {
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { IService } from '../../../interfaces/table/IService';
 import { DateComponent } from '../components/date';
+import ApiService from '../../../services/ApiService';
 
 interface ITableComponent extends ITableHeader {
   data: IService[];
 }
 
-const api = axios.create({
-  baseURL: 'http://localhost:8080',
-});
-
-const token = localStorage.getItem('access_token');
+const api = new ApiService('');
 
 export function TableServices({ title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
-  const [service, setService] = useState([]);
-  const [filteredService, setFilteredService] = useState([]);
+  const [service, setService] = useState<any>([]);
+  const [filteredService, setFilteredService] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalElements, setTotalElements] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sort] = useState('date'); 
-  const [sortOrder, setSortOrder] = useState('asc'); 
   
   const servicesPerPage = 12;
   
   const fetchServices = useCallback(async () => {
-    const response = await api.get('/api/v1/services', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
+    setSearchTerm(searchTerm)
+    const response = await api.get('/api/v1/services',
+      {
       page: currentPage - 1,
       size: servicesPerPage,
       sort: sort,
       name: searchTerm,
     },
-  });
+  );
   setTotalElements(response.data.total_elements);
   return response.data;
 }, [currentPage, searchTerm, sort]);
 
 useEffect(() => {
   const fetchAndSetServices = async () => {
-    const data = await fetchServices(currentPage - 1, servicesPerPage);
+    const data = await fetchServices();
     setService(data.content);
     setFilteredService(data.content);
   };
@@ -64,9 +57,9 @@ useEffect(() => {
 useEffect(() => {
   if(currentPage<2) return;
   const fetchAndSetServices = async () => {
-    const newServices = await fetchServices(currentPage - 1, servicesPerPage);
-    setService(prevServices => [...prevServices, ...newServices.content]);
-    setFilteredService(prevServices => [...prevServices, ...newServices.content]);
+    const newServices = await fetchServices();
+    setService((prevServices: any) => [...prevServices, ...newServices.content]);
+    setFilteredService((prevServices: any) => [...prevServices, ...newServices.content]);
   };
   fetchAndSetServices();
 }, [currentPage]);
@@ -77,7 +70,7 @@ useEffect(() => {
   };
 
 
-  const handleTableHeaderChange = (headerChange) => {
+  const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
     const filteredServices = (service || []).filter((service: IService) => {
       return service.name?.toLowerCase().includes(searchValue?.toLowerCase());
@@ -120,7 +113,14 @@ useEffect(() => {
                 cnpj={service.cnpj}
                 name={service.name} 
                 city={service.city} 
-                uf={service.state}              
+                uf={service.state}    
+                code=''
+                description=''
+                last_service={new Date()}
+                next_service={new Date()}
+                model=''
+                serial_number=''
+                icon=''
               />
               <DateComponent preventiveDate={service.date} preventiveHour="x" />
               <Item text={service.items?.map(item => item.description).join('\n')} />

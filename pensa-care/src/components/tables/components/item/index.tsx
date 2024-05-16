@@ -6,7 +6,7 @@ interface IItem {
   icon?: string;
 }
 
-export function Item({ withIcon, text }: IItem) {
+export function Item({ text }: IItem) {
   return <Table.Td><div style={{ whiteSpace: 'pre-wrap', fontSize: '0.9em' }}>{text}</div></Table.Td>;
 }
 

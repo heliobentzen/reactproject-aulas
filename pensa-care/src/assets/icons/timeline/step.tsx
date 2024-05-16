@@ -1,4 +1,4 @@
-export function StepIcon({ color }) {
+export function StepIcon({ color }: any) {
   return (
     <svg
       width="32"

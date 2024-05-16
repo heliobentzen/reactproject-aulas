@@ -1,11 +1,12 @@
 import { Anchor, Button, Center, PinInput, Text } from '@mantine/core';
 import axios from 'axios';
 import { FormEvent, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export function Recover() {
   const [code, setCode] = useState('');
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  code
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -17,15 +18,15 @@ export function Recover() {
     }
     };
 
-  const handleConfirm = async () => {
-    try {
-      await axios.post('/verify-code', { code });
-      console.log('Código confirmado');
-      navigate('/new-password');
-    } catch (error) {
-      console.error('Falhou ao confirmar código:', error);
-    }
-  };
+  // const handleConfirm = async () => {
+  //   try {
+  //     await axios.post('/verify-code', { code });
+  //     console.log('Código confirmado');
+  //     navigate('/new-password');
+  //   } catch (error) {
+  //     console.error('Falhou ao confirmar código:', error);
+  //   }
+  // };
 
 
   return (

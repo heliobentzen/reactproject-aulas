@@ -11,7 +11,8 @@ export function ServicesPage() {
       <Flex direction="column" gap={24}>
         <TableServices
           title="Lista de Serviços prestados"
-          
+          data={[]}
+          result={1}
           searchPlaceholder={''} 
         />
       </Flex>

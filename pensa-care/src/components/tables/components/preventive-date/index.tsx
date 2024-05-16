@@ -4,6 +4,7 @@ import { differenceInDays } from 'date-fns';
 import { IPreventiveDate } from '../../../../interfaces/table/IClient';
 
 export function PreventiveDate({ preventiveDate, done }: IPreventiveDate) {
+  done 
   if (preventiveDate === null || preventiveDate === "N/A") {
     return (
       <Table.Td>
@@ -17,7 +18,7 @@ export function PreventiveDate({ preventiveDate, done }: IPreventiveDate) {
     );
   }
   const today = new Date();
-  const preventiveDateObj = new Date(preventiveDate);
+  const preventiveDateObj = new Date(preventiveDate as string);
   const diffDays = differenceInDays(today, preventiveDateObj);
 
   return (
