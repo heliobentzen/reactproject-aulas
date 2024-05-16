@@ -24,7 +24,7 @@ export function Router() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route element={<Layout.Auth />}>
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/signup" element={<Signup isLogin={true} />} />
         </Route>
         <Route element={<Layout.Recovery />}>
           <Route path="/recover" element={<Recover />} />

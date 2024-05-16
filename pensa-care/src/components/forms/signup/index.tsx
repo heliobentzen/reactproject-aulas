@@ -3,8 +3,7 @@ import axios from 'axios';
 import { FormEvent, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-export function Signup() {
-
+export function Signup(props) {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [nome, setNome] = useState('');
@@ -17,55 +16,79 @@ export function Signup() {
 
   const api = axios.create({
     baseURL: 'http://localhost:8080',
-
   });
 
   const salvar = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (validarCampos()){
-      const dados = {
-        "name": nome,
-        "username": user,
-        "email": email,
-        "password": password,
-        "password_confirmation": password
+    if (validarCampos()) {
+      if (props.isLogin) {
+
+        const dados = {
+          "name": nome,
+          "username": user,
+          "email": email,
+          "password": password,
+          "password_confirmation": passwordConfirm
+        }
+        api.post('/api/v1/auth/signup', dados)
+          .then(response => {
+            console.log('Resposta da API:', response.data);
+            navigate('/dashboard');
+          })
+          .catch(error => {
+            console.error('Erro ao fazer cadastro:', error);
+          });
+      } else {
+
+        const dados = {
+          "username": user,
+          "password": password,
+          "fullname": nome,
+          "email": email,
+          "role": "ADMIN"
+        }
+
+        const headers = {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        };
+
+        api.post('/api/v1/users', dados, { headers }) 
+          .then(response => {
+            console.log('Resposta da API:', response.data);
+            navigate('/config');
+            window.location.reload();
+          })
+          .catch(error => {
+            console.error('Erro ao fazer cadastro:', error);
+          });
       }
-  
-      api.post('/api/v1/auth/signup', dados)
-        .then(response => {
-          console.log('Resposta da API:', response.data);
-          navigate('/dashboard');
-        })
-        .catch(error => {
-          // Manipular erros aqui
-          console.error('Erro ao fazer cadastro:', error);
-        });
+
     }
   };
 
   const validarCampos = () => {
-    if(nome == ''){
+    if (nome == '') {
       setError('Nome vazio, preencha o campo nome.');
       return false;
     }
-    else if(email == ''){
+    else if (email == '') {
       setError('E-mail vazio, preencha o campo e-mail.');
       return false;
     }
-    else if(user == ''){
+    else if (user == '') {
       setError('Usuário vazio, preencha o campo usuário.');
       return false;
-    }   
-    else if(password == ''){
+    }
+    else if (password == '') {
       setError('Senha vazio, preencha o campo de senha.');
       return false;
     }
-    else if(passwordConfirm == ''){
+    else if (passwordConfirm == '') {
       setError('Confirmar senha vazio, preencha o campo de confirmar senha.');
       return false
     }
-    else{
+    else {
       setError('');
       return true;
     }
@@ -99,11 +122,14 @@ export function Signup() {
 
   return (
     <>
-      <Center>
-        <Title order={2} mt="32" mb={32}>
-          Registro de Usuário
-        </Title>
-      </Center>
+
+      {props.isLogin ?
+        <Center>
+          <Title order={2} mt="32" mb={32}>
+            Registro de Usuário
+          </Title>
+        </Center>
+        : ''}
 
       <Text size="sm" c="red">{error}</Text>
 
@@ -154,7 +180,7 @@ export function Signup() {
 
         <PasswordInput
           variant="filled"
-          label="Confirmar Senha" 
+          label="Confirmar Senha"
           placeholder="••••••••"
           size="md"
           mt="md"
@@ -177,18 +203,21 @@ export function Signup() {
         />
 
         <Button radius={'md'} fullWidth mt="xl" size="md" type="submit">
-          Criar conta
+          {props.isLogin ? 'Criar conta' : 'Salvar'}
         </Button>
       </form>
 
-      <Center mt="md">
-        <Text size="lg">
-          Já tem uma conta? Faça o{' '}
-          <Anchor component={Link} to={'/login'}>
-            Log in
-          </Anchor>
-        </Text>
-      </Center>
+      {props.isLogin ?
+        <Center mt="md">
+          <Text size="lg">
+            Já tem uma conta? Faça o{' '}
+            <Anchor component={Link} to={'/login'}>
+              Log in
+            </Anchor>
+          </Text>
+        </Center>
+        : ''}
+
     </>
   );
 }

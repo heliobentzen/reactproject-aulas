@@ -1,12 +1,13 @@
-import { Box, Table, Flex, Button, Text } from '@mantine/core';
+import { Box, Table, Flex, Button, Modal, Text, Title, Container, Center } from '@mantine/core';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Footer, TableHeader } from '../components';
+import { useDisclosure } from '@mantine/hooks';
 
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { IService } from '../../../interfaces/table/IService';
 import { IUser } from '../../../interfaces/table/IUser';
+import { Signup } from '../../forms';
 
 interface ITableComponent extends ITableHeader {
   data: IService[];
@@ -19,6 +20,8 @@ const api = axios.create({
 const token = localStorage.getItem('access_token');
 
 export function TableConfig({ title }: ITableComponent) {
+  const [opened, { open, close }] = useDisclosure(false);
+
   const weightRegular = { fontWeight: 400 };
   const [user, setUser] = useState([]);
   const [filteredUser, setFilteredUser] = useState([]);
@@ -29,7 +32,6 @@ export function TableConfig({ title }: ITableComponent) {
   const [totalElements, setTotalElements] = useState(1);
 
   const userPerPage = 12;
-
   const fetchUsers = useCallback(async () => {
     const response = await api.get('/api/v1/users', {
       headers: {
@@ -51,6 +53,7 @@ export function TableConfig({ title }: ITableComponent) {
     const fetchAndSetUsers = async () => {
       const newUsers = await fetchUsers();
       setUser(newUsers.content);
+      setFilteredUser(newUsers.content);
     };
     fetchAndSetUsers();
   }, []);
@@ -64,28 +67,27 @@ export function TableConfig({ title }: ITableComponent) {
     fetchAndSetUsers();
   }, [currentPage]);
 
-
   const handleClick = () => {
     setCurrentPage(prevPage => prevPage + 1);
   };
 
-
   const handleTableHeaderChange = (headerChange) => {
     const { sortOrder, searchValue } = headerChange;
     const filteredUser = (user || []).filter((user: IUser) => {
-      return user.name?.toLowerCase().includes(searchValue?.toLowerCase());
+      return user.username?.toLowerCase().includes(searchValue?.toLowerCase());
     }) || [];
 
     const sortFilteredUser = filteredUser.sort((a: IUser, b: IUser) => {
       if (sortOrder === '1') {
-        return a.name.localeCompare(b.name);
+        return a.username.localeCompare(b.username);
       } else {
-        return b.name.localeCompare(a.name);
+        return b.username.localeCompare(a.username);
       }
     });
 
     setFilteredUser(sortFilteredUser || []);
   }
+
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
 
@@ -97,9 +99,14 @@ export function TableConfig({ title }: ITableComponent) {
       />
 
       <Flex h={40} mt={10} align={'center'} justify={'flex-end'}>
-        <Button>
-          <Text c="#030229" component={Link} to={'/signup'}>Adicionar</Text>
-        </Button>
+        <Modal opened={opened} onClose={close} closeOnClickOutside={false} centered>
+          <Title order={2} mt="0" mb={32}>
+            Registro de Usuário
+          </Title>
+          <Signup isLogin={false} />
+        </Modal>
+        <Button c="#030229" onClick={open}>Adicionar</Button>
+
       </Flex>
 
       <Table mt={16}>
@@ -110,7 +117,7 @@ export function TableConfig({ title }: ITableComponent) {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {user.map((u: IUser) => (
+          {filteredUser.map((u: IUser) => (
             <Table.Tr key={u.id}>
               <Table.Td>{u.username}</Table.Td>
               <Table.Td>
