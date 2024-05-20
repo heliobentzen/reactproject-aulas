@@ -1,11 +1,14 @@
 import { Avatar, Flex, Indicator, Table, Text } from '@mantine/core';
 
 import { IEquipments } from '../../../../interfaces/table/IClient';
+import ImageApiService from '../../../../services/ImageApiService';
 
 interface ParkProps {
   parks: IEquipments[];
   withIndicator?: boolean;
 }
+
+const imageApiService = new ImageApiService();
 
 export function ParkClient({ parks, withIndicator }: ParkProps) {
   return (
@@ -27,10 +30,10 @@ export function ParkClient({ parks, withIndicator }: ParkProps) {
                 mb={6}
                 withBorder
               >
-                <Avatar src={park.icon} size="lg" />
+                <Avatar src={imageApiService.getEquipmentImageUrl(park.code)} size="lg" />
               </Indicator>
             ) : (
-              <Avatar src={park.icon} size="lg" />
+              <Avatar src={imageApiService.getEquipmentImageUrl(park.code)} size="lg" />
             )}
             <Text size="sm" truncate>
               {park.serial_number}

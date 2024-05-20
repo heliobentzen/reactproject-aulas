@@ -22,20 +22,21 @@ function TimelineCardBody(props: TimelineCardBodyProps) {
         <Flex direction="column" gap={4}>
           <Flex mt={2} justify={'space-between'} align={'center'} maw={170}>
             <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>
-              Técnico
+              TÉCNICO
             </Text>
-            <Text></Text>
+            <Text>{props.technician}</Text>
           </Flex>
           <Flex justify={'space-between'} align={'center'} maw={205}>
             <Text fw={'bold'} tt="uppercase" size="sm" mr={87}>
-              Time
+              TIME
             </Text>
+            <Text>{props.time}</Text>
           </Flex>
           <Flex justify={'space-between'} align={'center'} maw={202}>
             <Text fw={'bold'} tt="uppercase" size="sm">
               Modelo
             </Text>
-            <Text>02930B1</Text>
+            <Text>{props.model}</Text>
           </Flex>
           {/* Ajustar tamanho de largura após dados do back-end */}
           <Flex align={'center'} maw={205} justify="space-between">
@@ -49,7 +50,7 @@ function TimelineCardBody(props: TimelineCardBodyProps) {
               }}
               mb={2}
             >
-              Não operacional
+              {props.status}
             </Text>
           </Flex>
         </Flex>
@@ -66,7 +67,7 @@ function TimelineCardBody(props: TimelineCardBodyProps) {
           >
             Ordem de serviço
           </Text>
-          <Text>XXXXXXXXXXXXXXXXX</Text>
+          <Text>{props.serviceOrder}</Text>
         </Flex>
       </Flex>
 
@@ -75,13 +76,13 @@ function TimelineCardBody(props: TimelineCardBodyProps) {
           <Text fw={'bold'} tt="uppercase" size="sm" ml={30}>
             Serial
           </Text>
-          <Text ml={30}>35164</Text>
+          <Text ml={30}>{props.serial}</Text>
         </Flex>
         <Flex justify={'space-between'} align={'center'}>
           <Text fw={'bold'} tt="uppercase" size="sm" ml={30}>
             Lansolver
           </Text>
-          <Text ml={30}>35164</Text>
+          <Text ml={30}>{props.lansolver}</Text>
         </Flex>
         <Text></Text>
       </Flex>
@@ -96,13 +97,14 @@ interface ModalDetailsCardProps {
   maintenanceHistory: Array<{
     date: string;
     type: string;
-    details: TimelineCardBodyProps;
+    description: TimelineCardBodyProps;
   }>;
+  equipment: any
 }
 
 export function ModalDetailsCard(card: ModalDetailsCardProps) {
   // TODO: Add the props in the component
-  card
+  
   return (
     <Flex
       style={{ borderRadius: '10px' }}
@@ -120,13 +122,13 @@ export function ModalDetailsCard(card: ModalDetailsCardProps) {
           <Image src={sulfIcon} m={20} ml={0} />
           <Flex direction={'column'}>
             <Text lh={1.25} c={'#999'} size="xs">
-              03-111
+              {card.equipment.code}
             </Text>
             <Text lh={1.25} size="xl">
-              Contador Automático de Partículas para Líquidos SBSS TÉCNICO
+              {card.equipment.description}
             </Text>
             <Text c={'#999'} size="xs">
-              Cliente: Caterpillar Piracicaba
+              Cliente: {card.client}
             </Text>
           </Flex>
         </Flex>
@@ -153,42 +155,26 @@ export function ModalDetailsCard(card: ModalDetailsCardProps) {
             },
           }}
         >
-          <Timeline.Item
-            bullet={<StepIcon color={'#95A317'} />}
-            title="ANALISADOR SERVOTOUCH LASER PARA PROCESSO - 35164"
-            pos={'relative'}
-            c={'#72707B'}
-          >
-            <Flex gap={30} pos={'absolute'} top={0} left={-120}>
-              <Text fw={'bold'}>
-                10/09/2022
-                <Text ta={'center'} size="md" c={'#88960E'}>
-                  Preventiva
+
+          {card.equipment.service_history.map((d: any ) => (
+              <Timeline.Item
+              bullet={<StepIcon color={d.type === 'MAINTENANCE' ? '#A32219' : '#C3C985'} />}
+              title="ANALISADOR SERVOTOUCH LASER PARA PROCESSO - 35164"
+              pos={'relative'}
+              c={'#72707B'}
+            >
+              <Flex gap={30} pos={'absolute'} top={0} left={-120}>
+                <Text fw={'bold'}>
+                  {new Date(d.date).toLocaleDateString()}
+                  <Text ta={'center'} size="md" c={d.type === 'MAINTENANCE' ? '#A32219' : '#88960E'}>
+                  {d.type === 'MAINTENANCE' ? 'Corretiva' : 'Preventiva'}
+                  </Text>
                 </Text>
-              </Text>
-            </Flex>
+              </Flex>
 
-            <TimelineCardBody lansolver='' model='' serial='' serviceOrder='' status='' technician='' time='' />
-          </Timeline.Item>
-
-          <Timeline.Item
-            bullet={<StepIcon color={'#95A317'} />}
-            title="ANALISADOR SERVOTOUCH LASER PARA PROCESSO - 35164"
-            pos={'relative'}
-            c={'#72707B'}
-          >
-            <Flex gap={30} pos={'absolute'} top={0} left={-120}>
-              <Text fw={'bold'}>
-                10/09/2022
-                <Text ta={'center'} size="md" c={'#88960E'}>
-                  Preventiva
-                </Text>
-              </Text>
-            </Flex>
-
-            {/* TODO: Add the props in the component */}
-            <TimelineCardBody lansolver='' model='' serial='' serviceOrder='' status='' technician='' time='' />
-          </Timeline.Item>
+              <TimelineCardBody lansolver='N/D' model={card.equipment.model} serial={d.serial_number} serviceOrder={d.order_number} status='N/D' technician={d.technician} time='N/D' />
+            </Timeline.Item>
+          ))}
         </Timeline>
       </Flex>
     </Flex>

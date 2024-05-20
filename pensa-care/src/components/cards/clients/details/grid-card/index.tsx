@@ -3,6 +3,9 @@ import { Flex, Image, Text, ColorSwatch, Center, Box } from '@mantine/core';
 import sulfIcon from '../../../../../assets/icons/tables/sulf.svg';
 import { useHover } from '@mantine/hooks';
 import { differenceInDays } from 'date-fns';
+import ImageApiService from '../../../../../services/ImageApiService';
+
+const imageApiService = new ImageApiService();
 
 export function GridCard({ open, item }: any) {
   const { hovered, ref } = useHover();
@@ -38,7 +41,7 @@ export function GridCard({ open, item }: any) {
           maw={{ sm: '155px', lg: '200px' }}
           onClick={() => open(item)}
         >
-          <Image src={sulfIcon} maw={'90px'} />
+          <Image src={imageApiService.getEquipmentImageUrl(item.code) || sulfIcon} maw={'90px'} />
           <Flex direction={'column'} align={'center'} gap={10}>
             <Text ta={'center'} size="lg" lh={'20px'}>
               {item.description}

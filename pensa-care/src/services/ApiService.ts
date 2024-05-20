@@ -5,7 +5,7 @@ import StorageService from './StorageService'
 export const LOGGED_USER = 'username'
 export const TOKEN = 'access_token'
 export const TOKEN_EXPIRES = 'expires_at'
-export const BASE_URL = 'http://localhost:8080'
+export const BASE_URL = 'https://api.pensacare.tdsc.dev'
 
 export const httpClient = axios.create({
   baseURL: BASE_URL,
@@ -64,6 +64,10 @@ export default class ApiService {
 
   buildUrl(url: string) {
     return `${this.endpoint}${url}`
+  }
+
+  getBaseUrl() : string{
+    return httpClient.defaults.baseURL || '';
   }
 
   getPlain(url: string) {

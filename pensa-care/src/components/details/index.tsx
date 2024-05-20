@@ -27,8 +27,20 @@ export function ClientDetails({client}: ClientDetailsProps) {
   const [items, setItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState();
 
-  const openModal = (item: any) => {
-    setSelectedItem(item);
+  const openModal = async (item: any) => {
+    const fetch = async () => {
+      if(item){
+        try {
+          const response = await api.get(`/api/v1/equipments/services?code=${item.code}&serialNumber=${item.serial_number}`);
+
+          setSelectedItem(response.data);
+        } catch (error) {
+          console.error('Erro ao obter os dados:', error);
+        }
+      }
+    }
+
+    await fetch();
     open();
   }
   

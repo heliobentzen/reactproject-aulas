@@ -1,8 +1,6 @@
 import { Box, Button, Flex, Modal, Text } from '@mantine/core';
 import { ModalCard } from '../cards/modal';
 import { ModalDetailsCard } from './details';
-import { useEffect, useState } from 'react';
-import ApiService from '../../services/ApiService';
 
 interface IModalComponent {
   config: {
@@ -14,39 +12,12 @@ interface IModalComponent {
   equipment: any;
 }
 
-const api = new ApiService('');
-
 export function ModalComponent({
   config: { opened, close },
   clientName,
   informationalOnly,
   equipment,
 }: IModalComponent) {
-
-  const [currentEquipment, setCurrentEquipment] = useState(equipment);
-  currentEquipment
-
-  useEffect(() => {
-    const fetch = async () => {
-      if(equipment){
-        try {
-          const response = await api.get(`/api/v1/equipments/services`,
-            {
-              code: equipment.code,
-              serialNumber: equipment.serial_number
-            }
-          );
-
-          setCurrentEquipment(response.data.content);
-        } catch (error) {
-          console.error('Erro ao obter os dados:', error);
-        }
-      }
-    }
-
-    fetch();
-
-  }, [equipment]);
 
   return (
     <>
@@ -82,7 +53,7 @@ export function ModalComponent({
         </Flex>
 
         {/* TODO: Add the props in the component */}
-        {informationalOnly ? <ModalDetailsCard client={clientName} maintenanceHistory={[]} subTitle='' title='' /> : <ModalCard />}
+        {informationalOnly ? <ModalDetailsCard client={clientName} maintenanceHistory={[]} subTitle='' title='' equipment={equipment} /> : <ModalCard />}
 
         {!informationalOnly && (
           <Flex gap={10} pb={12} direction={'column'} align={'center'}>
