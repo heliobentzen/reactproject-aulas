@@ -12,4 +12,8 @@ export default class ImageApiService extends ApiService {
     return s;
   }
 
+  getUserProfileImageUrl(imageCode: string): string{
+    const s = `${this.getBaseUrl()}/${imageCode}`;
+    return s;
+  }
 }

@@ -124,7 +124,7 @@ export function TableConfig({ title }: ITableComponent) {
           ))}
         </Table.Tbody>
       </Table>
-      <Footer color={undefined} radius={undefined} onHandleClick={handleClick} />
+      <Footer color={""} radius={""} onHandleClick={handleClick} />
     </Box>
   );
 }
