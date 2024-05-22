@@ -1,4 +1,4 @@
-import { Avatar, Button, Center, Flex, Image, Text } from '@mantine/core';
+import { Avatar, Button, Center, Flex, Text } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import logoutIco from '../../assets/icons/logout.svg';
 import ApiService from '../../services/ApiService';
@@ -33,12 +33,12 @@ export function User() {
         });
         console.log('Imagem salva com sucesso!');
 
-        const response = await api.pacth('/api/v1/users/me/image',
+        await api.pacth('/api/v1/users/me/image',
           {
             'image_id': `${resUpload.data.id}`,
           }
         );
-        console.log('Id atualizado com sucesso!');
+        
         setId(resUpload.data.id);
 
       } catch (error) {
@@ -58,7 +58,9 @@ export function User() {
   }, [id]);
 
   const handleAvatarButtonClick = () => {
-    fileInputRef.current.click();
+    if(fileInputRef.current){
+      (fileInputRef.current as any).click();
+    }
   };
 
   return (
