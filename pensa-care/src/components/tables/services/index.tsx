@@ -1,5 +1,5 @@
 import { Box, Table } from '@mantine/core';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Client,
   Footer,
@@ -24,72 +24,65 @@ export function TableServices({ title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
   const [service, setService] = useState<any>([]);
   const [filteredService, setFilteredService] = useState<any>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalElements, setTotalElements] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sort] = useState('date'); 
-  
-  const servicesPerPage = 12;
-  
-  const fetchServices = useCallback(async () => {
-    setSearchTerm(searchTerm)
-    const response = await api.get('/api/v1/services',
-      {
-      page: currentPage - 1,
-      size: servicesPerPage,
-      sort: sort,
-      name: searchTerm,
-    },
-  );
-  setTotalElements(response.data.total_elements);
-  return response.data;
-}, [currentPage, searchTerm, sort]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const isRefInicial = useRef(true);
+  const isRefVerMais = useRef(false);
 
-useEffect(() => {
-  const fetchAndSetServices = async () => {
-    const data = await fetchServices();
-    setService(data.content);
-    setFilteredService(data.content);
+  const servicesPerPage = 2;
+  const fetchServices = async () => {
+    const response = await api.get(`/api/v1/services?page=${currentPage}&size=${servicesPerPage}`);
+    setTotalElements(response.data.total_elements);
+    return response.data;
   };
-  fetchAndSetServices();
-}, []);
 
-useEffect(() => {
-  if(currentPage<2) return;
-  const fetchAndSetServices = async () => {
-    const newServices = await fetchServices();
-    setService((prevServices: any) => [...prevServices, ...newServices.content]);
-    setFilteredService((prevServices: any) => [...prevServices, ...newServices.content]);
-  };
-  fetchAndSetServices();
-}, [currentPage]);
+  useEffect(() => {
+    if (isRefInicial.current) {
+      const fetchAndSetServices = async () => {
+        const data = await fetchServices();
+        setService(data.content);
+        setFilteredService(data.content);
+      };
+      fetchAndSetServices();
+      isRefInicial.current = false;
+    }
+  }, []);
 
+  useEffect(() => {
+    if (isRefVerMais.current) {
+      const fetchAndSetServices = async () => {
+        const newServices = await fetchServices();
+        setService((prevServices: any) => [...prevServices, ...newServices.content]);
+        setFilteredService((prevServices: any) => [...prevServices, ...newServices.content]);
+      };
+      fetchAndSetServices();
+      isRefVerMais.current = false;
+    }
+  }, [currentPage]);
 
   const handleClick = () => {
-    setCurrentPage(prevPage => prevPage + 1); 
+    isRefVerMais.current = true;
+    setCurrentPage(prevPage => prevPage + 1);
   };
-
 
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
     const filteredServices = (service || []).filter((service: IService) => {
       return service.name?.toLowerCase().includes(searchValue?.toLowerCase());
     }) || [];
-    
-    const sortFilteredServices = filteredServices.sort((a: IService, b: IService) => {        
+
+    const sortFilteredServices = filteredServices.sort((a: IService, b: IService) => {
       if (sortOrder === '1') {
         return a.name.localeCompare(b.name);
       } else {
         return b.name.localeCompare(a.name);
       }
     });
-
     setFilteredService(sortFilteredServices || []);
   }
 
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
-      
       <TableHeader
         title={title}
         result={totalElements}
@@ -109,11 +102,11 @@ useEffect(() => {
         <Table.Tbody>
           {filteredService.map((service: IService) => (
             <Table.Tr key={`${service.order_number}-${service.cnpj}`}>
-              <Client 
+              <Client
                 cnpj={service.cnpj}
-                name={service.name} 
-                city={service.city} 
-                uf={service.state}    
+                name={service.name}
+                city={service.city}
+                uf={service.state}
                 code=''
                 description=''
                 last_service={new Date()}
