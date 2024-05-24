@@ -1,5 +1,5 @@
 import { Box, Loader, Table } from '@mantine/core';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Client,
   Footer,
@@ -21,65 +21,63 @@ interface ITableComponent extends ITableHeader {
 
 export function TableClients({ title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
-  const [clients, setClients] = useState<any>([]);
-  const [filteredClients, setFilteredClients] = useState<any>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [client, setClient] = useState<any>([]);
+  const [filteredClient, setFilteredClient] = useState<any>([]);
   const [totalElements, setTotalElements] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortName] = useState('name'); 
-  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const isRefInicial = useRef(true);
+  const isRefVerMais = useRef(false);
+  const [limpar, setLimpar] = useState(false);
+  const [loading, setLoading] = useState(false);//falta ajustar
 
-  const clientsPerPage = 12;
-  
-  const fetchClients = useCallback(async () => {
-    setSearchTerm(searchTerm)
-    setLoading(true);
-    const response = await api.get('/api/v1/clients',
-      {
-      page: currentPage - 1,
-      size: clientsPerPage,
-      sort: sortName,
-      name: searchTerm,
-    },
-  );
-
-  setLoading(false);
-  setTotalElements(response.data.total_elements);
-  
-  return response.data;
-  
-}, [currentPage, searchTerm, sortName]);
+  const clientsPerPage = 2;
+  const fetchClient = async () => {
+    const response = await api.get(`/api/v1/clients?page=${currentPage}&size=${clientsPerPage}`);
+    setTotalElements(response.data.total_elements);
+    return response.data;
+  };
 
   useEffect(() => {
-    const fecthReloadClient = async ()=> {
-      const data = await fetchClients()
-      setClients(data.content);
-      setFilteredClients(data.content);
+    if (isRefInicial.current) {
+        setLoading(true);
+        const fetchAndSetClient = async () => {
+        const data = await fetchClient();
+        setClient(data.content);
+        setFilteredClient(data.content);
+      };
+      fetchAndSetClient();
+      isRefInicial.current = false;
+      setLoading(false);
     }
-    fecthReloadClient();
   }, []);
-  
+
   useEffect(() => {
-    if(currentPage<2) return;
-    const fetchAndSetClients = async () => {
-      const newClients = await fetchClients();
-      setClients((prevClients: any) => [...prevClients, ...newClients.content]);
-      setFilteredClients((prevClients: any) => [...prevClients, ...newClients.content]);
-    };
-    fetchAndSetClients();
-  }, [currentPage, searchTerm]);
-  
+    if (isRefVerMais.current) {
+      const fetchAndSetClient = async () => {
+        const newClients = await fetchClient();
+        const todos = [...client, ...newClients.content]
+        setFilteredClient(todos);
+        setClient(todos);
+      };
+      fetchAndSetClient(); 
+      isRefVerMais.current = false;
+      setLimpar(false);
+    }
+  }, [currentPage]);
+
   const handleClick = () => {
-    setCurrentPage(prevPage => prevPage + 1); 
+    isRefVerMais.current = true;
+    setLimpar(true);
+    setCurrentPage(prevPage => prevPage + 1);
   };
 
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
-    const filteredClients = (clients || []).filter((client: IClient) => {
+    const filteredClient = (client || []).filter((client: IClient) => {
       return client.name?.toLowerCase().includes(searchValue?.toLowerCase());
     }) || [];
     
-    const sortFilteredClients = filteredClients.sort((a: IClient, b: IClient) => {        
+    const sortFilteredClient = filteredClient.sort((a: IClient, b: IClient) => {        
       if (sortOrder === '1') {
         return a.name.localeCompare(b.name);
       } else {
@@ -87,15 +85,17 @@ export function TableClients({ title }: ITableComponent) {
       }
     });
 
-    setFilteredClients(sortFilteredClients || []);
+    setFilteredClient(sortFilteredClient || []);
   }
+
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
       <TableHeader
         title={title}
         result={totalElements}
-        onHandleTableHeaderChange={handleTableHeaderChange}
         searchPlaceholder="Pesquisar por Nome"
+        onHandleTableHeaderChange={handleTableHeaderChange}
+        limpar={limpar}
       />
       <Table mt={16}>
         <Table.Thead>
@@ -106,7 +106,7 @@ export function TableClients({ title }: ITableComponent) {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {filteredClients.map((client: IClient, index: any) => {
+          {filteredClient.map((client: IClient, index: any) => {
           const nextServiceDates = (client as IClient).equipments!
           .map((equipment : any) => equipment.next_service ? new Date(equipment.next_service) : null)
           .filter(date => date !== null);

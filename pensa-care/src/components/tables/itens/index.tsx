@@ -8,7 +8,7 @@ import {
   TableHeader,
 } from '../components';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IEquipment } from '../../../interfaces/table/IEquipment';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { Price } from '../components/price';
@@ -25,48 +25,49 @@ export function TableItens({ title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
   const [equipment, setEquipment] = useState<any>([]);
   const [filteredEquipment, setFilteredEquipment] = useState<any>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalElements, setTotalElements] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sort] = useState('date'); 
+  const [currentPage, setCurrentPage] = useState(0);
+  const isRefInicial = useRef(true);
+  const isRefVerMais = useRef(false);
+  const [limpar, setLimpar] = useState(false);
 
-  const equipmentPerPage = 12;
-  
-  const fetchItens = useCallback(async () => {
-    setSearchTerm(searchTerm)
-    const response = await api.get('/api/v1/equipments',
-      {
-        page: currentPage - 1,
-        size: equipmentPerPage,
-        sort: sort,
-        name: searchTerm,
-    },
-  );
+const equipmentPerPage = 2;
+const fetchItens = async () => {
+  const response = await api.get(`/api/v1/equipments?page=${currentPage}&size=${equipmentPerPage}`);
   setTotalElements(response.data.total_elements);
   return response.data;
-}, [currentPage, searchTerm, sort]);
+};
 
 useEffect(() => {
-  const fetchAndSetItens = async () => {
-    const data = await fetchItens();
-    setEquipment(data.content);
-    setFilteredEquipment(data.content);
-  };
-  fetchAndSetItens();
+  if (isRefInicial.current) {
+      const fetchAndSetItens = async () => {
+      const data = await fetchItens();
+      setEquipment(data.content);
+      setFilteredEquipment(data.content);
+    };
+    fetchAndSetItens();
+    isRefInicial.current = false;
+  }
 }, []);
 
 useEffect(() => {
-  if(currentPage<2) return;
-  const fetchAndSetItens = async () => {
-    const newItens = await fetchItens();
-    setEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
-    setFilteredEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
-  };
-  fetchAndSetItens();
+  if (isRefVerMais.current) {
+    const fetchAndSetServices = async () => {
+      const newEquipment = await fetchItens();
+      const todos = [...equipment, ...newEquipment.content]
+      setFilteredEquipment(todos);
+      setEquipment(todos);
+    };
+    fetchAndSetServices(); 
+    isRefVerMais.current = false;
+    setLimpar(false);
+  }
 }, [currentPage]);
 
 const handleClick = () => {
-  setCurrentPage(prevPage => prevPage + 1); 
+  isRefVerMais.current = true;
+  setLimpar(true);
+  setCurrentPage(prevPage => prevPage + 1);
 };
 
 const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
@@ -82,7 +83,6 @@ const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: an
       return b.name.localeCompare(a.name);
     }
   });
-
   setFilteredEquipment(sortFilteredItens || []);
 }
 
@@ -91,8 +91,9 @@ const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: an
       <TableHeader
         title={title}
         result={totalElements}
-        searchPlaceholder="Pesquisar por Nome"
         onHandleTableHeaderChange={handleTableHeaderChange}
+        searchPlaceholder="Pesquisar por Nome"
+        limpar={limpar}
       />
       <Table mt={16}>
         <Table.Thead>

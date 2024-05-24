@@ -28,6 +28,7 @@ export function TableServices({ title }: ITableComponent) {
   const [currentPage, setCurrentPage] = useState(0);
   const isRefInicial = useRef(true);
   const isRefVerMais = useRef(false);
+  const [limpar, setLimpar] = useState(false);
 
   const servicesPerPage = 2;
   const fetchServices = async () => {
@@ -38,7 +39,7 @@ export function TableServices({ title }: ITableComponent) {
 
   useEffect(() => {
     if (isRefInicial.current) {
-      const fetchAndSetServices = async () => {
+        const fetchAndSetServices = async () => {
         const data = await fetchServices();
         setService(data.content);
         setFilteredService(data.content);
@@ -52,16 +53,19 @@ export function TableServices({ title }: ITableComponent) {
     if (isRefVerMais.current) {
       const fetchAndSetServices = async () => {
         const newServices = await fetchServices();
-        setService((prevServices: any) => [...prevServices, ...newServices.content]);
-        setFilteredService((prevServices: any) => [...prevServices, ...newServices.content]);
+        const todos = [...service, ...newServices.content]
+        setFilteredService(todos);
+        setService(todos);
       };
-      fetchAndSetServices();
+      fetchAndSetServices(); 
       isRefVerMais.current = false;
+      setLimpar(false);
     }
   }, [currentPage]);
 
   const handleClick = () => {
     isRefVerMais.current = true;
+    setLimpar(true);
     setCurrentPage(prevPage => prevPage + 1);
   };
 
@@ -88,6 +92,7 @@ export function TableServices({ title }: ITableComponent) {
         result={totalElements}
         searchPlaceholder="Pesquisar por Nome/Serial Number"
         onHandleTableHeaderChange={handleTableHeaderChange}
+        limpar={limpar}
       />
       <Table mt={16}>
         <Table.Thead>

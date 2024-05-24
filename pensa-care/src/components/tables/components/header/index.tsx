@@ -8,18 +8,25 @@ export function TableHeader({
   searchPlaceholder,
   columnMode,
   onHandleTableHeaderChange,
+  limpar
 }: ITableHeader & { onHandleTableHeaderChange?: ({ sortOrder, searchValue }: { sortOrder: string, searchValue: string }) => void }) {
   const [sortOrder, setSortOrder] = useState('1');
   const [searchValue, setSearchValue] = useState('');
-  
   
   const onSortOrderChange = (value: any) => {
     setSortOrder(value);
   }
 
+  useEffect(() => {
+    if(limpar){
+      setSearchValue('');
+      limpar = false;
+    }
+
+  }, [limpar]);
+
   const onSearchChange = (event: any) => {
     setSearchValue(event.target.value);
-    
   }
 
   useEffect(() => {
