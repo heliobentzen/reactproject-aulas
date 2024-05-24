@@ -11,8 +11,6 @@ import {
   SaleIcon,
 } from '../../assets/icons/cards/dashboard';
 
-import { mockClientData } from '../../__mock__/data';
-
 export function DashboardPage() {
   return (
     <Box mx={24}>
@@ -45,11 +43,7 @@ export function DashboardPage() {
       </Flex>
       <Flex direction="column" gap={24}>
         <TableDashboard
-          title="Leads de Manutenção"
-          result={56} // data.length
-          data={mockClientData} 
-          searchPlaceholder={''} 
-        />
+          title="Leads de Manutenção" data={[]} result={0} searchPlaceholder={''}/>
         {/* <TableDashboard
           title="Leads de Venda"
           result={56} // data.length

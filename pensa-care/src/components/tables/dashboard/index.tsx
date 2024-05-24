@@ -1,4 +1,4 @@
-import { Box, Table } from '@mantine/core';
+import { Box, Loader, Table } from '@mantine/core';
 import {
   Client,
   Footer,
@@ -7,7 +7,7 @@ import {
   TableHeader,
 } from '../components';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IClient } from '../../../interfaces/table/IClient';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { Item } from '../components/item';
@@ -20,65 +20,74 @@ interface ITableComponent extends ITableHeader {
 // Create an axios instance
 const api = new ApiService('');
 
-export function TableDashboard({ data, result, title }: ITableComponent) {
+export function TableDashboard({ title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
-  data
-  result
-
   const [leads, setLeads] = useState<any>([]);
   const [filteredLeads, setFilteredLeads] = useState<any>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalElements, setTotalElements] = useState(1);
-  const [sort] = useState('date'); 
+  const [currentPage, setCurrentPage] = useState(0);
+  const isRefInicial = useRef(true);
+  const isRefVerMais = useRef(false);
+  const [limpar, setLimpar] = useState(false);
+  const [loading, setLoading] = useState(false);//falta ajustar
 
-  const leadsPerPage = 12;
-  
-  const fetchItens = useCallback(async () => {
-    api.get(`/api/v1/leads`,
-      {
-        page: currentPage - 1,
-        size: leadsPerPage
-    },
-  ).then((response) => {
+  const leadsPerPage = 2;
+  const fetchLeads = async () => {
+    const response = await api.get(`/api/v1/leads?page=${currentPage}&size=${leadsPerPage}`);
     setTotalElements(response.data.total_elements);
-
-    setLeads(response.data.content);
-    setFilteredLeads(response.data.content);
-
-    const newItens = response.data;
-    setLeads((prevItens: any) => [...prevItens, ...newItens.content]);
-    setFilteredLeads((prevItens: any) => [...prevItens, ...newItens.content]);
-  });
-  
-  }, [currentPage, sort]);
+    return response.data;
+  };
 
   useEffect(() => {
-    fetchItens();
+    if (isRefInicial.current) {
+        setLoading(true);
+        const fetchAndSetLeads = async () => {
+        const data = await fetchLeads();
+        setLeads(data.content);
+        setFilteredLeads(data.content);
+      };
+      fetchAndSetLeads();
+      isRefInicial.current = false;
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-      fetchItens();
+    if (isRefVerMais.current) {
+      const fetchAndSetLeads = async () => {
+        const newLeads = await fetchLeads();
+        const todos = [...leads, ...newLeads.content]
+        setFilteredLeads(todos);
+        setLeads(todos);
+      };
+      fetchAndSetLeads(); 
+      isRefVerMais.current = false;
+      setLimpar(false);
+    }
   }, [currentPage]);
 
   const handleClick = () => {
-    setCurrentPage(currentPage + 1); 
+    isRefVerMais.current = true;
+    setLimpar(true);
+    setCurrentPage(prevPage => prevPage + 1);
   };
 
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
-    const filteredItens = (leads || []).filter((item: { item: string; }) => {
+
+    const filteredLeads = (leads || []).filter((item: { item: string; }) => {
       return item.item?.toLowerCase().includes(searchValue?.toLowerCase());
     }) || [];
     
-    const sortFilteredItens = filteredItens.sort((a: { item: string; }, b: { item: string; }) => {        
+    const sortFilteredLeads = filteredLeads.sort((a: { item: string; }, b: { item: string; }) => {        
       if (sortOrder === '1') {
         return a.item.localeCompare(b.item);
       } else {
         return b.item.localeCompare(a.item);
       }
     });
-
-    setFilteredLeads(sortFilteredItens || []);
+    console.log(filteredLeads);
+    setFilteredLeads(sortFilteredLeads || []);
   }
 
   return (
@@ -86,13 +95,14 @@ export function TableDashboard({ data, result, title }: ITableComponent) {
       <TableHeader
         title={title}
         result={totalElements}
-        searchPlaceholder="Pesquisar por Nome"
+        searchPlaceholder="Pesquisar por Item"
         onHandleTableHeaderChange={handleTableHeaderChange}
+        limpar={limpar}
       />
       <Table mt={16}>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th style={weightRegular}>Cliente/</Table.Th>
+            <Table.Th style={weightRegular}>Cliente</Table.Th>
             <Table.Th style={weightRegular}>Próx. preventiva</Table.Th>
             <Table.Th style={weightRegular}>Item</Table.Th>
             <Table.Th pl={40} style={weightRegular}>
@@ -101,8 +111,8 @@ export function TableDashboard({ data, result, title }: ITableComponent) {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {filteredLeads.map((d: { client_cnpj: string; client_name: string | undefined; item_code: string; client_city: string; client_state: string; next_service: string | undefined; item: any; status: string | null | undefined; }) => (
-            <Table.Tr key={`${d.client_cnpj}-${d.client_name}`}>
+          {filteredLeads.map((d: { item_serial_number : string, client_cnpj: string; client_name: string | undefined; item_code: string; client_city: string; client_state: string; next_service: string | undefined; item: any; status: string | null | undefined; }) => (
+            <Table.Tr key={`${d.client_cnpj}-${d.item_code}-${d.item_serial_number}`}>
               <Client
                 code={d.item_code}
                 name={d.client_name ? d.client_name : ''}
@@ -128,7 +138,8 @@ export function TableDashboard({ data, result, title }: ITableComponent) {
           ))}
         </Table.Tbody>
       </Table>
-      <Footer color={undefined} radius={undefined} onHandleClick={handleClick}/>
+      {loading && <Loader />}
+      <Footer color={''} radius={''} onHandleClick={handleClick}/>
     </Box>
   );
 }
