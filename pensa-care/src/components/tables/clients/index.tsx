@@ -30,7 +30,7 @@ export function TableClients({ title }: ITableComponent) {
   const [limpar, setLimpar] = useState(false);
   const [loading, setLoading] = useState(false);//falta ajustar
 
-  const clientsPerPage = 2;
+  const clientsPerPage = 12;
   const fetchClient = async () => {
     const response = await api.get(`/api/v1/clients?page=${currentPage}&size=${clientsPerPage}`);
     setTotalElements(response.data.total_elements);

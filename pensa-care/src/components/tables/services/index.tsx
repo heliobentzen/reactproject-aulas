@@ -30,7 +30,7 @@ export function TableServices({ title }: ITableComponent) {
   const isRefVerMais = useRef(false);
   const [limpar, setLimpar] = useState(false);
 
-  const servicesPerPage = 2;
+  const servicesPerPage = 12;
   const fetchServices = async () => {
     const response = await api.get(`/api/v1/services?page=${currentPage}&size=${servicesPerPage}`);
     setTotalElements(response.data.total_elements);

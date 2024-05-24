@@ -31,7 +31,7 @@ export function TableItens({ title }: ITableComponent) {
   const isRefVerMais = useRef(false);
   const [limpar, setLimpar] = useState(false);
 
-const equipmentPerPage = 2;
+const equipmentPerPage = 12;
 const fetchItens = async () => {
   const response = await api.get(`/api/v1/equipments?page=${currentPage}&size=${equipmentPerPage}`);
   setTotalElements(response.data.total_elements);

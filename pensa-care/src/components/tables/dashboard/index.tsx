@@ -31,7 +31,7 @@ export function TableDashboard({ title }: ITableComponent) {
   const [limpar, setLimpar] = useState(false);
   const [loading, setLoading] = useState(false);//falta ajustar
 
-  const leadsPerPage = 2;
+  const leadsPerPage = 12;
   const fetchLeads = async () => {
     const response = await api.get(`/api/v1/leads?page=${currentPage}&size=${leadsPerPage}`);
     setTotalElements(response.data.total_elements);
