@@ -133,6 +133,9 @@ export function TableDashboard({ title }: ITableComponent) {
                 status={d.status != null && d.status !== 'null' ? d.status : "N/D"}
                 isFulfilled={d.status === 'Atendido'}
                 clientName={d.client_name}
+                code={d.item_code}
+                serialNumber={d.item_serial_number}
+                lead={d}
               />
             </Table.Tr>
           ))}

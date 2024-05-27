@@ -10,6 +10,7 @@ interface IModalComponent {
   clientName: string;
   informationalOnly?: boolean;
   equipment: any;
+  lead?: any;
 }
 
 export function ModalComponent({
@@ -17,6 +18,7 @@ export function ModalComponent({
   clientName,
   informationalOnly,
   equipment,
+  lead,
 }: IModalComponent) {
 
   return (
@@ -53,7 +55,7 @@ export function ModalComponent({
         </Flex>
 
         {/* TODO: Add the props in the component */}
-        {informationalOnly ? <ModalDetailsCard client={clientName} maintenanceHistory={[]} subTitle='' title='' equipment={equipment} /> : <ModalCard />}
+        {informationalOnly ? <ModalDetailsCard client={clientName} maintenanceHistory={[]} subTitle='' title='' equipment={equipment} /> : <ModalCard equipment={equipment} client={clientName} title={''} subTitle={''} lead={lead} />}
 
         {!informationalOnly && (
           <Flex gap={10} pb={12} direction={'column'} align={'center'}>

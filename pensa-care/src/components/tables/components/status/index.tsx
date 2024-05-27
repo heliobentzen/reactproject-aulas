@@ -6,10 +6,31 @@ import breakIcon from '../../../../assets/icons/tables/break.svg';
 
 import { IStatus } from '../../../../interfaces/table/IClient';
 import { ModalComponent } from '../../../modal';
+import { useState } from 'react';
+import ApiService from '../../../../services/ApiService';
 
 // A lógica desse componente será alterada de acordo com o retorno que tivermos do back-end.
-export function Status({ isFulfilled = false, status, clientName }: IStatus) {
+export function Status({ isFulfilled = false, status, clientName, serialNumber, code, lead }: IStatus) {
   const [opened, { open, close }] = useDisclosure(false);
+  const [selectedItem, setSelectedItem] = useState();
+  const api = new ApiService('');
+
+  const openModal = async () => {
+    const fetch = async () => {
+      if(serialNumber && code){
+        try {
+          const response = await api.get(`/api/v1/equipments/services?code=${code}&serialNumber=${serialNumber}`);
+
+          setSelectedItem(response.data);
+        } catch (error) {
+          console.error('Erro ao obter os dados:', error);
+        }
+      }
+    }
+
+    await fetch();
+    open();
+  }
 
   return (
     <Table.Td>
@@ -34,7 +55,7 @@ export function Status({ isFulfilled = false, status, clientName }: IStatus) {
             color="black"
             onClick={() => {
               console.log('action - break');
-              open();
+              openModal();
             }}
           >
             <Flex direction={'column'} align={'center'} mr={20} gap={4}>
@@ -50,7 +71,7 @@ export function Status({ isFulfilled = false, status, clientName }: IStatus) {
           style={{ border: 'none' }}
           onClick={() => {
             console.log('edit');
-            open();
+            openModal();
           }}
         >
           <Flex direction={'column'} align={'center'} gap={2} c={'#3C3C3C'}>
@@ -62,7 +83,8 @@ export function Status({ isFulfilled = false, status, clientName }: IStatus) {
       <ModalComponent
         config={{ opened, close }}
         clientName={clientName || ''}
-        equipment={undefined}
+        equipment={selectedItem}
+        lead={lead}
       />
     </Table.Td>
   );

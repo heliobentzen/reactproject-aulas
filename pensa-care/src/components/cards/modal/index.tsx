@@ -1,7 +1,7 @@
 import {
+  Avatar,
   Divider,
   Flex,
-  Image,
   Select,
   Switch,
   Text,
@@ -9,11 +9,21 @@ import {
   Textarea,
 } from '@mantine/core';
 
-import sulfIcon from '../../../assets/icons/cards/modal/sulf.svg';
 import { useState } from 'react';
+import ImageApiService from '../../../services/ImageApiService';
+
+interface ModalDetailsCardProps {
+  title: string;
+  subTitle: string;
+  client: string;
+  equipment: any;
+  lead: any
+}
+
+const imageApiService = new ImageApiService();
 
 // Componente temporariamente com informações estáticas e lógica simples
-export function ModalCard() {
+export function ModalCard(card: ModalDetailsCardProps) {
   const [paused, setPaused] = useState(false);
 
   return (
@@ -30,16 +40,17 @@ export function ModalCard() {
           Item
         </Text>
         <Flex>
-          <Image src={sulfIcon} m={20} ml={0} />
+          {/* <Image src={imageApiService.getEquipmentImageUrl(card.equipment.code) || sulfIcon} m={20} ml={20} maw={'90px'} /> */}
+          <Avatar src={imageApiService.getEquipmentImageUrl(card.equipment.code)} size="lg" m={20} ml={20} />
           <Flex direction={'column'}>
             <Text c={'#999'} size="xs">
-              03-111
+            {card.equipment.code}
             </Text>
             <Text size="xl">
-              Contador Automático de Partículas para Líquidos SBSS TÉCNICO
+            {card.equipment.description}
             </Text>
             <Text c={'#999'} size="xs">
-              Cliente: Caterpillar Piracicaba
+              Cliente: Cliente: {card.client}
             </Text>
           </Flex>
         </Flex>

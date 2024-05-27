@@ -8,6 +8,9 @@ export interface IStatus {
   status?: string;
   isFulfilled?: boolean;
   clientName?: string;
+  serialNumber?: string;
+  code?: string;
+  lead?: any;
 }
 
 export interface IPark {
