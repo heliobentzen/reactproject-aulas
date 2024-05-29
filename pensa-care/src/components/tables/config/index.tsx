@@ -1,13 +1,13 @@
-import { Box, Table, Flex, Button, Modal, Title, Text, Stack, Checkbox, TextInput, ScrollArea } from '@mantine/core';
-import { useEffect, useRef, useState } from 'react';
-import { Footer, TableHeader } from '../components';
+import { Box, Button, Checkbox, Flex, Modal, ScrollArea, Stack, Table, Text, TextInput, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useEffect, useRef, useState } from 'react';
+import { IClient } from '../../../interfaces/table/IClient';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { IService } from '../../../interfaces/table/IService';
 import { IUser } from '../../../interfaces/table/IUser';
-import { Signup } from '../../forms';
 import ApiService from '../../../services/ApiService';
-import { IClient } from '../../../interfaces/table/IClient';
+import { Signup } from '../../forms';
+import { Footer, TableHeader } from '../components';
 
 interface ITableComponent extends ITableHeader {
   data: IService[];
@@ -26,7 +26,7 @@ export function TableConfig({ title }: ITableComponent) {
   const [limpar, setLimpar] = useState(false);
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [isOpened, setIsOpened] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState<IUser | null>(null);
   const openModal = (item: any) => {
     setSelectedItem(item);
     setIsOpened(true);
