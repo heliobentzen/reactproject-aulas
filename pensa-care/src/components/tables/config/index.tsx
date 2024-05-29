@@ -1,4 +1,4 @@
-import { Box, Table, Flex, Button, Modal, Title, Text, Stack, Checkbox } from '@mantine/core';
+import { Box, Table, Flex, Button, Modal, Title, Text, Stack, Checkbox, TextInput, ScrollArea } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 import { Footer, TableHeader } from '../components';
 import { useDisclosure } from '@mantine/hooks';
@@ -68,13 +68,26 @@ export function TableConfig({ title }: ITableComponent) {
   useEffect(() => {
     if (isRefInicialClient.current) {
       const fetchAndSetClient = async () => {
-        const resultado = await api.get(`/api/v1/clients?page=${0}&size=${10}`);
+        const resultado = await api.get(`/api/v1/clients?page=${0}&size=${20}`);
         setClient(resultado.data.content)
       };
       fetchAndSetClient();
       isRefInicialClient.current = false;
     }
   }, []);
+
+  const [search, setSearch] = useState('');
+  useEffect(() => {
+    const pesquisar = async () => {
+      try {
+        const resultado = await api.get(`/api/v1/clients?page=${0}&size=${20}&query="${search}"`);
+        setClient(resultado.data.content)
+      } catch (error) {
+        console.error('Erro ao buscar dados da API:', error);
+      }
+    };
+    pesquisar();
+  }, [search]);
 
   const handleClick = () => {
     isRefVerMais.current = true;
@@ -168,30 +181,38 @@ export function TableConfig({ title }: ITableComponent) {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {filteredUser.map((u: IUser) => (
-            <Table.Tr key={u.id}>
+          {filteredUser.map((u: IUser, index : any) => (
+            <Table.Tr key={`${u.id}-${index}`}>
               <Table.Td>
                 <Modal opened={isOpened} onClose={closeModal} closeOnClickOutside={false} withCloseButton={false} centered>
+
                   <Flex p={16} align={'center'} gap={15} bg={'white'}>
                     <Box>
-                      <Text size="sm" tt={'uppercase'} c={'#999'}>CONFIGURAÇÕES</Text>
-                      <Text tt={'uppercase'} fw={'bold'} size="md">VINCULAR VENDEDOR(A) A CLIENTES</Text>
+                      <Text size="sm" tt={'uppercase'} c={'#999'}>{`CONFIGURAÇÕES > VINCULAR`}</Text>
+                      <Text tt={'uppercase'} fw={'bold'} size="md">{`VENDEDOR(A) > ${u.username}`}</Text>
                     </Box>
                   </Flex>
-                  <Flex bg="rgba(0, 0, 0, .3)" gap={10} pt={15} mb={40} pb={15} direction={'column'} align={'center'}>
-                    <Box >
-                      <Stack>
-                        {client.map((cli: IClient) => (
-                          <Checkbox
-                            key={`${cli.code}-${cli.name}`}
-                            label={cli.name}
-                            checked={checkedItems.includes(cli.cnpj)}
-                            onChange={() => handleCheckboxChange(cli.cnpj)}
-                          />
-                        ))}
-                      </Stack>
-                    </Box>
+
+                  <Flex mb={15}>
+                    <TextInput miw={'410px'} placeholder={'Pesquisar por nome'} onChange={(e) => setSearch(e.target.value)}/>
                   </Flex>
+                  
+                  <ScrollArea type="scroll" style={{  border: '1px solid' }} mb={10} h={200}>
+                    <Flex gap={10} pt={15} mb={20} pb={10} direction={'column'} align={'start'}>
+                      <Box>
+                        <Stack ml={8} align={'start'}> 
+                          {client.map((cli: IClient, index : any) => (
+                            <Checkbox
+                              key={`${cli.code}-${cli.name}-${index}`}
+                              label={cli.name}
+                              checked={checkedItems.includes(cli.cnpj)}
+                              onChange={() => handleCheckboxChange(cli.cnpj)}
+                            />
+                          ))}
+                        </Stack>
+                      </Box>
+                    </Flex>
+                  </ScrollArea>
 
                   <Flex gap={10} pb={12} direction={'column'} align={'center'}>
                     <Button color="#0855A3" onClick={vincular}>Confirmar</Button>
@@ -223,6 +244,6 @@ export function TableConfig({ title }: ITableComponent) {
         </Table.Tbody>
       </Table>
       <Footer color={""} radius={""} onHandleClick={handleClick} />
-    </Box>
+    </Box >
   );
 }

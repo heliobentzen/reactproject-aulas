@@ -1,4 +1,4 @@
-import { Avatar, Button, Center, Flex, Text } from '@mantine/core';
+import { Avatar, Button, Center, Flex, HoverCard, Text } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import logoutIco from '../../assets/icons/logout.svg';
 import ApiService from '../../services/ApiService';
@@ -38,7 +38,7 @@ export function User() {
             'image_id': `${resUpload.data.id}`,
           }
         );
-        
+
         setId(resUpload.data.id);
 
       } catch (error) {
@@ -58,22 +58,28 @@ export function User() {
   }, [id]);
 
   const handleAvatarButtonClick = () => {
-    if(fileInputRef.current){
+    if (fileInputRef.current) {
       (fileInputRef.current as any).click();
     }
   };
 
   return (
     <Flex justify={'space-between'} p={10}>
-      <input
-        type="file"
-        ref={fileInputRef}
-        style={{ display: 'none' }}
-        onChange={handleFileChange}
-      />
-      <Button variant="transparent" w={50} p={0} onClick={handleAvatarButtonClick} >
-        <Avatar size="45" radius="md" src={link} />
-      </Button>
+
+      <HoverCard width={280} shadow="md">
+        <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange}/>
+
+        <HoverCard.Target>
+          <Button variant="transparent" w={50} p={0} onClick={handleAvatarButtonClick} >
+            <Avatar size="45" radius="md" src={link} />
+          </Button>
+        </HoverCard.Target>
+        <HoverCard.Dropdown>
+          <Text size="sm">
+            Clique na imagem para mudar a foto de perfil.
+          </Text>
+        </HoverCard.Dropdown>
+      </HoverCard>
 
       <Flex direction={'column'}>
         <Text>{localStorage.getItem('username')}</Text>
