@@ -79,10 +79,10 @@ export function TableConfig({ title }: ITableComponent) {
   const [search, setSearch] = useState('');
   useEffect(() => {
     const pesquisar = async () => {
-      let busca : string = ''; 
-      if(search === ''){
+      let busca: string = '';
+      if (search === '') {
         busca = 'a';
-      }else{
+      } else {
         busca = search;
       }
 
@@ -127,13 +127,13 @@ export function TableConfig({ title }: ITableComponent) {
     );
   };
 
-  const vincular = () => {
+  const vincular = (id: string) => {
     const dados = {
       "clients": checkedItems
     }
 
     const salvar = async () => {
-      const response = await api.get('/api/v1/users/me');
+      const response = await api.get(`/api/v1/users/${id}`);
 
       api.post(`/api/v1/users/${response.data.id}/clients`, dados)
         .then(response => {
@@ -188,7 +188,7 @@ export function TableConfig({ title }: ITableComponent) {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {filteredUser.map((u: IUser, index : any) => (
+          {filteredUser.map((u: IUser, index: any) => (
             <Table.Tr key={`${u.id}-${index}`}>
               <Table.Td>
                 <Modal opened={isOpened} onClose={closeModal} closeOnClickOutside={false} withCloseButton={false} centered>
@@ -201,14 +201,14 @@ export function TableConfig({ title }: ITableComponent) {
                   </Flex>
 
                   <Flex mb={15}>
-                    <TextInput miw={'410px'} placeholder={'Pesquisar por nome'} onChange={(e) => setSearch(e.target.value)}/>
+                    <TextInput miw={'410px'} placeholder={'Pesquisar por nome'} onChange={(e) => setSearch(e.target.value)} />
                   </Flex>
-                  
-                  <ScrollArea type="scroll" style={{  border: '1px solid' }} mb={10} h={200}>
+
+                  <ScrollArea type="scroll" style={{ border: '1px solid' }} mb={10} h={200}>
                     <Flex gap={10} pt={15} mb={20} pb={10} direction={'column'} align={'start'}>
                       <Box>
-                        <Stack ml={8} align={'start'}> 
-                          {client.map((cli: IClient, index : any) => (
+                        <Stack ml={8} align={'start'}>
+                          {client.map((cli: IClient, index: any) => (
                             <Checkbox
                               key={`${cli.code}-${cli.name}-${index}`}
                               label={cli.name}
@@ -222,7 +222,7 @@ export function TableConfig({ title }: ITableComponent) {
                   </ScrollArea>
 
                   <Flex gap={10} pb={12} direction={'column'} align={'center'}>
-                    <Button color="#0855A3" onClick={vincular}>Confirmar</Button>
+                    <Button color="#0855A3" onClick={() => { vincular(u.id) }}>Confirmar</Button>
                     <Button color="#0855A3" variant="transparent" onClick={closeModal}>Descartar alteração</Button>
                   </Flex>
                 </Modal>
