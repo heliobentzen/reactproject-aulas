@@ -26,8 +26,16 @@ export function TableConfig({ title }: ITableComponent) {
   const [limpar, setLimpar] = useState(false);
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [isOpened, setIsOpened] = useState(false);
-  const openModal = () => setIsOpened(true);
-  const closeModal = () => setIsOpened(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const openModal = (item: any) => {
+    setSelectedItem(item);
+    setIsOpened(true);
+  }
+  const closeModal = () => {
+    setSelectedItem(null);
+    setIsOpened(false);
+  }
+
   const isRefInicial = useRef(true);
   const isRefInicialClient = useRef(true);
   const isRefVerMais = useRef(false);
@@ -128,30 +136,32 @@ export function TableConfig({ title }: ITableComponent) {
   };
 
   const vincular = (id: string) => {
-    const dados = {
-      "clients": checkedItems
+    if (checkedItems.length != 0) {
+      const dados = {
+        "clients": checkedItems
+      }
+
+      const salvar = async () => {
+        //const response = await api.get(`/api/v1/users/${id}`);
+        api.post(`/api/v1/users/${id}/clients`, dados)
+          .then(response => {
+            console.log('Resposta da API:', response.data);
+            setCheckedItems([]);
+            closeModal();
+            const fetchAndSetUser = async () => {
+              const data = await fetchUser();
+              setUser(data.content);
+              setFilteredUser(data.content);
+            };
+            fetchAndSetUser();
+          })
+          .catch(error => {
+            console.error('Erro ao vincular:', error);
+          });
+      };
+      salvar();
     }
 
-    const salvar = async () => {
-      const response = await api.get(`/api/v1/users/${id}`);
-
-      api.post(`/api/v1/users/${response.data.id}/clients`, dados)
-        .then(response => {
-          console.log('Resposta da API:', response.data);
-          setCheckedItems([]);
-          closeModal();
-          const fetchAndSetUser = async () => {
-            const data = await fetchUser();
-            setUser(data.content);
-            setFilteredUser(data.content);
-          };
-          fetchAndSetUser();
-        })
-        .catch(error => {
-          console.error('Erro ao vincular:', error);
-        });
-    };
-    salvar();
   }
 
   return (
@@ -187,60 +197,24 @@ export function TableConfig({ title }: ITableComponent) {
             <Table.Th style={weightRegular}>Edição</Table.Th>
           </Table.Tr>
         </Table.Thead>
+
         <Table.Tbody>
           {filteredUser.map((u: IUser, index: any) => (
             <Table.Tr key={`${u.id}-${index}`}>
               <Table.Td>
-                <Modal opened={isOpened} onClose={closeModal} closeOnClickOutside={false} withCloseButton={false} centered>
-
-                  <Flex p={16} align={'center'} gap={15} bg={'white'}>
-                    <Box>
-                      <Text size="sm" tt={'uppercase'} c={'#999'}>{`CONFIGURAÇÕES > VINCULAR`}</Text>
-                      <Text tt={'uppercase'} fw={'bold'} size="md">{`VENDEDOR(A) > ${u.username}`}</Text>
-                    </Box>
-                  </Flex>
-
-                  <Flex mb={15}>
-                    <TextInput miw={'410px'} placeholder={'Pesquisar por nome'} onChange={(e) => setSearch(e.target.value)} />
-                  </Flex>
-
-                  <ScrollArea type="scroll" style={{ border: '1px solid' }} mb={10} h={200}>
-                    <Flex gap={10} pt={15} mb={20} pb={10} direction={'column'} align={'start'}>
-                      <Box>
-                        <Stack ml={8} align={'start'}>
-                          {client.map((cli: IClient, index: any) => (
-                            <Checkbox
-                              key={`${cli.code}-${cli.name}-${index}`}
-                              label={cli.name}
-                              checked={checkedItems.includes(cli.cnpj)}
-                              onChange={() => handleCheckboxChange(cli.cnpj)}
-                            />
-                          ))}
-                        </Stack>
-                      </Box>
-                    </Flex>
-                  </ScrollArea>
-
-                  <Flex gap={10} pb={12} direction={'column'} align={'center'}>
-                    <Button color="#0855A3" onClick={() => { vincular(u.id) }}>Confirmar</Button>
-                    <Button color="#0855A3" variant="transparent" onClick={closeModal}>Descartar alteração</Button>
-                  </Flex>
-                </Modal>
-
-                <Button variant="subtle" size="md" c="#030229" onClick={openModal}>{u.username}</Button>
+                <Button variant="subtle" size="md" c="#030229" onClick={() => { openModal(u) }}>{u.username}</Button>
               </Table.Td>
-
               <Table.Td>
-                {u.clients?.map((client) => (
-                  <div key={`${client.name}-${client.uf}`}>
+                {u.clients?.map((client, index) => (
+                  <div key={`${client.name}-${index}`}>
                     {client.name}
                   </div>
                 ))}
               </Table.Td>
 
               <Table.Td>
-                {u.clients?.map((client) => (
-                  <div key={`${client.name}-${client.uf}`}>
+                {u.clients?.map((client, index) => (
+                  <div key={`${client.name}-${index}`}>
                     {client.uf}
                   </div>
                 ))}
@@ -250,6 +224,46 @@ export function TableConfig({ title }: ITableComponent) {
           ))}
         </Table.Tbody>
       </Table>
+
+      {isOpened && (
+        <Modal opened={isOpened} onClose={closeModal} closeOnClickOutside={false} withCloseButton={false} centered>
+
+          <Flex p={16} align={'center'} gap={15} bg={'white'}>
+            <Box>
+              <Text size="sm" tt={'uppercase'} c={'#999'}>{`CONFIGURAÇÕES > VINCULAR`}</Text>
+              <Text tt={'uppercase'} fw={'bold'} size="md">{`VENDEDOR(A) > ${selectedItem.username}`}</Text>
+            </Box>
+          </Flex>
+
+          <Flex mb={15}>
+            <TextInput miw={'410px'} placeholder={'Pesquisar por nome'} onChange={(e) => setSearch(e.target.value)} />
+          </Flex>
+
+          <ScrollArea type="scroll" style={{ border: '1px solid' }} mb={10} h={200}>
+            <Flex gap={10} pt={15} mb={20} pb={10} direction={'column'} align={'start'}>
+              <Box>
+                <Stack ml={8} align={'start'}>
+                  {client.map((cli: IClient, index: any) => (
+                    <Checkbox
+                      key={`${cli.code}-${cli.name}-${index}`}
+                      label={cli.name}
+                      checked={checkedItems.includes(cli.cnpj)}
+                      onChange={() => handleCheckboxChange(cli.cnpj)}
+                    />
+                  ))}
+                </Stack>
+              </Box>
+            </Flex>
+          </ScrollArea>
+
+          <Flex gap={10} pb={12} direction={'column'} align={'center'}>
+            <Button color="#0855A3" onClick={() => { vincular(selectedItem.id) }}>Confirmar</Button>
+            <Button color="#0855A3" variant="transparent" onClick={closeModal}>Descartar alteração</Button>
+          </Flex>
+        </Modal>
+      )}
+
+
       <Footer color={""} radius={""} onHandleClick={handleClick} />
     </Box >
   );
