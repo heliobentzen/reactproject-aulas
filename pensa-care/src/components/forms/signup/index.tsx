@@ -1,7 +1,7 @@
 import { Anchor, Button, Center, Checkbox, PasswordInput, Text, TextInput, Title, } from '@mantine/core';
-import axios from 'axios';
 import { FormEvent, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ApiService from '../../../services/ApiService';
 
 export function Signup(props: any) {
   const [email, setEmail] = useState('');
@@ -14,9 +14,7 @@ export function Signup(props: any) {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const api = axios.create({
-    baseURL: 'http://localhost:8080',
-  });
+  const api = new ApiService('');
 
   const salvar = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
