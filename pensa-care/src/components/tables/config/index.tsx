@@ -1,13 +1,13 @@
-import { Box, Table, Flex, Button, Modal, Title, Text, Stack, Checkbox, TextInput, ScrollArea } from '@mantine/core';
-import { useEffect, useRef, useState } from 'react';
-import { Footer, TableHeader } from '../components';
+import { Box, Button, Checkbox, Flex, Modal, ScrollArea, Stack, Table, Text, TextInput, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useEffect, useRef, useState } from 'react';
+import { IClient } from '../../../interfaces/table/IClient';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { IService } from '../../../interfaces/table/IService';
 import { IUser } from '../../../interfaces/table/IUser';
-import { Signup } from '../../forms';
 import ApiService from '../../../services/ApiService';
-import { IClient } from '../../../interfaces/table/IClient';
+import { Signup } from '../../forms';
+import { Footer, TableHeader } from '../components';
 
 interface ITableComponent extends ITableHeader {
   data: IService[];
@@ -136,7 +136,7 @@ export function TableConfig({ title }: ITableComponent) {
       const response = await api.get(`/api/v1/users/${id}`);
 
       api.post(`/api/v1/users/${response.data.id}/clients`, dados)
-        .then(response => {
+      .then(response => {
           console.log('Resposta da API:', response.data);
           setCheckedItems([]);
           closeModal();
@@ -203,8 +203,8 @@ export function TableConfig({ title }: ITableComponent) {
                   <Flex mb={15}>
                     <TextInput miw={'410px'} placeholder={'Pesquisar por nome'} onChange={(e) => setSearch(e.target.value)} />
                   </Flex>
-
-                  <ScrollArea type="scroll" style={{ border: '1px solid' }} mb={10} h={200}>
+                  
+                  <ScrollArea type="scroll" style={{  border: '1px solid' }} mb={10} h={200}>
                     <Flex gap={10} pt={15} mb={20} pb={10} direction={'column'} align={'start'}>
                       <Box>
                         <Stack ml={8} align={'start'}>
@@ -232,7 +232,7 @@ export function TableConfig({ title }: ITableComponent) {
 
               <Table.Td>
                 {u.clients?.map((client) => (
-                  <div key={`${client.name}-${client.uf}`}>
+                  <div key={`${client.name}-${client.cnpj}-${client.uf}`}>
                     {client.name}
                   </div>
                 ))}
@@ -240,7 +240,7 @@ export function TableConfig({ title }: ITableComponent) {
 
               <Table.Td>
                 {u.clients?.map((client) => (
-                  <div key={`${client.name}-${client.uf}`}>
+                  <div key={`${client.name}-${client.cnpj}-${client.uf}`}>
                     {client.uf}
                   </div>
                 ))}
