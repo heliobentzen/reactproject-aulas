@@ -79,8 +79,15 @@ export function TableConfig({ title }: ITableComponent) {
   const [search, setSearch] = useState('');
   useEffect(() => {
     const pesquisar = async () => {
+      let busca : string = ''; 
+      if(search === ''){
+        busca = 'a';
+      }else{
+        busca = search;
+      }
+
       try {
-        const resultado = await api.get(`/api/v1/clients?page=${0}&size=${20}&query="${search}"`);
+        const resultado = await api.get(`/api/v1/clients?page=${0}&size=${50}&query=${busca}`);
         setClient(resultado.data.content)
       } catch (error) {
         console.error('Erro ao buscar dados da API:', error);
