@@ -2,12 +2,12 @@ import { Box, Table, Text } from '@mantine/core';
 import { Footer, TableHeader } from '../../components';
 import { Maintenance } from '../../components/maintenance';
 
-import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
-import { Model } from '../../components/model';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
 import { IService } from '../../../../interfaces/table/IService';
 import ApiService from '../../../../services/ApiService';
+import { Model } from '../../components/model';
 
 // Create an axios instance
 const api = new ApiService('');
@@ -97,9 +97,7 @@ export function TableDetails({ title, result, client }: any) {
             <Table.Th pl={50} style={weightRegular}>
               Serial/Modelo
             </Table.Th>
-            <Table.Th pl={10} style={weightRegular}>
-              Status/Lansolver
-            </Table.Th>
+            
             <Table.Th style={weightRegular}>Ordem de serviço</Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -107,7 +105,7 @@ export function TableDetails({ title, result, client }: any) {
           {filteredEquipment.map((d: any) => (
             <Table.Tr>
             <Maintenance
-                data={d.date ? d.date : 'N/D'}
+                data={d.date ? new Date(d.date).toLocaleDateString('pt-BR') : "N/D"}
                 type={d.type === 'MAINTENANCE' ? 'Corretiva' : 'Preventiva'}
                 client={d.name}
               />
@@ -118,10 +116,7 @@ export function TableDetails({ title, result, client }: any) {
                 name={d.items[0].model}
               />
 
-              <Table.Td>
-                <Text>{'N/D'}</Text>
-              </Table.Td>
-
+          
               <Table.Td>
                 <Text>{d.order_number}</Text>
               </Table.Td>

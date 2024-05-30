@@ -24,7 +24,7 @@ export function PreventiveDate({ preventiveDate, done }: IPreventiveDate) {
   return (
     <Table.Td>
       <Flex direction={'column'} gap={4}>
-        <Text>{preventiveDateObj.toLocaleDateString()}</Text>
+        <Text>{preventiveDateObj.toLocaleDateString('pt-BR')}</Text>
         <Text c="#999" size="sm">
           {diffDays > 0 ? `${diffDays} dias atrás` : `Em ${Math.abs(diffDays)} dias`}
         </Text>

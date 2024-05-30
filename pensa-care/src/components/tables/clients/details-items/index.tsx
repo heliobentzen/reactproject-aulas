@@ -1,12 +1,12 @@
 import { Box, Table, Text } from '@mantine/core';
 import { Footer, TableHeader } from '../../components';
 
-import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
-import { Model } from '../../components/model';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import ApiService from '../../../../services/ApiService';
+import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
 import { IEquipment } from '../../../../interfaces/table/IEquipment';
+import ApiService from '../../../../services/ApiService';
+import { Model } from '../../components/model';
 
 // Create an axios instance
 const api = new ApiService('');
@@ -122,7 +122,7 @@ export function TableDetailsItems({ title, result, client }: any) {
               </Table.Td>
 
               <Table.Td>
-                <Text>{d.next_service ? new Date(d.next_service).toLocaleDateString() : "N/D"}</Text>
+                <Text>{d.next_service ? new Date(d.next_service).toLocaleDateString('pt-BR') : "N/D"}</Text>
               </Table.Td>
           </Table.Tr>
           ))}

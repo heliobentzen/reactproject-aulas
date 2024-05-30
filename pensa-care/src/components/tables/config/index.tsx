@@ -230,7 +230,7 @@ export function TableConfig({ title }: ITableComponent) {
           <Flex p={16} align={'center'} gap={15} bg={'white'}>
             <Box>
               <Text size="sm" tt={'uppercase'} c={'#999'}>{`CONFIGURAÇÕES > VINCULAR`}</Text>
-              <Text tt={'uppercase'} fw={'bold'} size="md">{`VENDEDOR(A) > ${selectedItem.username}`}</Text>
+              <Text tt={'uppercase'} fw={'bold'} size="md">{`VENDEDOR(A) > ${selectedItem?.username}`}</Text>
             </Box>
           </Flex>
 

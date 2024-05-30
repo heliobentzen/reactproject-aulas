@@ -4,8 +4,8 @@ import { useParams } from 'react-router-dom';
 import { Breadcrumbs } from '../../../components/breadcrumbs';
 import { ClientDetails } from '../../../components/details/index';
 import { TableDetails } from '../../../components/tables/clients/details';
-import { ClientTimeline } from '../../../components/timeline';
 import { TableDetailsItems } from '../../../components/tables/clients/details-items';
+import { ClientTimeline } from '../../../components/timeline';
 import ApiService from '../../../services/ApiService';
 
 
@@ -70,7 +70,9 @@ export function ClientDetailsPage() {
         gap={20}
       >
         <ClientDetails client={client} />
-        <TableDetails title={'Histórico de Manutenções'} client={client} result={services.length} />
+        <div id="history-section">
+          <TableDetails title={'Histórico de Manutenções'} client={client} result={services.length} />
+        </div>
         <TableDetailsItems title={'Histórico de Itens'} client={client} result={itens.length} />
       </Flex>
     </Box>

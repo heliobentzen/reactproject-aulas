@@ -1,10 +1,10 @@
 import { Box, Flex, Text, Timeline, Title } from '@mantine/core';
 
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
 import { StepIcon } from '../../assets/icons/timeline/step';
 import { IClient } from '../../interfaces/table/IClient';
-import { Footer } from '../tables/components';
-import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
 import ApiService from '../../services/ApiService';
+import { Footer } from '../tables/components';
 
 interface ClientTimelineProps {
   client: IClient;
@@ -30,7 +30,10 @@ export function ClientTimeline({client}: ClientTimelineProps) {
   });
 
   const handleClick = () => {
-    
+    const timelineSection = document.getElementById('history-section');
+    if (timelineSection) {
+      timelineSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -66,7 +69,7 @@ export function ClientTimeline({client}: ClientTimelineProps) {
           {services.slice(0, 5).map((d: { type: string; date: string | number | Date; description: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }) => (
             <Timeline.Item
               bullet={<StepIcon color={d.type === 'MAINTENANCE' ? '#A32219' : '#C3C985'} />}
-              title={<Text fw={'bold'}>{d.date ? new Date(d.date).toLocaleDateString() : 'N/D'}</Text>}
+              title={<Text fw={'bold'}>{d.date ? new Date(d.date).toLocaleDateString('pt-BR') : 'N/D'}</Text>}
               lineVariant="dashed"
               opacity={0.8}
               c={'dimmed'}

@@ -165,7 +165,7 @@ export function ModalDetailsCard(card: ModalDetailsCardProps) {
             >
               <Flex gap={30} pos={'absolute'} top={0} left={-120}>
                 <Text fw={'bold'}>
-                  {new Date(d.date).toLocaleDateString()}
+                  {new Date(d.date).toLocaleDateString('pt-BR')}
                   <Text ta={'center'} size="md" c={d.type === 'MAINTENANCE' ? '#A32219' : '#88960E'}>
                   {d.type === 'MAINTENANCE' ? 'Corretiva' : 'Preventiva'}
                   </Text>

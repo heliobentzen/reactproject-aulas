@@ -4,7 +4,7 @@ import { IPreventiveDate } from '../../../../interfaces/table/IClient';
 
 export function DateComponent({ preventiveDate }: IPreventiveDate) {
   const date = new Date(preventiveDate as string);
-  const formattedDate = !isNaN(date.getTime()) ? date.toLocaleDateString() : 'N/A';
+  const formattedDate = !isNaN(date.getTime()) ? date.toLocaleDateString('pt-BR') : 'N/A';
   
   return (
     <Table.Td>

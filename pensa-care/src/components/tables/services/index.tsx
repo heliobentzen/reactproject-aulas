@@ -11,8 +11,8 @@ import {
 
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { IService } from '../../../interfaces/table/IService';
-import { DateComponent } from '../components/date';
 import ApiService from '../../../services/ApiService';
+import { DateComponent } from '../components/date';
 
 interface ITableComponent extends ITableHeader {
   data: IService[];
@@ -33,6 +33,7 @@ export function TableServices({ title }: ITableComponent) {
   const servicesPerPage = 12;
   const fetchServices = async () => {
     const response = await api.get(`/api/v1/services?page=${currentPage}&size=${servicesPerPage}`);
+    //`/api/v1/clients/${cnpj}/services?page=${currentPage}&size=${servicesPerPage}`
     setTotalElements(response.data.total_elements);
     return response.data;
   };
