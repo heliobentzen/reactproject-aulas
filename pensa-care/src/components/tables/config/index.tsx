@@ -87,15 +87,15 @@ export function TableConfig({ title }: ITableComponent) {
   const [search, setSearch] = useState('');
   useEffect(() => {
     const pesquisar = async () => {
-      let busca: string = '';
+      let url: string = '';
       if (search === '') {
-        busca = 'a';
+        url = `/api/v1/clients?page=${0}&size=${50}`;
       } else {
-        busca = search;
+        url = `/api/v1/clients?page=${0}&size=${50}&query=${search}`;
       }
 
       try {
-        const resultado = await api.get(`/api/v1/clients?page=${0}&size=${50}&query=${busca}`);
+        const resultado = await api.get(url);
         setClient(resultado.data.content)
       } catch (error) {
         console.error('Erro ao buscar dados da API:', error);
@@ -161,7 +161,6 @@ export function TableConfig({ title }: ITableComponent) {
       };
       salvar();
     }
-
   }
 
   return (
