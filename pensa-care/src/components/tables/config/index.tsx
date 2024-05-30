@@ -27,7 +27,10 @@ export function TableConfig({ title }: ITableComponent) {
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [isOpened, setIsOpened] = useState(false);
   const [selectedItem, setSelectedItem] = useState<IUser | null>(null);
-  const openModal = (item: any) => {
+  const openModal = (item: any,  clients: IClient[]) => {
+    const cnpjs = clients.map(client => client.cnpj);
+    setCheckedItems([]);
+    setCheckedItems(cnpjs);
     setSelectedItem(item);
     setIsOpened(true);
   }
@@ -201,7 +204,7 @@ export function TableConfig({ title }: ITableComponent) {
           {filteredUser.map((u: IUser, index: any) => (
             <Table.Tr key={`${u.id}-${index}`}>
               <Table.Td>
-                <Button variant="subtle" size="md" c="#030229" onClick={() => { openModal(u) }}>{u.username}</Button>
+                <Button variant="subtle" size="md" c="#030229" onClick={() => { openModal(u, u.clients) }}>{u.username}</Button>
               </Table.Td>
               <Table.Td>
                 {u.clients?.map((client, index) => (
