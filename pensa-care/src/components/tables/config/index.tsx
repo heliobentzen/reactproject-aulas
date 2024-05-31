@@ -27,12 +27,14 @@ export function TableConfig({ title }: ITableComponent) {
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [isOpened, setIsOpened] = useState(false);
   const [selectedItem, setSelectedItem] = useState<IUser | null>(null);
-  const openModal = (item: any,  clients: IClient[]) => {
-    const cnpjs = clients.map(client => client.cnpj);
-    setCheckedItems([]);
-    setCheckedItems(cnpjs);
-    setSelectedItem(item);
-    setIsOpened(true);
+  const openModal = (item: any,  clients: IClient[] | undefined) => {
+    if(client != undefined){
+      const cnpjs = clients?.map(client => client.cnpj);
+      setCheckedItems([]);
+      setCheckedItems(cnpjs ?? []);
+      setSelectedItem(item);
+      setIsOpened(true);
+    }
   }
   const closeModal = () => {
     setSelectedItem(null);
@@ -138,7 +140,7 @@ export function TableConfig({ title }: ITableComponent) {
     );
   };
 
-  const vincular = (id: string) => {
+  const vincular = (id: string | undefined) => {
     if (checkedItems.length != 0) {
       const dados = {
         "clients": checkedItems
@@ -259,7 +261,7 @@ export function TableConfig({ title }: ITableComponent) {
           </ScrollArea>
 
           <Flex gap={10} pb={12} direction={'column'} align={'center'}>
-            <Button color="#0855A3" onClick={() => { vincular(selectedItem.id) }}>Confirmar</Button>
+            <Button color="#0855A3" onClick={() => { vincular(selectedItem?.id) }}>Confirmar</Button>
             <Button color="#0855A3" variant="transparent" onClick={closeModal}>Descartar alteração</Button>
           </Flex>
         </Modal>
