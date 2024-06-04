@@ -2,7 +2,7 @@ import { Box, Table, Text } from '@mantine/core';
 import { Footer, TableHeader } from '../../components';
 import { Maintenance } from '../../components/maintenance';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
 import { IService } from '../../../../interfaces/table/IService';
@@ -21,6 +21,7 @@ export function TableDetails({ title, result, client }: any) {
   const [totalPages, setTotalPages] = useState(100);
   const [searchTerm, setSearchTerm] = useState('');
   const [sort] = useState('date'); 
+  const isRefVerMais = useRef(false);
 
   const { id } = useParams<{ id: string }>();
   const cnpj = id;
@@ -30,23 +31,22 @@ export function TableDetails({ title, result, client }: any) {
   const equipmentPerPage = 12;
   
   const fetchItens = useCallback(async () => {
-    setSearchTerm(searchTerm)
-    api.get(`/api/v1/clients/${cnpj}/services`,
-      {
-        page: currentPage - 1,
-        size: equipmentPerPage
-    },
-  ).then((response) => {
-    setTotalElements(response.data.total_elements);
-    setTotalPages(response.data.total_pages);
+    if(currentPage <= totalPages){
+      setSearchTerm(searchTerm)
+      api.get(`/api/v1/clients/${cnpj}/services?page=${currentPage - 1}&size=${equipmentPerPage}`)
+      .then((response) => {
+      setTotalElements(response.data.total_elements);
+      setTotalPages(response.data.total_pages);
 
-    setEquipment(response.data.content);
-    setFilteredEquipment(response.data.content);
-
-    const newItens = response.data;
-    setEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
-    setFilteredEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
-  });
+      if(!isRefVerMais.current){
+        setEquipment(response.data.content);
+        setFilteredEquipment(response.data.content);
+      }else{
+        const newItens = response.data;
+        setEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
+        setFilteredEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
+      }
+  })}
   
   }, [currentPage, searchTerm, sort]);
 
@@ -59,8 +59,8 @@ export function TableDetails({ title, result, client }: any) {
   }, [currentPage]);
 
   const handleClick = () => {
-    const nextPage = currentPage < totalPages ? currentPage + 1 : 1;
-    setCurrentPage(nextPage); 
+    setCurrentPage(prevPage => prevPage + 1);
+    isRefVerMais.current = true;
   };
 
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {

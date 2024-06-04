@@ -52,6 +52,8 @@ export function TableConfig({ title }: ITableComponent) {
     return response.data;
   };
 
+  open
+
   useEffect(() => {
     if (isRefInicial.current) {
       const fetchAndSetUser = async () => {
