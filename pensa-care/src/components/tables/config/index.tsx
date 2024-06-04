@@ -186,7 +186,7 @@ export function TableConfig({ title }: ITableComponent) {
           </Title>
           <Signup isLogin={false} />
         </Modal>
-        <Button c="#030229" onClick={open}>Adicionar</Button>
+
 
       </Flex>
 
@@ -196,8 +196,6 @@ export function TableConfig({ title }: ITableComponent) {
             <Table.Th style={weightRegular}>Usuário</Table.Th>
             <Table.Th style={weightRegular}>Cliente(s)</Table.Th>
             <Table.Th style={weightRegular}>UF</Table.Th>
-            <Table.Th style={weightRegular}>Macro Segmento</Table.Th>
-            <Table.Th style={weightRegular}>Micro Segmento</Table.Th>
             <Table.Th style={weightRegular}>Edição</Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -223,6 +221,9 @@ export function TableConfig({ title }: ITableComponent) {
                   </div>
                 ))}
               </Table.Td>
+              <Table.Td>
+                <a href="#" onClick={() => { openModal(u, u.clients) }}>Editar</a>
+              </Table.Td>
 
             </Table.Tr>
           ))}
@@ -240,7 +241,7 @@ export function TableConfig({ title }: ITableComponent) {
           </Flex>
 
           <Flex mb={15}>
-            <TextInput miw={'410px'} placeholder={'Pesquisar por nome'} onChange={(e) => setSearch(e.target.value)} />
+            <TextInput miw={'410px'} placeholder={'Selecionar um ou mais clientes'} onChange={(e) => setSearch(e.target.value)} />
           </Flex>
 
           <ScrollArea type="scroll" style={{ border: '1px solid' }} mb={10} h={200}>
@@ -261,7 +262,7 @@ export function TableConfig({ title }: ITableComponent) {
           </ScrollArea>
 
           <Flex gap={10} pb={12} direction={'column'} align={'center'}>
-            <Button color="#0855A3" onClick={() => { vincular(selectedItem?.id) }}>Confirmar</Button>
+            <Button color="#0855A3" onClick={() => { vincular(selectedItem?.id) }}>Salvar</Button>
             <Button color="#0855A3" variant="transparent" onClick={closeModal}>Descartar alteração</Button>
           </Flex>
         </Modal>

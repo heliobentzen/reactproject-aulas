@@ -8,16 +8,21 @@ import {
   ItensIcon,
   ServicesIcon
 } from '../../assets/icons/nav';
-import { NavIcon } from '../../interfaces/NavIcon';
 import { Logo } from '../logo';
 
-interface INavLink {
-  Icon: ({ active }: NavIcon) => React.ReactElement;
-  title: string;
-  src: string;
-}
+// Exemplo de subitens em Configurações
+const configSubitems = [
+  {
+    title: 'Usuários',
+    src: '/users',
+  },
+  {
+    title: 'Relação Vendedor/Cliente',
+    src: '/config',
+  },
+];
 
-const data: INavLink[] = [
+const data = [
   {
     Icon: DashBoardIcon,
     title: 'Dashboard',
@@ -42,13 +47,15 @@ const data: INavLink[] = [
     Icon: ConfigIcon,
     title: 'Configurações',
     src: '/config',
-  }
+    // Adicione os subitens aqui
+    subitems: configSubitems,
+  },
 ];
 
 export function NavBar() {
   const [active, setActive] = useState(0);
 
-  const navLinks = data.map(({ src, title, Icon }, index) => {
+  const navLinks = data.map(({ src, title, Icon, subitems }, index) => {
     const isActive = index === active;
 
     return (
@@ -71,7 +78,20 @@ export function NavBar() {
               : '',
           },
         }}
-      />
+      >
+        {/* Renderize os subitens dentro do NavLink de Configurações */}
+        {subitems && subitems.map((subitem) => (
+          <NavLink
+            component={Link}
+            to={subitem.src}
+            key={subitem.title}
+            active={false} // Subitens não precisam ficar ativos
+            label={subitem.title}
+            h={48}
+            pl={30}
+          />
+        ))}
+      </NavLink>
     );
   });
 

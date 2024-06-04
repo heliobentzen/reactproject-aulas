@@ -8,6 +8,7 @@ import { ConfigPage } from '../pages/config';
 import { DashboardPage } from '../pages/dashboard';
 import { ItensPage } from '../pages/itens';
 import { ServicesPage } from '../pages/services';
+import { UsersPage } from '../pages/users';
 import withAuthProtection from './AuthProtection';
 
 const ProtectedDashboard = withAuthProtection(DashboardPage);
@@ -16,6 +17,7 @@ const ProtectedClientDetails = withAuthProtection(ClientDetailsPage);
 const ProtectedItens = withAuthProtection(ItensPage);
 const ProtectedServices = withAuthProtection(ServicesPage);
 const ProtectedConfig = withAuthProtection(ConfigPage);
+const ProtectedUsers = withAuthProtection(UsersPage);
 
 export function Router() {
   return (
@@ -37,6 +39,7 @@ export function Router() {
           <Route path="/itens" element={<ProtectedItens />} />
           <Route path="/services" element={<ProtectedServices />} />
           <Route path="/config" element={<ProtectedConfig />} />
+          <Route path="/users" element={<ProtectedUsers />} />
         </Route>
       </Routes>
     </BrowserRouter>
