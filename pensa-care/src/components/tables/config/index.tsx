@@ -190,7 +190,7 @@ export function TableConfig({ title }: ITableComponent) {
         </Modal>
 
 
-      </Flex>
+      </Flex> 
 
       <Table mt={16}>
         <Table.Thead>

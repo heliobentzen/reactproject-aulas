@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Modal, Table, Text, Title } from '@mantine/core';
+import { Box, Button, Flex, Modal, Table, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useRef, useState } from 'react';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
@@ -18,18 +18,20 @@ export function TableUsers({ title }: ITableComponent) {
   const [opened, { open, close }] = useDisclosure(false);
   const weightRegular = { fontWeight: 400 };
   const [user, setUser] = useState<any>([]);
+  const [userEdit, setUserEdit] = useState<IUser>();
   const [filteredUser, setFilteredUser] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalElements, setTotalElements] = useState(1);
   const [limpar, setLimpar] = useState(false);
   const [isOpenedEdit, setIsOpenedEdit] = useState(false);
   const [isOpenedDelete, setIsOpenedDelete] = useState(false);
-  
-  
-  const editModal = () => {
-      setIsOpenedEdit(true);
+
+
+  const editModal = (u: IUser) => {
+    setUserEdit(u);
+    setIsOpenedEdit(true);
   }
-  
+
   const closeModal = () => {
     setIsOpenedDelete(false);
     setIsOpenedEdit(false);
@@ -98,12 +100,7 @@ export function TableUsers({ title }: ITableComponent) {
     setFilteredUser(sortFilteredUser || []);
   }
 
-  
-  const registerUser = () => {
-
-  }
-
-  const deleteUser = (id: string | undefined) => {  
+  const deleteUser = (id: string | undefined) => {
     const save = async () => {
       api.delete(`/api/v1/users/${id}/clients`)
         .then(response => {
@@ -121,8 +118,10 @@ export function TableUsers({ title }: ITableComponent) {
         });
     };
     save();
-    
+
   }
+
+  console.log(filteredUser)
 
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
@@ -136,8 +135,11 @@ export function TableUsers({ title }: ITableComponent) {
       />
 
       <Flex h={40} mt={10} align={'center'} justify={'flex-end'}>
-        <Modal opened={opened} onClose={close} closeOnClickOutside={false} centered>
-          <Title order={2} mt="0" mb={32}>Registro de Usuário</Title>
+        <Modal size={500} opened={opened} onClose={close} closeOnClickOutside={false} centered>
+          <Box mb={30}>
+            <Text size="sm" tt={'uppercase'} c={'#999'}>{`CONFIGURAÇÕES`}</Text>
+            <Text tt={'uppercase'} fw={'bold'} size="md">{`CADASTRAR USUÁRIO`}</Text>
+          </Box>
           <Signup isLogin={false} />
         </Modal>
         <Button c="#030229" onClick={open}>Cadastrar Usuário</Button>
@@ -160,7 +162,7 @@ export function TableUsers({ title }: ITableComponent) {
               <Table.Td>{u.role}</Table.Td>
               <Table.Td>{u.email}</Table.Td>
               <Table.Td>
-                <a href="#" onClick={() => { editModal() }}>Editar</a> | 
+                <a href="#" onClick={() => { editModal(u) }}>Editar</a> |
                 <a href="#" onClick={() => { deleteModal() }}>Excluir</a>
               </Table.Td>
             </Table.Tr>
@@ -168,42 +170,42 @@ export function TableUsers({ title }: ITableComponent) {
         </Table.Tbody>
       </Table>
 
-    {isOpenedEdit && (
-      <Modal opened={isOpenedEdit} onClose={closeModal} closeOnClickOutside={false} withCloseButton={false} centered>
-        <Flex p={16} align={'center'} gap={15} bg={'white'}>
-          <Box>
-            <Text size="sm" tt={'uppercase'} c={'#999'}>{`CONFIGURAÇÕES`}</Text>
-            <Text tt={'uppercase'} fw={'bold'} size="md">{`EDITAR USUÁRIO(A) > ${user.username}`}</Text>
-          </Box>
-        </Flex>
-        <Flex gap={10} pb={12} direction={'column'} align={'center'}>
-          <Button color="#0855A3" onClick={() => { registerUser() }}>Cadastrar</Button>
-          <Button color="#0855A3" variant="transparent" onClick={closeModal}>Descartar alteração</Button>
-        </Flex>
-      </Modal>
-    )}
+      {isOpenedEdit && (
+        <Modal opened={isOpenedEdit} onClose={closeModal} closeOnClickOutside={false} withCloseButton={false} centered>
+            <Box mb={30}>
+              <Text size="sm" tt={'uppercase'} c={'#999'}>{`CONFIGURAÇÕES`}</Text>
+              <Text tt={'uppercase'} fw={'bold'} size="md">{`EDITAR USUÁRIO(A) > ${userEdit?.username}`}</Text>
+            </Box>
 
-    {isOpenedDelete && (
-      <Modal opened={isOpenedDelete} onClose={closeModal} closeOnClickOutside={false} withCloseButton={false} centered>
-        <Flex p={16} align={'center'} gap={15} bg={'white'}>
-          <Box>
-            <Text size="sm" tt={'uppercase'} c={'#999'}>{`CONFIGURAÇÕES`}</Text>
-            <Text tt={'uppercase'} fw={'bold'} size="md">{`EXCLUIR USUÁRIO(A) > ${user.username}`}</Text>
-          </Box>
-        </Flex>
+          <Signup isLogin={false} isEdit={true} user={userEdit}/>
+          <Flex gap={10} pb={12} direction={'column'} align={'center'}>
+            {/*<Button color="#0855A3" onClick={() => { registerUser() }}>Cadastrar</Button>*/}
+            <Button color="#0855A3" variant="transparent" onClick={closeModal}>Descartar alteração</Button>
+          </Flex>
+        </Modal>
+      )}
 
-        <Flex p={16} align={'center'} gap={15} bg={'white'}>
-          <Box>
-            <Text size="sm" c={'#999'}>{`Você tem certeza que deseja excluir 
-              o usuário da lista do Pensacare?`}</Text>              
-          </Box>
-        </Flex>
-        <Flex gap={10} pb={12} direction={'column'} align={'center'}>
-          <Button color="#EB5757" onClick={() => { deleteUser(user.id) }}>Sim, desejo excluir</Button>
-          <Button color="#0855A3" variant="transparent" onClick={closeModal}>Cancelar</Button>
-        </Flex>
-      </Modal>
-    )}
+      {isOpenedDelete && (
+        <Modal opened={isOpenedDelete} onClose={closeModal} closeOnClickOutside={false} withCloseButton={false} centered>
+          <Flex p={16} align={'center'} gap={15} bg={'white'}>
+            <Box>
+              <Text size="sm" tt={'uppercase'} c={'#999'}>{`CONFIGURAÇÕES`}</Text>
+              <Text tt={'uppercase'} fw={'bold'} size="md">{`EXCLUIR USUÁRIO(A) > ${user.username}`}</Text>
+            </Box>
+          </Flex>
+
+          <Flex p={16} align={'center'} gap={15} bg={'white'}>
+            <Box>
+              <Text size="sm" c={'#999'}>{`Você tem certeza que deseja excluir 
+              o usuário da lista do Pensacare?`}</Text>
+            </Box>
+          </Flex>
+          <Flex gap={10} pb={12} direction={'column'} align={'center'}>
+            <Button color="#EB5757" onClick={() => { deleteUser(user.id) }}>Sim, desejo excluir</Button>
+            <Button color="#0855A3" variant="transparent" onClick={closeModal}>Cancelar</Button>
+          </Flex>
+        </Modal>
+      )}
       <Footer color={""} radius={""} onHandleClick={handleClick} />
     </Box >
   );

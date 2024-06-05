@@ -1,4 +1,4 @@
-import { Anchor, Button, Center, Checkbox, PasswordInput, Text, TextInput, Title, } from '@mantine/core';
+import { Anchor, Button, Card, Center, Checkbox, Group, PasswordInput, Radio, Text, TextInput, Title, } from '@mantine/core';
 import { FormEvent, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ApiService from '../../../services/ApiService';
@@ -11,6 +11,7 @@ export function Signup(props: any) {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [role, setRole] = useState('ADMIN');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -44,14 +45,14 @@ export function Signup(props: any) {
           "password": password,
           "fullname": nome,
           "email": email,
-          "role": "ADMIN"
+          "role": role
         }
 
         const headers = {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         };
 
-        api.post('/api/v1/users', dados, { headers }) 
+        api.post('/api/v1/users', dados, { headers })
           .then(response => {
             console.log('Resposta da API:', response.data);
             navigate('/config');
@@ -138,7 +139,7 @@ export function Signup(props: any) {
           placeholder="John Doe"
           size="md"
           withAsterisk
-          value={nome}
+          value={props.isEdit ? props.user?.name : nome}
           onChange={(event) => setNome(event.target.value)}
         />
 
@@ -149,7 +150,7 @@ export function Signup(props: any) {
           size="md"
           mt="md"
           withAsterisk
-          value={email}
+          value={props.isEdit ? props.user.email : email}
           onChange={handleEmailChange}
           error={emailError}
         />
@@ -161,47 +162,79 @@ export function Signup(props: any) {
           size="md"
           mt="md"
           withAsterisk
-          value={user}
+          value={props.isEdit ? props.user.username : user}
           onChange={(event) => setUser(event.target.value)}
+          disabled={props.isEdit ? true : false}
         />
 
-        <PasswordInput
-          variant="filled"
-          label="Senha"
-          placeholder="••••••••"
-          size="md"
-          mt="md"
-          withAsterisk
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-        />
+        {props.isEdit ?
+          ''
+          :
+          <>
+            <PasswordInput
+              variant="filled"
+              label="Senha"
+              placeholder="••••••••"
+              size="md"
+              mt="md"
+              withAsterisk
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
 
-        <PasswordInput
-          variant="filled"
-          label="Confirmar Senha"
-          placeholder="••••••••"
-          size="md"
-          mt="md"
-          withAsterisk
-          value={passwordConfirm}
-          onChange={(event) => setPasswordConfirm(event.target.value)}
-          error={passwordError}
-        />
+            <PasswordInput
+              variant="filled"
+              label="Confirmar Senha"
+              placeholder="••••••••"
+              size="md"
+              mt="md"
+              withAsterisk
+              value={passwordConfirm}
+              onChange={(event) => setPasswordConfirm(event.target.value)}
+              error={passwordError}
+            />
+          </>}
 
-        <Checkbox
-          mt="xl"
-          label={
-            <>
-              Ao criar a conta você concorda com os{' '}
-              <Anchor href="#" target="_blank" inherit>
-                termos de uso e políticas de privacidade.
-              </Anchor>
-            </>
-          }
-        />
+        {props.isLogin ?
+          ''
+          :
+          <>
+            <Text mt={10} mb={10} size="mg">Tipo do usuário</Text>
 
+            <Card shadow="sm" padding="sm" radius="md" withBorder>
+              <Radio.Group
+                name="tipo usuario"
+                label="Selecione o tipo do usuário"
+                withAsterisk
+                value={role}
+                onChange={(event) => setRole(event)}
+              >
+                <Group mt="xs">
+                  <Radio value="ADMIN" label="Administrador" />
+                  <Radio value="SALES" label="Vendedor" />
+                </Group>
+              </Radio.Group>
+            </Card>
+          </>
+        }
+
+        {props.isLogin ?
+          <Checkbox
+            mt="xl"
+            label={
+              <>
+                Ao criar a conta você concorda com os{' '}
+                <Anchor href="#" target="_blank" inherit>
+                  termos de uso e políticas de privacidade.
+                </Anchor>
+              </>
+            }
+          />
+          : ''}
         <Button radius={'md'} fullWidth mt="xl" size="md" type="submit">
-          {props.isLogin ? 'Criar conta' : 'Salvar'}
+          {props.isLogin === true ? 'Criar conta'
+            : props.isEdit === true ? 'Atualizar'
+              : 'Salvar'}
         </Button>
       </form>
 

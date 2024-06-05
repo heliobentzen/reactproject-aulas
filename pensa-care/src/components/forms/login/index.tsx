@@ -101,7 +101,8 @@ export function Login() {
         >
           Entrar
         </Button>
-        <Button
+        {/* 
+          <Button
           variant="outline"
           radius={'md'}
           fullWidth
@@ -113,6 +114,8 @@ export function Login() {
           Cadastre-se
         </Button>
       
+        */}
+        
       </form>
     </Paper>
   );
