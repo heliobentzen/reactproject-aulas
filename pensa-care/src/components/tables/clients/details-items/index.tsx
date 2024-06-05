@@ -109,7 +109,7 @@ export function TableDetailsItems({ title, result, client }: any) {
           {filteredEquipment.map((d: any) => (
             <Table.Tr>
               <Table.Td>
-                <Text>{d.code}</Text>
+                <Text size="sm">{d.code}</Text>
               </Table.Td>
 
               <Model
@@ -118,12 +118,12 @@ export function TableDetailsItems({ title, result, client }: any) {
                 name={d.model}
               />
 
-              <Table.Td>
-                <Text>{d.description}</Text>
+              <Table.Td >
+                <Text size="sm">{d.description}</Text>
               </Table.Td>
 
               <Table.Td>
-                <Text>{d.next_service ? new Date(d.next_service).toLocaleDateString('pt-BR') : "N/D"}</Text>
+                <Text size="sm">{d.next_service ? new Date(d.next_service).toLocaleDateString('pt-BR') : "N/D"}</Text>
               </Table.Td>
           </Table.Tr>
           ))}
