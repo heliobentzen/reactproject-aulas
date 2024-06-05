@@ -1,8 +1,8 @@
-import { Flex, Image, Text, ColorSwatch, Center, Box } from '@mantine/core';
+import { Box, Center, ColorSwatch, Flex, Image, Text } from '@mantine/core';
 
-import sulfIcon from '../../../../../assets/icons/tables/sulf.svg';
 import { useHover } from '@mantine/hooks';
 import { differenceInDays } from 'date-fns';
+import sulfIcon from '../../../../../assets/icons/tables/sulf.svg';
 import ImageApiService from '../../../../../services/ImageApiService';
 
 const imageApiService = new ImageApiService();
@@ -11,7 +11,7 @@ export function GridCard({ open, item }: any) {
   const { hovered, ref } = useHover();
   const today = new Date();
   const nextService = item.next_service ? new Date(item.next_service) : null;
-  const diffDays = nextService ? differenceInDays(today, nextService) : null;
+  const diffDays = nextService ? differenceInDays(nextService, today) : null;
   let color = "red";
 
   if(diffDays){
@@ -43,10 +43,10 @@ export function GridCard({ open, item }: any) {
         >
           <Image src={imageApiService.getEquipmentImageUrl(item.code) || sulfIcon} maw={'90px'} />
           <Flex direction={'column'} align={'center'} gap={10}>
-            <Text ta={'center'} size="lg" lh={'20px'}>
+            <Text ta={'center'} size="md" lh={'16px'}>
               {item.description}
             </Text>
-            <Text size="11px">S/N: {item.serial_number}</Text>
+            <Text size="10px">S/N: {item.serial_number}</Text>
             <Flex mt={8} align={'center'} gap={10} mr={16}>
               <ColorSwatch size="16px" color={color} />
               <Flex direction={'column'} align={'center'}>

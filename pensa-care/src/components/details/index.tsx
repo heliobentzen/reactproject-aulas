@@ -3,12 +3,12 @@ import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { IClient } from '../../interfaces/table/IClient';
+import { IContact } from '../../interfaces/table/IContact';
+import ApiService from '../../services/ApiService';
 import { GridCard } from '../cards/clients/details/grid-card';
 import { GridHeader } from '../grid-header';
 import { ClientInfo } from '../info';
 import { ModalComponent } from '../modal';
-import ApiService from '../../services/ApiService';
-import { IContact } from '../../interfaces/table/IContact';
 
 interface ClientDetailsProps {
   client: IClient;
@@ -72,8 +72,6 @@ export function ClientDetails({client}: ClientDetailsProps) {
 
   return (
     <Box>
-      
-
       <ClientInfo 
         client={client} 
         contacts={contacts}
@@ -83,16 +81,12 @@ export function ClientDetails({client}: ClientDetailsProps) {
         searchPlaceholder="Pesquisar Nome/ Serial number"
       />
       <SimpleGrid
-        cols={{ base: 3, sm: 4, lg: 4 }}
-        bg={'white'}
+        type="container"
+        cols={{ base: 3, sm: 2, lg: 5 }}
+        spacing={{ base: 10, sm: 'xl' }}
         pb={20}
-        px={8}
-        style={{ borderRadius: '10px' }}
       >
-
-        {items.map((d) => (
-            <GridCard open={openModal} item={d}/>
-          ))}
+        {items.map((d) => (<GridCard open={openModal} item={d}/>))}
       </SimpleGrid>
 
       <ModalComponent
