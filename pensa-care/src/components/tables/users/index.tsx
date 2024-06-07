@@ -135,12 +135,16 @@ export function TableUsers({ title }: ITableComponent) {
       />
 
       <Flex h={40} mt={10} align={'center'} justify={'flex-end'}>
-        <Modal size={500} opened={opened} onClose={close} closeOnClickOutside={false} centered>
+        <Modal size={500} opened={opened} onClose={close} closeOnClickOutside={false} withCloseButton={false}	centered>
           <Box mb={30}>
             <Text size="sm" tt={'uppercase'} c={'#999'}>{`CONFIGURAÇÕES`}</Text>
             <Text tt={'uppercase'} fw={'bold'} size="md">{`CADASTRAR USUÁRIO`}</Text>
           </Box>
           <Signup isLogin={false} />
+          <Box ta="center">
+            <Button color="#0855A3" variant="transparent" onClick={close}>Descartar alteração</Button>
+          </Box>
+
         </Modal>
         <Button c="#030229" onClick={open}>Cadastrar Usuário</Button>
       </Flex>
