@@ -1,4 +1,4 @@
-import { Box, Card, Divider, Flex, Modal, Table, Text, Title } from '@mantine/core';
+import { Accordion, Box, Card, Divider, Flex, Modal, Table, Text, Title } from '@mantine/core';
 import { Footer, TableHeader } from '../../components';
 import { Maintenance } from '../../components/maintenance';
 
@@ -107,7 +107,7 @@ export function TableDetails({ title, result, client }: any) {
         columnMode
       />
 
-      <Table mt={16}>
+      <Table highlightOnHover style={{cursor: 'pointer'}} mt={16}>
         <Table.Thead>
           <Table.Tr>
             <Table.Th style={weightRegular}>Data</Table.Th>
@@ -160,7 +160,7 @@ export function TableDetails({ title, result, client }: any) {
             <Divider size={'sm'} my="xs" labelPosition="center" />
             <Title c="#0855A3" size={'h4'}>Informações </Title>
             <Card mt={4} shadow="sm" bg={'#E7E7E7'}>
-              <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>DATA: {equipmentView.date === null ? 'Não informada': new Date(equipmentView.date).toLocaleDateString('pt-BR') }</Text>
+              <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>DATA: {equipmentView.date === null ? 'Não informada' : new Date(equipmentView.date).toLocaleDateString('pt-BR')}</Text>
               <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>DESCRIÇÃO: {equipmentView.description}</Text>
               <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>ORDEM DE SERVIÇO: {equipmentView.order_number}</Text>
               <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>TÉCNICO: {equipmentView.order_number}</Text>
@@ -168,17 +168,22 @@ export function TableDetails({ title, result, client }: any) {
             </Card>
             <Divider size={'sm'} my="xs" labelPosition="center" />
             <Title c="#0855A3" size={'h4'}>Itens </Title>
-
-            {equipmentView.items.map((item: any, index: number) => (
-              <Card key={index} mt={5} shadow="sm" bg={'#E7E7E7'}>
-                <Text fw={'bold'} tt="uppercase" size="sm" >CODIGO: {item.code}</Text>
-                <Text fw={'bold'} tt="uppercase" size="sm" >DATA: {item.date === null ? 'Não informada': new Date(item.date).toLocaleDateString('pt-BR') }</Text>
-                <Text fw={'bold'} tt="uppercase" size="sm" >DESCRIÇÃO: {item.description}</Text>
-                <Text fw={'bold'} tt="uppercase" size="sm" >ITEM: {item.item}</Text>
-                <Text fw={'bold'} tt="uppercase" size="sm" >MODELO: {item.model}</Text>
-                <Text fw={'bold'} tt="uppercase" size="sm" >SERIAL: {item.serial_number}</Text>
-              </Card>
-            ))}
+            <Card p={0} shadow="sm" bg={'#E7E7E7'}>
+              <Accordion chevronPosition="left" mt={0}>
+                {equipmentView.items.map((item: any, index: number) => (
+                  <Accordion.Item key={index} value={`${item.serial_number}-${index}`}>
+                    <Accordion.Control >{item.description}</Accordion.Control>
+                    <Accordion.Panel>
+                      <Text fw={'bold'} tt="uppercase" size="sm">CODIGO: {item.code}</Text>
+                      <Text fw={'bold'} tt="uppercase" size="sm">DATA: {item.date === null ? 'Não informada' : new Date(item.date).toLocaleDateString('pt-BR')}</Text>
+                      <Text fw={'bold'} tt="uppercase" size="sm">ITEM: {item.item}</Text>
+                      <Text fw={'bold'} tt="uppercase" size="sm">MODELO: {item.model}</Text>
+                      <Text fw={'bold'} tt="uppercase" size="sm">SERIAL: {item.serial_number}</Text>
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
+            </Card>
           </Flex>
         </Modal>
       )}
