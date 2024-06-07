@@ -19,6 +19,7 @@ export function TableUsers({ title }: ITableComponent) {
   const weightRegular = { fontWeight: 400 };
   const [user, setUser] = useState<any>([]);
   const [userEdit, setUserEdit] = useState<IUser>();
+  const [userDelete, setUserDelete] = useState<IUser>();
   const [filteredUser, setFilteredUser] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalElements, setTotalElements] = useState(1);
@@ -37,7 +38,8 @@ export function TableUsers({ title }: ITableComponent) {
     setIsOpenedEdit(false);
   }
 
-  const deleteModal = () => {
+  const deleteModal = (u: IUser) => {
+    setUserDelete(u);
     setIsOpenedDelete(true);
   }
 
@@ -101,8 +103,9 @@ export function TableUsers({ title }: ITableComponent) {
   }
 
   const deleteUser = (id: string | undefined) => {
+    debugger
     const save = async () => {
-      api.delete(`/api/v1/users/${id}/clients`)
+      api.delete(`/api/v1/users/${id}`)
         .then(response => {
           console.log('Resposta da API:', response.data);
           closeModal();
@@ -167,7 +170,7 @@ export function TableUsers({ title }: ITableComponent) {
               <Table.Td>{u.email}</Table.Td>
               <Table.Td>
                 <a href="#" onClick={() => { editModal(u) }}>Editar</a> |
-                <a href="#" onClick={() => { deleteModal() }}>Excluir</a>
+                <a href="#" onClick={() => { deleteModal(u) }}>Excluir</a>
               </Table.Td>
             </Table.Tr>
           ))}
@@ -194,7 +197,7 @@ export function TableUsers({ title }: ITableComponent) {
           <Flex p={16} align={'center'} gap={15} bg={'white'}>
             <Box>
               <Text size="sm" tt={'uppercase'} c={'#999'}>{`CONFIGURAÇÕES`}</Text>
-              <Text tt={'uppercase'} fw={'bold'} size="md">{`EXCLUIR USUÁRIO(A) > ${user.username}`}</Text>
+              <Text tt={'uppercase'} fw={'bold'} size="md">{`EXCLUIR USUÁRIO(A) > ${userDelete?.username}`}</Text>
             </Box>
           </Flex>
 
@@ -205,7 +208,8 @@ export function TableUsers({ title }: ITableComponent) {
             </Box>
           </Flex>
           <Flex gap={10} pb={12} direction={'column'} align={'center'}>
-            <Button color="#EB5757" onClick={() => { deleteUser(user.id) }}>Sim, desejo excluir</Button>
+            
+            <Button color="#EB5757" onClick={() => { deleteUser(userDelete?.id) }}>Sim, desejo excluir</Button>
             <Button color="#0855A3" variant="transparent" onClick={closeModal}>Cancelar</Button>
           </Flex>
         </Modal>

@@ -81,6 +81,7 @@ export function ClientDetails({client}: ClientDetailsProps) {
         searchPlaceholder="Pesquisar Nome/ Serial number"
       />
       <SimpleGrid
+        type="container"
         cols={{ base: 3, sm: 2, lg: 5 }}
         spacing={{ base: 10, sm: 'xl' }}
         pb={20}
