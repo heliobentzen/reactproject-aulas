@@ -26,7 +26,7 @@ export function TableDetails({ title, result, client }: any) {
 
 
 
-  const editModal = (u: any) => {
+  const openModal = (u: any) => {
     setEquipmentView(u);
     setIsOpenedView(true);
   }
@@ -97,6 +97,16 @@ export function TableDetails({ title, result, client }: any) {
     setFilteredEquipment(sortFilteredItens || []);
   }
 
+  const formatarData = (data: any) => {
+    if(data === null){
+      return "N/D";
+    }else{
+      const dataUTC = new Date(data);
+      const dataLocal = new Date(dataUTC.getUTCFullYear(), dataUTC.getUTCMonth(), dataUTC.getUTCDate());
+      return dataLocal.toLocaleDateString('pt-BR');
+    }
+  }
+
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
       <TableHeader
@@ -118,9 +128,9 @@ export function TableDetails({ title, result, client }: any) {
 
         <Table.Tbody>
           {filteredEquipment.map((d: any) => (
-            <Table.Tr onClick={() => { editModal(d) }}>
+            <Table.Tr onClick={() => { openModal(d) }}>
               <Maintenance
-                data={d.date ? new Date(d.date).toLocaleDateString('pt-BR') : "N/D"}
+                data={formatarData(d.date)}
                 type={d.type === 'MAINTENANCE' ? 'Corretiva' : 'Preventiva'}
                 client={d.name}
               />
@@ -160,7 +170,7 @@ export function TableDetails({ title, result, client }: any) {
             <Divider size={'sm'} my="xs" labelPosition="center" />
             <Title c="#0855A3" size={'h4'}>Informações </Title>
             <Card mt={4} shadow="sm" bg={'#E7E7E7'}>
-              <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>DATA: {equipmentView.date === null ? 'Não informada' : new Date(equipmentView.date).toLocaleDateString('pt-BR')}</Text>
+              <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>DATA: {formatarData(equipmentView.date)}</Text>
               <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>DESCRIÇÃO: {equipmentView.description}</Text>
               <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>ORDEM DE SERVIÇO: {equipmentView.order_number}</Text>
               <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>TÉCNICO: {equipmentView.order_number}</Text>
@@ -175,7 +185,7 @@ export function TableDetails({ title, result, client }: any) {
                     <Accordion.Control >{item.description}</Accordion.Control>
                     <Accordion.Panel>
                       <Text fw={'bold'} tt="uppercase" size="sm">CODIGO: {item.code}</Text>
-                      <Text fw={'bold'} tt="uppercase" size="sm">DATA: {item.date === null ? 'Não informada' : new Date(item.date).toLocaleDateString('pt-BR')}</Text>
+                      <Text fw={'bold'} tt="uppercase" size="sm">DATA: {formatarData(item.date)}</Text>
                       <Text fw={'bold'} tt="uppercase" size="sm">ITEM: {item.item}</Text>
                       <Text fw={'bold'} tt="uppercase" size="sm">MODELO: {item.model}</Text>
                       <Text fw={'bold'} tt="uppercase" size="sm">SERIAL: {item.serial_number}</Text>

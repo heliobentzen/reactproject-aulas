@@ -1,4 +1,4 @@
-import { Box, Table, Text } from '@mantine/core';
+import { Box, Card, Flex, Modal, Table, Text, Title } from '@mantine/core';
 import { Footer, TableHeader } from '../../components';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -19,7 +19,9 @@ export function TableDetailsItems({ title, result, client }: any) {
   const [totalElements, setTotalElements] = useState(1);
   const [totalPages, setTotalPages] = useState(100);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sort] = useState('date'); 
+  const [sort] = useState('date');
+  const [itemView, setItemView] = useState<any>();
+  const [isOpenedView, setIsOpenedView] = useState(false);
   const isRefVerMais = useRef(false);
 
   const { id } = useParams<{ id: string }>();
@@ -28,33 +30,43 @@ export function TableDetailsItems({ title, result, client }: any) {
   result
   client
   const equipmentPerPage = 12;
-  
+
   const fetchItens = useCallback(async () => {
-    if(currentPage <= totalPages){
+    if (currentPage <= totalPages) {
       setSearchTerm(searchTerm)
       api.get(`/api/v1/clients/${cnpj}/equipments?page=${currentPage - 1}&size=${equipmentPerPage}`)
-    .then((response) => {
-      setTotalElements(response.data.total_elements);
-      setTotalPages(response.data.total_pages);
+        .then((response) => {
+          setTotalElements(response.data.total_elements);
+          setTotalPages(response.data.total_pages);
 
-      if(!isRefVerMais.current){
-        setEquipment(response.data.content);
-        setFilteredEquipment(response.data.content);
-      }else{
-        const newItens = response.data;
-        setEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
-        setFilteredEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
-      }
-  })}
-  
+          if (!isRefVerMais.current) {
+            setEquipment(response.data.content);
+            setFilteredEquipment(response.data.content);
+          } else {
+            const newItens = response.data;
+            setEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
+            setFilteredEquipment((prevItens: any) => [...prevItens, ...newItens.content]);
+          }
+        })
+    }
+
   }, [currentPage, searchTerm, sort]);
+
+  const openModal = (d: any) => {
+    setItemView(d);
+    setIsOpenedView(true);
+  }
+
+  const closeModal = () => {
+    setIsOpenedView(false);
+  }
 
   useEffect(() => {
     fetchItens();
   }, []);
 
   useEffect(() => {
-      fetchItens();
+    fetchItens();
   }, [currentPage]);
 
   const handleClick = () => {
@@ -68,8 +80,8 @@ export function TableDetailsItems({ title, result, client }: any) {
     const filteredItens = (equipment || []).filter((item: IEquipment) => {
       return item.description?.toLowerCase().includes(searchValue?.toLowerCase());
     }) || [];
-    
-    const sortFilteredItens = filteredItens.sort((a: IEquipment, b: IEquipment) => {        
+
+    const sortFilteredItens = filteredItens.sort((a: IEquipment, b: IEquipment) => {
       if (sortOrder === '1') {
         return a.description.localeCompare(b.description);
       } else {
@@ -78,6 +90,16 @@ export function TableDetailsItems({ title, result, client }: any) {
     });
 
     setFilteredEquipment(sortFilteredItens || []);
+  }
+
+  const formatarData = (data: any) => {
+    if(data === null){
+      return "N/D";
+    }else{
+      const dataUTC = new Date(data);
+      const dataLocal = new Date(dataUTC.getUTCFullYear(), dataUTC.getUTCMonth(), dataUTC.getUTCDate());
+      return dataLocal.toLocaleDateString('pt-BR');
+    }
   }
 
   return (
@@ -90,7 +112,7 @@ export function TableDetailsItems({ title, result, client }: any) {
         columnMode
       />
 
-      <Table mt={16}>
+      <Table highlightOnHover style={{ cursor: 'pointer' }} mt={16}>
         <Table.Thead>
           <Table.Tr>
             <Table.Th style={weightRegular}>Código</Table.Th>
@@ -107,7 +129,7 @@ export function TableDetailsItems({ title, result, client }: any) {
         </Table.Thead>
         <Table.Tbody>
           {filteredEquipment.map((d: any) => (
-            <Table.Tr>
+            <Table.Tr onClick={() => { openModal(d) }}>
               <Table.Td>
                 <Text size="sm">{d.code}</Text>
               </Table.Td>
@@ -123,13 +145,35 @@ export function TableDetailsItems({ title, result, client }: any) {
               </Table.Td>
 
               <Table.Td>
-                <Text size="sm">{d.next_service ? new Date(d.next_service).toLocaleDateString('pt-BR') : "N/D"}</Text>
+                <Text size="sm">{formatarData(d.next_service)}</Text>
               </Table.Td>
-          </Table.Tr>
+            </Table.Tr>
           ))}
         </Table.Tbody>
       </Table>
-      <Footer color={undefined} radius={undefined} onHandleClick={handleClick}/>
+
+      {isOpenedView && (
+        <Modal size="lg" opened={isOpenedView} onClose={closeModal} withCloseButton={false} centered>
+          <Box mb={10}>
+            <Text size="sm" tt={'uppercase'} c={'#999'}> {itemView.code} </Text>
+            <Text tt={'uppercase'} fw={'bold'} size="lg"> DETALHES DO ITEM </Text>
+          </Box>
+
+          <Flex direction={'column'}>
+            <Title c="#0855A3" size={'h4'}>Informações </Title>
+            <Card mt={4} shadow="sm" bg={'#E7E7E7'}>
+              <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>DESCRIÇÃO: {itemView.description}</Text>
+              <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>CÓDIGO: {itemView.code}</Text>
+              <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>MODELO: {itemView.model === '' ? 'Não informado' : itemView.model}</Text>
+              <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>SÉRIAL: {itemView.serial_number}</Text>
+              <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>ULTIMO SERVIÇO:  {formatarData(itemView.last_service)}</Text>
+              <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>PRÓXIMO SERVIÇO: {formatarData(itemView.next_service)}</Text>
+            </Card>
+          </Flex>
+        </Modal>
+      )}
+
+      <Footer color={undefined} radius={undefined} onHandleClick={handleClick} />
     </Box>
   );
 }

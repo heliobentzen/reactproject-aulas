@@ -17,6 +17,20 @@ export function Signup(props: any) {
 
   const api = new ApiService('');
 
+  useEffect(() => {
+    console.log(props.user.role)
+    if (props.isEdit) {
+      setNome(props.user.name);
+      setEmail(props.user.email);
+      setUser(props.user.username);
+      if(props.user.role === undefined){
+        setRole('ADMIN');
+      }else{
+        setRole(props.user.role);
+      }
+    }
+  }, [])
+
   const salvar = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -38,7 +52,34 @@ export function Signup(props: any) {
           .catch(error => {
             console.error('Erro ao fazer cadastro:', error);
           });
-      } else {
+      } 
+      else if(props.isEdit){
+        const dados = {
+          "username": user,
+          "fullname": nome,
+          "email": email,
+          "role": role
+        }
+        console.log(dados);
+        
+        const headers = {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        };
+
+        api.pacth(`/api/v1/users/${props.user.id}`, dados, { headers })
+        .then(response => {
+          console.log('Resposta da API:', response.data);
+          //navigate('/config');
+          //window.location.reload();
+        })
+        .catch(error => {
+          console.error('Erro ao fazer cadastro:', error);
+        });
+
+
+      }
+
+      else {
 
         const dados = {
           "username": user,
@@ -79,11 +120,11 @@ export function Signup(props: any) {
       setError('Usuário vazio, preencha o campo usuário.');
       return false;
     }
-    else if (password == '') {
+    else if (password == '' && !props.isEdit) {
       setError('Senha vazio, preencha o campo de senha.');
       return false;
     }
-    else if (passwordConfirm == '') {
+    else if (passwordConfirm == '' && !props.isEdit) {
       setError('Confirmar senha vazio, preencha o campo de confirmar senha.');
       return false
     }
@@ -139,7 +180,7 @@ export function Signup(props: any) {
           placeholder="John Doe"
           size="md"
           withAsterisk
-          value={props.isEdit ? props.user?.name : nome}
+          value={nome}
           onChange={(event) => setNome(event.target.value)}
         />
 
@@ -149,8 +190,8 @@ export function Signup(props: any) {
           placeholder="johndoe@pensalab.com.br"
           size="md"
           mt="md"
+          value={email}
           withAsterisk
-          value={props.isEdit ? props.user.email : email}
           onChange={handleEmailChange}
           error={emailError}
         />
@@ -162,7 +203,7 @@ export function Signup(props: any) {
           size="md"
           mt="md"
           withAsterisk
-          value={props.isEdit ? props.user.username : user}
+          value={user}
           onChange={(event) => setUser(event.target.value)}
           disabled={props.isEdit ? true : false}
         />

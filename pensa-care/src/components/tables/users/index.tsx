@@ -103,7 +103,6 @@ export function TableUsers({ title }: ITableComponent) {
   }
 
   const deleteUser = (id: string | undefined) => {
-    debugger
     const save = async () => {
       api.delete(`/api/v1/users/${id}`)
         .then(response => {
@@ -123,8 +122,6 @@ export function TableUsers({ title }: ITableComponent) {
     save();
 
   }
-
-  console.log(filteredUser)
 
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
