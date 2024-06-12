@@ -25,6 +25,11 @@ const imageApiService = new ImageApiService();
 // Componente temporariamente com informações estáticas e lógica simples
 export function ModalCard(card: ModalDetailsCardProps) {
   const [paused, setPaused] = useState(false);
+  const [status, setStatus] = useState("N/D");
+
+  const onStatusChanged = (value: any) => {
+    setStatus(value);
+  }
 
   return (
     <Flex
@@ -62,7 +67,7 @@ export function ModalCard(card: ModalDetailsCardProps) {
             </Text>
             <Flex align={'flex-start'} gap={10}>
               <Select
-                disabled={paused}
+                disabled={paused || card.lead.status === null || card.lead.status === 'null'}
                 styles={{
                   input: {
                     border: 'none',
@@ -77,15 +82,18 @@ export function ModalCard(card: ModalDetailsCardProps) {
                     fontWeight: 700,
                   },
                 }}
+                value={status}
                 maw={'115px'}
                 withCheckIcon={false}
-                defaultValue="1"
+                defaultValue="4"
                 allowDeselect={false}
                 data={[
-                  { value: '1', label: `Atendido` },
-                  { value: '2', label: 'Cancelado' },
-                  { value: '3', label: 'Pausado' },
+                  { value: 'Atendido', label: `Atendido` },
+                  { value: 'Cancelado', label: 'Cancelado' },
+                  { value: 'Pausado', label: 'Pausado' },
+                  { value: 'N/D', label: 'N/D' },
                 ]}
+                onChange={onStatusChanged}
               />
               <Switch
                 label={paused ? 'Pausado' : 'Pausar'}
@@ -99,6 +107,7 @@ export function ModalCard(card: ModalDetailsCardProps) {
                     marginTop: '10px',
                   },
                 }}
+                disabled={card.lead.status === null || card.lead.status === 'null'}
               />
             </Flex>
           </Flex>

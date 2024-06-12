@@ -59,7 +59,7 @@ export function ModalComponent({
 
         {!informationalOnly && (
           <Flex gap={10} pb={12} direction={'column'} align={'center'}>
-            <Button color="#0855A3" onClick={close}>
+            <Button color="#0855A3" onClick={close} disabled={lead.status === null || lead.status === 'null'}>
               Confirmar Status
             </Button>
             <Button color="#0855A3" variant="transparent" onClick={close}>

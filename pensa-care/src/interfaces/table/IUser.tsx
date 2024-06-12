@@ -7,4 +7,5 @@ export interface IUser extends IClient{
   email: string;
   clients?: IClient[];
   role: string;
+  active: boolean;
 }
