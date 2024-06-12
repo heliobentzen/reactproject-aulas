@@ -8,28 +8,51 @@ export function Signup(props: any) {
   const [emailError, setEmailError] = useState('');
   const [nome, setNome] = useState('');
   const [user, setUser] = useState('');
+  const [userError, setUserError] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [role, setRole] = useState('ADMIN');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
   const api = new ApiService('');
 
   useEffect(() => {
-    console.log(props.user.role)
     if (props.isEdit) {
       setNome(props.user.name);
       setEmail(props.user.email);
       setUser(props.user.username);
-      if(props.user.role === undefined){
+      setRole(props.user.role);
+      /*if(props.user.role === undefined){
         setRole('ADMIN');
       }else{
         setRole(props.user.role);
-      }
+      }*/
     }
   }, [])
+
+  useEffect(() => {
+      console.log(role);
+    }, [role,setRole])
+
+
+  useEffect(() => {
+    if (password !== passwordConfirm) {
+      setPasswordError("As senhas não coincidem.");
+    } else if (password.length < 8) {
+      setPasswordError("A senha deve ter pelo menos 8 caracteres.");
+    } else {
+      setPasswordError("");
+    }
+  }, [password, passwordConfirm]);
+
+  useEffect(() => {
+    if (user.length < 3) {
+      setUserError("O usuário deve ter pelo menos 3 caracteres.");
+    } else {
+      setUserError("");
+    }
+  }, [user]);
 
   const salvar = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -60,7 +83,6 @@ export function Signup(props: any) {
           "email": email,
           "role": role
         }
-        console.log(dados);
         
         const headers = {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`
@@ -69,7 +91,7 @@ export function Signup(props: any) {
         api.pacth(`/api/v1/users/${props.user.id}`, dados, { headers })
         .then(response => {
           console.log('Resposta da API:', response.data);
-          //navigate('/config');
+          navigate('/users');
           //window.location.reload();
         })
         .catch(error => {
@@ -78,9 +100,7 @@ export function Signup(props: any) {
 
 
       }
-
       else {
-
         const dados = {
           "username": user,
           "password": password,
@@ -120,12 +140,20 @@ export function Signup(props: any) {
       setError('Usuário vazio, preencha o campo usuário.');
       return false;
     }
+    else if (user.length < 3) {
+      setError('');
+      return false;
+    }
     else if (password == '' && !props.isEdit) {
       setError('Senha vazio, preencha o campo de senha.');
       return false;
     }
     else if (passwordConfirm == '' && !props.isEdit) {
       setError('Confirmar senha vazio, preencha o campo de confirmar senha.');
+      return false
+    }
+    else if (password.length < 8 && !props.isEdit) {
+      setError('');
       return false
     }
     else {
@@ -149,16 +177,6 @@ export function Signup(props: any) {
       setEmailError('');
     }
   };
-
-  useEffect(() => {
-    if (password !== passwordConfirm) {
-      setPasswordError("As senhas não coincidem.");
-    } else if (password.length < 8) {
-      setPasswordError("A senha deve ter pelo menos 8 caracteres.");
-    } else {
-      setPasswordError("");
-    }
-  }, [password, passwordConfirm]);
 
   return (
     <>
@@ -206,6 +224,7 @@ export function Signup(props: any) {
           value={user}
           onChange={(event) => setUser(event.target.value)}
           disabled={props.isEdit ? true : false}
+          error={userError}
         />
 
         {props.isEdit ?
@@ -248,7 +267,7 @@ export function Signup(props: any) {
                 label="Selecione o tipo do usuário"
                 withAsterisk
                 value={role}
-                onChange={(event) => setRole(event)}
+                onChange={(event) => setRole(event.toString())}
               >
                 <Group mt="xs">
                   <Radio value="ADMIN" label="Administrador" />
