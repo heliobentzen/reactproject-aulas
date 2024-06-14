@@ -1,13 +1,13 @@
 import { Button, Flex, Image, Table, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
-import editIcon from '../../../../assets/icons/tables/edit.svg';
 import breakIcon from '../../../../assets/icons/tables/break.svg';
+import editIcon from '../../../../assets/icons/tables/edit.svg';
 
-import { IStatus } from '../../../../interfaces/table/IClient';
-import { ModalComponent } from '../../../modal';
 import { useState } from 'react';
+import { IStatus } from '../../../../interfaces/table/IClient';
 import ApiService from '../../../../services/ApiService';
+import { ModalComponent } from '../../../modal';
 
 // A lógica desse componente será alterada de acordo com o retorno que tivermos do back-end.
 export function Status({ isFulfilled = false, status, clientName, serialNumber, code, lead }: IStatus) {
@@ -66,16 +66,9 @@ export function Status({ isFulfilled = false, status, clientName, serialNumber, 
             </Flex>
           </Button>
         )}
-        <Button
-          variant="transparent"
-          style={{ border: 'none' }}
-          onClick={() => {
-            console.log('edit');
-            openModal();
-          }}
-        >
-          <Flex direction={'column'} align={'center'} gap={2} c={'#3C3C3C'}>
-            <Image src={editIcon} w={'16px'} />
+        <Button variant="transparent" onClick={openModal}>
+          <Flex direction="column" align="center" gap={2} c="#3C3C3C">
+            <Image src={editIcon} w={"16px"} />
             <Text size="sm">Editar</Text>
           </Flex>
         </Button>

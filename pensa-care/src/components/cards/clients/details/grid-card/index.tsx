@@ -9,11 +9,11 @@ const imageApiService = new ImageApiService();
 
 export function GridCard({ open, item }: any) {
   const { hovered, ref } = useHover();
+  
   const today = new Date();
   const nextService = item.next_service ? new Date(item.next_service) : null;
   const diffDays = nextService ? differenceInDays(nextService, today) : null;
   let color = "red";
-
   if(diffDays){
     if(diffDays > 120){
       color = "green"
@@ -41,7 +41,12 @@ export function GridCard({ open, item }: any) {
           maw={{ sm: '155px', lg: '200px' }}
           onClick={() => open(item)}
         >
-          <Image src={imageApiService.getEquipmentImageUrl(item.code) || sulfIcon} maw={'90px'} />
+          <Image src={imageApiService.getEquipmentImageUrl(item.code) || sulfIcon} maw={'70px'}
+          alt="Equipment Image"
+          onError={(e) => {
+            const imgElement = e.target as HTMLImageElement;
+            imgElement.src = sulfIcon
+          }} />
           <Flex direction={'column'} align={'center'} gap={10}>
             <Text ta={'center'} size="md" lh={'16px'}>
               {item.description}
@@ -50,7 +55,9 @@ export function GridCard({ open, item }: any) {
             <Flex mt={8} align={'center'} gap={10} mr={16}>
               <ColorSwatch size="16px" color={color} />
               <Flex direction={'column'} align={'center'}>
-                <Text size="11px">Próx.: {new Date(item.next_service).toLocaleDateString()}</Text>
+                <Text size="11px">
+                  Próx.: {item.next_service ? new Date(item.next_service).toLocaleDateString() : 'N/D'}
+                </Text>
                 <Text fw={'bold'}>{diffDays ? `Em ${diffDays} dias` : "N/D"}</Text>
               </Flex>
             </Flex>

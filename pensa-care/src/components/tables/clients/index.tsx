@@ -27,15 +27,22 @@ export function TableClients({ title }: ITableComponent) {
   const [currentPage, setCurrentPage] = useState(0);
   const isRefInicial = useRef(true);
   const isRefVerMais = useRef(false);
-  const [limpar, setLimpar] = useState(false);
-  const [loading, setLoading] = useState(false);//falta ajustar
+  const [clean, setClean] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const clientsPerPage = 12;
+  
   const fetchClient = async () => {
-    const response = await api.get(`/api/v1/clients?page=${currentPage}&size=${clientsPerPage}`);
-    setTotalElements(response.data.total_elements);
-    return response.data;
+    try {
+        const response = await api.get(`/api/v1/clients?page=${currentPage}&size=${clientsPerPage}`);
+        setTotalElements(response.data.total_elements);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao buscar clientes:', error);
+        return null;
+    }
   };
+
 
   useEffect(() => {
     if (isRefInicial.current) {
@@ -55,37 +62,35 @@ export function TableClients({ title }: ITableComponent) {
     if (isRefVerMais.current) {
       const fetchAndSetClient = async () => {
         const newClients = await fetchClient();
-        const todos = [...client, ...newClients.content]
-        setFilteredClient(todos);
-        setClient(todos);
+        const all = [...client, ...newClients.content]
+        setFilteredClient(all);
+        setClient(all);
       };
       fetchAndSetClient(); 
       isRefVerMais.current = false;
-      setLimpar(false);
+      setClean(false);
     }
   }, [currentPage]);
 
   const handleClick = () => {
     isRefVerMais.current = true;
-    setLimpar(true);
+    setClean(true);
     setCurrentPage(prevPage => prevPage + 1);
   };
-
+  
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
     const filteredClient = (client || []).filter((client: IClient) => {
       return client.name?.toLowerCase().includes(searchValue?.toLowerCase());
     }) || [];
     
-    const sortFilteredClient = filteredClient.sort((a: IClient, b: IClient) => {        
-      if (sortOrder === '1') {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
-    });
-
-    setFilteredClient(sortFilteredClient || []);
+    const sortedFilteredClient: IClient[] = [...filteredClient];
+    if (sortOrder === '1') {
+      sortedFilteredClient.sort((a, b) => a.name.localeCompare(b.name)); 
+    } else {
+      sortedFilteredClient.sort((a, b) => b.name.localeCompare(a.name));
+    }
+    setFilteredClient(sortedFilteredClient);
   }
 
   return (
@@ -95,7 +100,7 @@ export function TableClients({ title }: ITableComponent) {
         result={totalElements}
         searchPlaceholder="Pesquisar por Nome"
         onHandleTableHeaderChange={handleTableHeaderChange}
-        limpar={limpar}
+        clean={clean}
       />
       <Table mt={16}>
         <Table.Thead>

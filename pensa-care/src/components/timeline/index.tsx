@@ -16,18 +16,18 @@ export function ClientTimeline({client}: ClientTimelineProps) {
   const api = new ApiService('');
   const cnpj = client.cnpj;
   
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const responseService = await api.get(`/api/v1/clients/${cnpj}/services`);
-        setServices(responseService.data.content);
-      } catch (error) {
-        console.error('Erro ao obter os dados:', error);
-      }
-    };
+useEffect(() => {
+  const fetchServices = async () => {
+    try {
+      const responseService = await api.get(`/api/v1/clients/${cnpj}/services`);
+      setServices(responseService.data.content);
+    } catch (error) {
+      console.error('Erro ao obter os dados:', error);
+    }
+  };
+  fetchServices(); 
+}, [cnpj]);
 
-    fetchServices();
-  });
 
   const handleClick = () => {
     const timelineSection = document.getElementById('history-section');
@@ -68,6 +68,7 @@ export function ClientTimeline({client}: ClientTimelineProps) {
 
           {services.slice(0, 5).map((d: { type: string; date: string | number | Date; description: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }) => (
             <Timeline.Item
+              key={`${d.description}-${d.date}`}
               bullet={<StepIcon color={d.type === 'MAINTENANCE' ? '#A32219' : '#C3C985'} />}
               title={<Text fw={'bold'}>{d.date ? new Date(d.date).toLocaleDateString('pt-BR') : 'N/D'}</Text>}
               lineVariant="dashed"

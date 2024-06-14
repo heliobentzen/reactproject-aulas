@@ -48,7 +48,8 @@ export function ClientDetails({client}: ClientDetailsProps) {
     const fetchContacts = async () => {
       try {
         const responseContacts = await api.get(`/api/v1/clients/${cnpj}/contacts`);
-        setContacts(responseContacts.data);
+        const sortedContacts = responseContacts.data.sort((a: { name: string; }, b: { name: any; }) => a.name.localeCompare(b.name));
+        setContacts(sortedContacts);
       } catch (error) {
         console.error('Erro ao obter os dados:', error);
       }

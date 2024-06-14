@@ -128,7 +128,7 @@ export function TableDetails({ title, result, client }: any) {
 
         <Table.Tbody>
           {filteredEquipment.map((d: any) => (
-            <Table.Tr onClick={() => { openModal(d) }}>
+            <Table.Tr key={d.id} onClick={() => { openModal(d) }}>
               <Maintenance
                 data={formatarData(d.date)}
                 type={d.type === 'MAINTENANCE' ? 'Corretiva' : 'Preventiva'}
@@ -173,7 +173,7 @@ export function TableDetails({ title, result, client }: any) {
               <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>DATA: {formatarData(equipmentView.date)}</Text>
               <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>DESCRIÇÃO: {equipmentView.description}</Text>
               <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>ORDEM DE SERVIÇO: {equipmentView.order_number}</Text>
-              <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>TÉCNICO: {equipmentView.order_number}</Text>
+              <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>TÉCNICO: {equipmentView.technician}</Text>
               <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>TIPO: {equipmentView.type === 'MAINTENANCE' ? 'Corretiva' : 'Preventiva'}</Text>
             </Card>
             <Divider size={'sm'} my="xs" labelPosition="center" />

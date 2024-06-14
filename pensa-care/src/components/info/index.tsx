@@ -36,7 +36,7 @@ export function ClientInfo({ client, contacts }: ClientInfoProps) {
       <Text>Contatos:</Text>
       <Accordion>
         {displayedContacts.map((contact, index) => (
-          <Accordion.Item key={index} value={contact.name}>
+          <Accordion.Item key={contact.name || index} value={contact.name}>
             <Accordion.Control>{contact.name}</Accordion.Control>
             <Accordion.Panel>
               <Text>{contact.email_primary}</Text>

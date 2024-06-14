@@ -12,44 +12,33 @@ import ApiService from '../../../services/ApiService';
 export function ClientDetailsPage() {
   const [client, setClient] = useState<any>({});
   const [services, setServices] = useState<any>([]);
-  const [itens, setItens] = useState([]);
+  const [items, setItems] = useState([]);
   const api = new ApiService('');
   const { id } = useParams<{ id: string }>();
   const cnpj = id;
   
   useEffect(() => {
-    const fetchClient = async () => {
+    const fetchData = async () => {
       try {
-        const responseClient = await api.get(`/api/v1/clients/${cnpj}`);
-        setClient(responseClient.data);
+        const [clientResponse, servicesResponse, itemsResponse] = await Promise.all([
+          api.get(`/api/v1/clients/${cnpj}`),
+          api.get(`/api/v1/clients/${cnpj}/services`),
+          api.get(`/api/v1/clients/${cnpj}/equipments`),
+        ]);
+  
+        setClient(clientResponse.data);
+        setServices(servicesResponse.data.content);
+        setItems(itemsResponse.data.content);
       } catch (error) {
         console.error('Erro ao obter os dados:', error);
       }
     };
+  
+    fetchData();
+  }, [cnpj]);
+  
 
-    const fetchServices = async () => {
-      try {
-        const responseService = await api.get(`/api/v1/clients/${cnpj}/services`);
-        setServices(responseService.data.content);
-      } catch (error) {
-        console.error('Erro ao obter os dados:', error);
-      }
-    };
-
-    const fetchItens = async () => {
-      try {
-        const responseItens = await api.get(`/api/v1/clients/${cnpj}/equipments`);
-        setItens(responseItens.data.content);
-      } catch (error) {
-        console.error('Erro ao obter os dados:', error);
-      }
-    };
-
-    fetchClient();
-    fetchServices();
-    fetchItens();
-  }, [id]);
-
+  
     
   return (
     <Box
@@ -73,7 +62,7 @@ export function ClientDetailsPage() {
         <div id="history-section">
           <TableDetails title={'Histórico de Manutenções'} client={client} result={services.length} />
         </div>
-        <TableDetailsItems title={'Histórico de Itens'} client={client} result={itens.length} />
+        <TableDetailsItems title={'Histórico de Itens'} client={client} result={items.length} />
       </Flex>
     </Box>
   );

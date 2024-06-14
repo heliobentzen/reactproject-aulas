@@ -10,8 +10,8 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { IClient } from '../../../interfaces/table/IClient';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
-import { Item } from '../components/item';
 import ApiService from '../../../services/ApiService';
+import { Item } from '../components/item';
 
 interface ITableComponent extends ITableHeader {
   data: IClient[];
@@ -28,7 +28,7 @@ export function TableDashboard({ title }: ITableComponent) {
   const [currentPage, setCurrentPage] = useState(0);
   const isRefInicial = useRef(true);
   const isRefVerMais = useRef(false);
-  const [limpar, setLimpar] = useState(false);
+  const [clean, setClean] = useState(false);
   const [loading, setLoading] = useState(false);//falta ajustar
 
   const leadsPerPage = 12;
@@ -62,13 +62,13 @@ export function TableDashboard({ title }: ITableComponent) {
       };
       fetchAndSetLeads(); 
       isRefVerMais.current = false;
-      setLimpar(false);
+      setClean(false);
     }
   }, [currentPage]);
 
   const handleClick = () => {
     isRefVerMais.current = true;
-    setLimpar(true);
+    setClean(true);
     setCurrentPage(prevPage => prevPage + 1);
   };
 
@@ -97,7 +97,7 @@ export function TableDashboard({ title }: ITableComponent) {
         result={totalElements}
         searchPlaceholder="Pesquisar por Item"
         onHandleTableHeaderChange={handleTableHeaderChange}
-        limpar={limpar}
+        clean={clean}
       />
       <Table mt={16}>
         <Table.Thead>

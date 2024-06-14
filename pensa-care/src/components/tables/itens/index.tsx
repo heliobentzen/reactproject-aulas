@@ -11,7 +11,6 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { IEquipment } from '../../../interfaces/table/IEquipment';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
-import { Price } from '../components/price';
 import ApiService from '../../../services/ApiService';
 
 interface ITableComponent extends ITableHeader {
@@ -29,61 +28,68 @@ export function TableItens({ title }: ITableComponent) {
   const [currentPage, setCurrentPage] = useState(0);
   const isRefInicial = useRef(true);
   const isRefVerMais = useRef(false);
-  const [limpar, setLimpar] = useState(false);
+  const [clean, setClean] = useState(false);
 
 const equipmentPerPage = 12;
-const fetchItens = async () => {
-  const response = await api.get(`/api/v1/equipments?page=${currentPage}&size=${equipmentPerPage}`);
-  setTotalElements(response.data.total_elements);
-  return response.data;
+
+const fetchItems = async () => {
+  try {
+      const response = await api.get(`/api/v1/equipments?page=${currentPage}&size=${equipmentPerPage}`);
+      setTotalElements(response.data.total_elements);
+      return response.data;
+  } catch (error) {
+      console.error('Erro ao buscar itens:', error);
+      return null;
+  }
 };
 
 useEffect(() => {
   if (isRefInicial.current) {
-      const fetchAndSetItens = async () => {
-      const data = await fetchItens();
+      const fetchAndSetItems = async () => {
+      const data = await fetchItems();
       setEquipment(data.content);
       setFilteredEquipment(data.content);
     };
-    fetchAndSetItens();
+    fetchAndSetItems();
     isRefInicial.current = false;
   }
 }, []);
 
+
 useEffect(() => {
   if (isRefVerMais.current) {
     const fetchAndSetServices = async () => {
-      const newEquipment = await fetchItens();
-      const todos = [...equipment, ...newEquipment.content]
-      setFilteredEquipment(todos);
-      setEquipment(todos);
+      const newEquipment = await fetchItems();
+      const all = [...equipment, ...newEquipment.content]
+      setFilteredEquipment(all);
+      setEquipment(all);
+      
     };
     fetchAndSetServices(); 
     isRefVerMais.current = false;
-    setLimpar(false);
+    setClean(false);
   }
 }, [currentPage]);
 
 const handleClick = () => {
   isRefVerMais.current = true;
-  setLimpar(true);
+  setClean(true);
   setCurrentPage(prevPage => prevPage + 1);
 };
 
 const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
   const { sortOrder, searchValue } = headerChange;
-  const filteredItens = (equipment || []).filter((item: IEquipment) => {
+  const filteredItems = (equipment || []).filter((item: IEquipment) => {
     return item.name?.toLowerCase().includes(searchValue?.toLowerCase());
   }) || [];
   
-  const sortFilteredItens = filteredItens.sort((a: IEquipment, b: IEquipment) => {        
+  const sortedFilteredItems: IEquipment[] = [...filteredItems];
     if (sortOrder === '1') {
-      return a.name.localeCompare(b.name);
+      sortedFilteredItems.sort((a, b) => a.name.localeCompare(b.name)); 
     } else {
-      return b.name.localeCompare(a.name);
+      sortedFilteredItems.sort((a, b) => b.name.localeCompare(a.name));
     }
-  });
-  setFilteredEquipment(sortFilteredItens || []);
+    setFilteredEquipment(sortedFilteredItems);
 }
 
   return (
@@ -93,7 +99,7 @@ const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: an
         result={totalElements}
         onHandleTableHeaderChange={handleTableHeaderChange}
         searchPlaceholder="Pesquisar por Nome"
-        limpar={limpar}
+        clean={clean}
       />
       <Table mt={16}>
         <Table.Thead>
@@ -102,12 +108,13 @@ const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: an
             <Table.Th style={weightRegular}>Data</Table.Th>
             <Table.Th style={weightRegular}>Item</Table.Th>
             <Table.Th style={weightRegular}>Código</Table.Th>
-            <Table.Th style={weightRegular}>Preço</Table.Th>
+            
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {filteredEquipment.map((equipment: IEquipment) => (
-            <Table.Tr key={`${(equipment as IEquipment).name}-${(equipment as IEquipment).cnpj}`}>
+        {filteredEquipment.map((equipment: IEquipment, index: any) => {
+          return (
+            <Table.Tr key={`${(equipment as IEquipment).order_number}` || index}>
               <Client
                 name={(equipment as IEquipment).name}
                 cnpj={(equipment as IEquipment).cnpj}
@@ -125,9 +132,9 @@ const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: an
               <PreventiveDate preventiveDate={(equipment as IEquipment).date} done />
               <Park parks={(equipment as IEquipment).items || []} withIndicator />
               <ServiceOrder number={(equipment as IEquipment).order_number} />
-              <Price number={0} />
             </Table.Tr>
-          ))}
+          )
+        })}
         </Table.Tbody>
       </Table>
       <Footer color={''} radius={''} onHandleClick={handleClick}></Footer>

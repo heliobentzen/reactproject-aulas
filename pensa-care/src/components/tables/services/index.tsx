@@ -28,12 +28,11 @@ export function TableServices({ title }: ITableComponent) {
   const [currentPage, setCurrentPage] = useState(0);
   const isRefInicial = useRef(true);
   const isRefVerMais = useRef(false);
-  const [limpar, setLimpar] = useState(false);
+  const [clean, setClean] = useState(false);
 
   const servicesPerPage = 12;
   const fetchServices = async () => {
     const response = await api.get(`/api/v1/services?page=${currentPage}&size=${servicesPerPage}`);
-    //`/api/v1/clients/${cnpj}/services?page=${currentPage}&size=${servicesPerPage}`
     setTotalElements(response.data.total_elements);
     return response.data;
   };
@@ -60,13 +59,13 @@ export function TableServices({ title }: ITableComponent) {
       };
       fetchAndSetServices(); 
       isRefVerMais.current = false;
-      setLimpar(false);
+      setClean(false);
     }
   }, [currentPage]);
 
   const handleClick = () => {
     isRefVerMais.current = true;
-    setLimpar(true);
+    setClean(true);
     setCurrentPage(prevPage => prevPage + 1);
   };
 
@@ -93,7 +92,7 @@ export function TableServices({ title }: ITableComponent) {
         result={totalElements}
         searchPlaceholder="Pesquisar por Nome/Serial Number"
         onHandleTableHeaderChange={handleTableHeaderChange}
-        limpar={limpar}
+        clean={clean}
       />
       <Table mt={16}>
         <Table.Thead>

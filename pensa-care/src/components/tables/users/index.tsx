@@ -1,5 +1,6 @@
 import { Box, Button, Flex, Modal, Table, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
 import { IService } from '../../../interfaces/table/IService';
@@ -7,6 +8,7 @@ import { IUser } from '../../../interfaces/table/IUser';
 import ApiService from '../../../services/ApiService';
 import { Signup } from '../../forms';
 import { Footer, TableHeader } from '../components';
+
 
 interface ITableComponent extends ITableHeader {
   data: IService[];
@@ -23,7 +25,7 @@ export function TableUsers({ title }: ITableComponent) {
   const [filteredUser, setFilteredUser] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalElements, setTotalElements] = useState(1);
-  const [limpar, setLimpar] = useState(false);
+  const [clean, setClean] = useState(false);
   const [isOpenedEdit, setIsOpenedEdit] = useState(false);
   const [isOpenedDelete, setIsOpenedDelete] = useState(false);
 
@@ -77,14 +79,14 @@ export function TableUsers({ title }: ITableComponent) {
       fetchAndSetUsers();
     }
     isRefVerMais.current = false;
-    setLimpar(false);
+    setClean(false);
   }, [currentPage]);
   
 
 
   const handleClick = () => {
     isRefVerMais.current = true;
-    setLimpar(true);
+    setClean(true);
     setCurrentPage(prevPage => prevPage + 1);
   };
 
@@ -124,7 +126,7 @@ export function TableUsers({ title }: ITableComponent) {
       <TableHeader
         title={title}
         searchPlaceholder="Pesquisar por usuário"
-        limpar={limpar}
+        clean={clean}
         onHandleTableHeaderChange={handleTableHeaderChange}
         result={totalElements}
       />
@@ -147,9 +149,9 @@ export function TableUsers({ title }: ITableComponent) {
       <Table mt={16}>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th style={weightRegular}>Usuário</Table.Th>
-            <Table.Th style={weightRegular}>Perfil</Table.Th>
+            <Table.Th style={weightRegular}>Nome</Table.Th>
             <Table.Th style={weightRegular}>E-mail</Table.Th>
+            <Table.Th style={weightRegular}>Perfil</Table.Th>
             <Table.Th style={weightRegular}>Status</Table.Th>
             <Table.Th style={weightRegular}>Edição</Table.Th>
           </Table.Tr>
@@ -158,13 +160,13 @@ export function TableUsers({ title }: ITableComponent) {
         <Table.Tbody>
           {filteredUser.map((u: IUser, index: any) => (
             <Table.Tr key={`${u.id}-${index}`}>
-              <Table.Td>{u.username}</Table.Td>
-              <Table.Td>{u.role}</Table.Td>
+              <Table.Td>{u.name}</Table.Td>
               <Table.Td>{u.email}</Table.Td>
+              <Table.Td>{u.role}</Table.Td>
               <Table.Td>{u.active ? 'Ativo' : 'Inativo'}</Table.Td>
               <Table.Td>
-                <a href="#" onClick={() => { editModal(u) }}>Editar</a> |
-                <a href="#" onClick={() => { deleteModal(u) }}>Excluir</a>
+                <a href="#" onClick={() => { editModal(u) }}> <IconEdit style={{ color: 'gray' }} /></a> 
+                <a href="#" onClick={() => { deleteModal(u) }}><IconTrash style={{ color: 'gray' }} /></a>
               </Table.Td>
             </Table.Tr>
           ))}

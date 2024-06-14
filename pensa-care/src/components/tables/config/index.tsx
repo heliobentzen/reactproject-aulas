@@ -1,5 +1,6 @@
 import { Box, Button, Checkbox, Flex, Modal, ScrollArea, Stack, Table, Text, TextInput, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { IconEdit } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 import { IClient } from '../../../interfaces/table/IClient';
 import { ITableHeader } from '../../../interfaces/table/IHeader';
@@ -23,7 +24,7 @@ export function TableConfig({ title }: ITableComponent) {
   const [filteredUser, setFilteredUser] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalElements, setTotalElements] = useState(1);
-  const [limpar, setLimpar] = useState(false);
+  const [clean, setClean] = useState(false);
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [isOpened, setIsOpened] = useState(false);
   const [selectedItem, setSelectedItem] = useState<IUser | null>(null);
@@ -76,7 +77,7 @@ export function TableConfig({ title }: ITableComponent) {
       };
       fetchAndSetUsers();
       isRefVerMais.current = false;
-      setLimpar(false);
+      setClean(false);
     }
   }, [currentPage]);
 
@@ -113,7 +114,7 @@ export function TableConfig({ title }: ITableComponent) {
 
   const handleClick = () => {
     isRefVerMais.current = true;
-    setLimpar(true);
+    setClean(true);
     setCurrentPage(prevPage => prevPage + 1);
   };
 
@@ -176,7 +177,7 @@ export function TableConfig({ title }: ITableComponent) {
       <TableHeader
         title={title}
         searchPlaceholder="Pesquisar por Vendedor"
-        limpar={limpar}
+        clean={clean}
         onHandleTableHeaderChange={handleTableHeaderChange}
         result={totalElements}
       />
@@ -224,7 +225,7 @@ export function TableConfig({ title }: ITableComponent) {
                 ))}
               </Table.Td>
               <Table.Td>
-                <a href="#" onClick={() => { openModal(u, u.clients) }}>Editar</a>
+                <a href="#" onClick={() => { openModal(u, u.clients) }}><IconEdit style={{ color: 'gray' }} /></a>
               </Table.Td>
 
             </Table.Tr>

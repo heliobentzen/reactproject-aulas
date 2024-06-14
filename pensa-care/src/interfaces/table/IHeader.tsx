@@ -5,5 +5,5 @@ export interface ITableHeader {
   searchPlaceholder: string;
   onSearchChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   columnMode?: boolean;
-  limpar?: boolean;
+  clean?: boolean;
 }
