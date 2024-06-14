@@ -29,12 +29,20 @@ export function TableItens({ title }: ITableComponent) {
   const isRefInicial = useRef(true);
   const isRefVerMais = useRef(false);
   const [clean, setClean] = useState(false);
+  const [query, setQuery] = useState('');
 
 const equipmentPerPage = 12;
 
-const fetchItems = async () => {
+const fetchItems = async (query: string) => {
   try {
-      const response = await api.get(`/api/v1/equipments?page=${currentPage}&size=${equipmentPerPage}`);
+
+      let url = `/api/v1/equipments?page=${currentPage}&size=${equipmentPerPage}&sort=name`;
+
+      if(query && query !== ''){
+        url += `&query=${query}`
+      }
+
+      const response = await api.get(url);
       setTotalElements(response.data.total_elements);
       return response.data;
   } catch (error) {
@@ -46,7 +54,7 @@ const fetchItems = async () => {
 useEffect(() => {
   if (isRefInicial.current) {
       const fetchAndSetItems = async () => {
-      const data = await fetchItems();
+      const data = await fetchItems(query);
       setEquipment(data.content);
       setFilteredEquipment(data.content);
     };
@@ -59,7 +67,7 @@ useEffect(() => {
 useEffect(() => {
   if (isRefVerMais.current) {
     const fetchAndSetServices = async () => {
-      const newEquipment = await fetchItems();
+      const newEquipment = await fetchItems(query);
       const all = [...equipment, ...newEquipment.content]
       setFilteredEquipment(all);
       setEquipment(all);
@@ -73,17 +81,26 @@ useEffect(() => {
 
 const handleClick = () => {
   isRefVerMais.current = true;
-  setClean(true);
+  setClean(false);
   setCurrentPage(prevPage => prevPage + 1);
 };
 
 const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
   const { sortOrder, searchValue } = headerChange;
-  const filteredItems = (equipment || []).filter((item: IEquipment) => {
-    return item.name?.toLowerCase().includes(searchValue?.toLowerCase());
-  }) || [];
+  setQuery(searchValue);
+
+  const fetchAndSetItems = async () => {
+    const data = await fetchItems(searchValue);
+    setEquipment(data.content);
+    setFilteredEquipment(data.content);
+  };
+  fetchAndSetItems();
+
+  // const filteredItems = (equipment || []).filter((item: IEquipment) => {
+  //   return item.name?.toLowerCase().includes(searchValue?.toLowerCase());
+  // }) || [];
   
-  const sortedFilteredItems: IEquipment[] = [...filteredItems];
+  const sortedFilteredItems: IEquipment[] = [...filteredEquipment];
     if (sortOrder === '1') {
       sortedFilteredItems.sort((a, b) => a.name.localeCompare(b.name)); 
     } else {

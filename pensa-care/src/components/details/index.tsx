@@ -27,12 +27,13 @@ export function ClientDetails({client}: ClientDetailsProps) {
   const [items, setItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState();
 
-  const openModal = async (item: any) => {
+  const openModalCardPark = async (item: any) => {
     const fetch = async () => {
       if(item){
         try {
           const response = await api.get(`/api/v1/equipments/services?code=${item.code}&serialNumber=${item.serial_number}`);
-
+          const sortedServiceHistory = response.data.service_history.sort((a: { date: string | number | Date; }, b: { date: string | number | Date; }) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          response.data.service_history = sortedServiceHistory;
           setSelectedItem(response.data);
         } catch (error) {
           console.error('Erro ao obter os dados:', error);
@@ -87,7 +88,7 @@ export function ClientDetails({client}: ClientDetailsProps) {
         spacing={{ base: 10, sm: 'xl' }}
         pb={20}
       >
-        {items.map((d) => (<GridCard open={openModal} item={d}/>))}
+        {items.map((d) => (<GridCard open={openModalCardPark} item={d}/>))}
       </SimpleGrid>
 
       <ModalComponent

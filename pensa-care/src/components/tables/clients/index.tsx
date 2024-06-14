@@ -29,13 +29,21 @@ export function TableClients({ title }: ITableComponent) {
   const isRefVerMais = useRef(false);
   const [clean, setClean] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState('');
 
   const clientsPerPage = 12;
   
-  const fetchClient = async () => {
+  const fetchClient = async (query: string) => {
     try {
-        const response = await api.get(`/api/v1/clients?page=${currentPage}&size=${clientsPerPage}`);
+        let url = `/api/v1/clients?page=${currentPage}&size=${clientsPerPage}&sort=name`;
+
+        if(query && query !== ''){
+          url += `&query=${query}`
+        }
+
+        const response = await api.get(url);
         setTotalElements(response.data.total_elements);
+        
         return response.data;
     } catch (error) {
         console.error('Erro ao buscar clientes:', error);
@@ -43,12 +51,11 @@ export function TableClients({ title }: ITableComponent) {
     }
   };
 
-
   useEffect(() => {
     if (isRefInicial.current) {
         setLoading(true);
         const fetchAndSetClient = async () => {
-        const data = await fetchClient();
+        const data = await fetchClient(query);
         setClient(data.content);
         setFilteredClient(data.content);
       };
@@ -61,7 +68,7 @@ export function TableClients({ title }: ITableComponent) {
   useEffect(() => {
     if (isRefVerMais.current) {
       const fetchAndSetClient = async () => {
-        const newClients = await fetchClient();
+        const newClients = await fetchClient(query);
         const all = [...client, ...newClients.content]
         setFilteredClient(all);
         setClient(all);
@@ -74,15 +81,25 @@ export function TableClients({ title }: ITableComponent) {
 
   const handleClick = () => {
     isRefVerMais.current = true;
-    setClean(true);
+    setClean(false);
     setCurrentPage(prevPage => prevPage + 1);
   };
   
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
-    const filteredClient = (client || []).filter((client: IClient) => {
-      return client.name?.toLowerCase().includes(searchValue?.toLowerCase());
-    }) || [];
+    setQuery(searchValue);
+
+    const fetchAndSetClient = async () => {
+      const newClients = await fetchClient(searchValue);
+      const all = [...client, ...newClients.content]
+      setFilteredClient(all);
+      setClient(all);
+    };
+    fetchAndSetClient(); 
+
+    // const filteredClient = (client || []).filter((client: IClient) => {
+    //   return client.name?.toLowerCase().includes(searchValue?.toLowerCase());
+    // }) || [];
     
     const sortedFilteredClient: IClient[] = [...filteredClient];
     if (sortOrder === '1') {

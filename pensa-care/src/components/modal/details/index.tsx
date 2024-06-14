@@ -1,7 +1,7 @@
-import { Divider, Flex, Image, Text, Timeline, Title } from '@mantine/core';
+import { Avatar, Divider, Flex, Text, Timeline, Title } from '@mantine/core';
 
-import sulfIcon from '../../../assets/icons/cards/modal/sulf.svg';
 import { StepIcon } from '../../../assets/icons/timeline/step';
+import ImageApiService from '../../../services/ImageApiService';
 
 interface TimelineCardBodyProps {
   technician: string;
@@ -17,29 +17,29 @@ function TimelineCardBody(props: TimelineCardBodyProps) {
   // TODO: Add the props in the component
   props
   return (
-    <Flex maw={520} pos={'relative'}>
+    <Flex maw={550} pos={'relative'}>
       <Flex direction="column" gap={2}>
+        <Flex mt={2} justify={'space-between'} align={'center'} maw={250}>
+          <Text fw={'bold'} tt="uppercase" size="sm" mt={1}>
+            TÉCNICO:
+          </Text>
+          <Text> {props.technician}</Text>
+        </Flex>
         <Flex direction="column" gap={4}>
-          <Flex mt={2} justify={'space-between'} align={'center'} maw={170}>
-            <Text fw={'bold'} tt="uppercase" size="sm" mt={4}>
-              TÉCNICO
-            </Text>
-            <Text>{props.technician}</Text>
-          </Flex>
-          <Flex justify={'space-between'} align={'center'} maw={205}>
+          <Flex justify={'space-between'} align={'center'} maw={180}>
             <Text fw={'bold'} tt="uppercase" size="sm" mr={87}>
               TIME
             </Text>
             <Text>{props.time}</Text>
           </Flex>
-          <Flex justify={'space-between'} align={'center'} maw={202}>
+          <Flex justify={'space-between'} align={'center'} maw={180}>
             <Text fw={'bold'} tt="uppercase" size="sm">
               Modelo
             </Text>
             <Text>{props.model}</Text>
           </Flex>
           {/* Ajustar tamanho de largura após dados do back-end */}
-          <Flex align={'center'} maw={205} justify="space-between">
+          <Flex align={'center'} maw={180} justify="space-between">
             <Text fw={'bold'} tt="uppercase" size="sm">
               Status
             </Text>
@@ -104,14 +104,15 @@ interface ModalDetailsCardProps {
 
 export function ModalDetailsCard(card: ModalDetailsCardProps) {
   // TODO: Add the props in the component
+  const imageApiService = new ImageApiService();
   
   return (
     <Flex
-      style={{ borderRadius: '10px' }}
+      
       bg={'white'}
       m={28}
       p={28}
-      maw={'630px'}
+      maw={'650px'}
       direction={'column'}
     >
       <Flex direction={'column'}>
@@ -119,7 +120,7 @@ export function ModalDetailsCard(card: ModalDetailsCardProps) {
           Equipamento
         </Title>
         <Flex align={'center'}>
-          <Image src={sulfIcon} m={20} ml={0} />
+          <Avatar src={imageApiService.getEquipmentImageUrl(card.equipment.code)} size="lg" m={15} ml={0} />
           <Flex direction={'column'}>
             <Text lh={1.25} c={'#999'} size="xs">
               {card.equipment.code}
@@ -158,14 +159,15 @@ export function ModalDetailsCard(card: ModalDetailsCardProps) {
 
           {card.equipment.service_history.map((d: any ) => (
               <Timeline.Item
+              key={`${d.description}-${d.date}`}
               bullet={<StepIcon color={d.type === 'MAINTENANCE' ? '#A32219' : '#C3C985'} />}
-              title="ANALISADOR SERVOTOUCH LASER PARA PROCESSO - 35164"
+              title={d.description}
               pos={'relative'}
               c={'#72707B'}
             >
               <Flex gap={30} pos={'absolute'} top={0} left={-120}>
                 <Text fw={'bold'}>
-                  {new Date(d.date).toLocaleDateString('pt-BR')}
+                  {d.date ? new Date(d.date).toLocaleDateString() : 'N/D'}
                   <Text ta={'center'} size="md" c={d.type === 'MAINTENANCE' ? '#A32219' : '#88960E'}>
                   {d.type === 'MAINTENANCE' ? 'Corretiva' : 'Preventiva'}
                   </Text>

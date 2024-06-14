@@ -29,10 +29,17 @@ export function TableServices({ title }: ITableComponent) {
   const isRefInicial = useRef(true);
   const isRefVerMais = useRef(false);
   const [clean, setClean] = useState(false);
+  const [query, setQuery] = useState('');
 
   const servicesPerPage = 12;
-  const fetchServices = async () => {
-    const response = await api.get(`/api/v1/services?page=${currentPage}&size=${servicesPerPage}`);
+  const fetchServices = async (query: string) => {
+    let url = `/api/v1/services?page=${currentPage}&size=${servicesPerPage}&sort=name`;
+
+    if(query && query !== ''){
+      url += `&query=${query}`
+    }
+
+    const response = await api.get(url);
     setTotalElements(response.data.total_elements);
     return response.data;
   };
@@ -40,7 +47,7 @@ export function TableServices({ title }: ITableComponent) {
   useEffect(() => {
     if (isRefInicial.current) {
         const fetchAndSetServices = async () => {
-        const data = await fetchServices();
+        const data = await fetchServices(query);
         setService(data.content);
         setFilteredService(data.content);
       };
@@ -52,7 +59,7 @@ export function TableServices({ title }: ITableComponent) {
   useEffect(() => {
     if (isRefVerMais.current) {
       const fetchAndSetServices = async () => {
-        const newServices = await fetchServices();
+        const newServices = await fetchServices(query);
         const todos = [...service, ...newServices.content]
         setFilteredService(todos);
         setService(todos);
@@ -65,17 +72,26 @@ export function TableServices({ title }: ITableComponent) {
 
   const handleClick = () => {
     isRefVerMais.current = true;
-    setClean(true);
+    setClean(false);
     setCurrentPage(prevPage => prevPage + 1);
   };
 
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
-    const filteredServices = (service || []).filter((service: IService) => {
-      return service.name?.toLowerCase().includes(searchValue?.toLowerCase());
-    }) || [];
+    setQuery(searchValue);
 
-    const sortFilteredServices = filteredServices.sort((a: IService, b: IService) => {
+    const fetchAndSetServices = async () => {
+      const data = await fetchServices(searchValue);
+      setService(data.content);
+      setFilteredService(data.content);
+    };
+    fetchAndSetServices();
+
+    // const filteredServices = (service || []).filter((service: IService) => {
+    //   return service.name?.toLowerCase().includes(searchValue?.toLowerCase());
+    // }) || [];
+
+    const sortFilteredServices = filteredService.sort((a: IService, b: IService) => {
       if (sortOrder === '1') {
         return a.name.localeCompare(b.name);
       } else {

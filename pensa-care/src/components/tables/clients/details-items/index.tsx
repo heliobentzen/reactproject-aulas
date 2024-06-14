@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { IEquipment } from '../../../../interfaces/table/IEquipment';
 import ApiService from '../../../../services/ApiService';
 import { Model } from '../../components/model';
-import sulfIcon from '/../../assets/icons/tables/sulf.svg';
+import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
 
 // Create an axios instance
 const api = new ApiService('');
