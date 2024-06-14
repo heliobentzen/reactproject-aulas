@@ -1,7 +1,8 @@
 import { Anchor, Button, Card, Center, Checkbox, Group, PasswordInput, Radio, Text, TextInput, Title, } from '@mantine/core';
-import { FormEvent, useState, useEffect } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ApiService from '../../../services/ApiService';
+
 
 export function Signup(props: any) {
   const [email, setEmail] = useState('');
@@ -16,6 +17,8 @@ export function Signup(props: any) {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const api = new ApiService('');
+  
+
 
   useEffect(() => {
     if (props.isEdit) {
@@ -54,9 +57,8 @@ export function Signup(props: any) {
     }
   }, [user]);
 
-  const salvar = (event: FormEvent<HTMLFormElement>) => {
+  const salvar = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if (validarCampos()) {
       if (props.isLogin) {
 

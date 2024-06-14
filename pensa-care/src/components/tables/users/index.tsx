@@ -51,6 +51,7 @@ export function TableUsers({ title }: ITableComponent) {
     const response = await api.get(`/api/v1/users?page=${currentPage}&size=${userPerPage}`);
     setTotalElements(response.data.total_elements);
     return response.data;
+
   };
 
   useEffect(() => {
@@ -69,15 +70,17 @@ export function TableUsers({ title }: ITableComponent) {
     if (isRefVerMais.current) {
       const fetchAndSetUsers = async () => {
         const newUsers = await fetchUser();
-        const todos = [...user, ...newUsers.content]
+        const todos = [...user, ...newUsers.content];
         setFilteredUser(todos);
-        setUser(todos);
+        setUser(todos); // Atualize apenas uma vez
       };
       fetchAndSetUsers();
-      isRefVerMais.current = false;
-      setLimpar(false);
     }
+    isRefVerMais.current = false;
+    setLimpar(false);
   }, [currentPage]);
+  
+
 
   const handleClick = () => {
     isRefVerMais.current = true;
@@ -88,7 +91,7 @@ export function TableUsers({ title }: ITableComponent) {
   const handleTableHeaderChange = (headerChange: any) => {
     const { sortOrder, searchValue } = headerChange;
     const filteredUser = (user || []).filter((user: IUser) => {
-      return user.username?.toLowerCase().includes(searchValue?.toLowerCase());
+      user.username?.toLowerCase().includes(searchValue?.toLowerCase());
     }) || [];
 
     const sortFilteredUser = filteredUser.sort((a: IUser, b: IUser) => {
@@ -98,30 +101,22 @@ export function TableUsers({ title }: ITableComponent) {
         return b.username.localeCompare(a.username);
       }
     });
-
     setFilteredUser(sortFilteredUser || []);
   }
 
-  const deleteUser = (id: string | undefined) => {
-    const save = async () => {
-      api.delete(`/api/v1/users/${id}`)
-        .then(response => {
-          console.log('Resposta da API:', response.data);
-          closeModal();
-          const fetchAndSetUser = async () => {
-            const data = await fetchUser();
-            setUser(data.content);
-            setFilteredUser(data.content);
-          };
-          fetchAndSetUser();
-        })
-        .catch(error => {
-          console.error('Erro:', error);
-        });
-    };
-    save();
-
-  }
+  const deleteUser =  async (id: string | undefined) => {
+    try {
+      await api.delete(`/api/v1/users/${id}`)
+      console.log('Usuário desativado com sucesso!');
+      closeModal();
+      
+      const data = await fetchUser();
+      setUser(data.content);
+      setFilteredUser(data.content);
+      } catch (error) {
+        console.error('Erro ao desativar usuário:', error);
+      }
+  };
 
   return (
     <Box pb={24} bg="white" style={{ borderRadius: '10px' }} px={24}>
@@ -155,6 +150,7 @@ export function TableUsers({ title }: ITableComponent) {
             <Table.Th style={weightRegular}>Usuário</Table.Th>
             <Table.Th style={weightRegular}>Perfil</Table.Th>
             <Table.Th style={weightRegular}>E-mail</Table.Th>
+            <Table.Th style={weightRegular}>Status</Table.Th>
             <Table.Th style={weightRegular}>Edição</Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -165,6 +161,7 @@ export function TableUsers({ title }: ITableComponent) {
               <Table.Td>{u.username}</Table.Td>
               <Table.Td>{u.role}</Table.Td>
               <Table.Td>{u.email}</Table.Td>
+              <Table.Td>{u.active ? 'Ativo' : 'Inativo'}</Table.Td>
               <Table.Td>
                 <a href="#" onClick={() => { editModal(u) }}>Editar</a> |
                 <a href="#" onClick={() => { deleteModal(u) }}>Excluir</a>
