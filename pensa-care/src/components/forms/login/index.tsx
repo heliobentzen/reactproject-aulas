@@ -85,7 +85,7 @@ export function Login() {
         />
 
         <Center mt={'md'}>
-          <Anchor component={Link} to={'/recover'}>
+          <Anchor component={Link} to={'/email-recover'}>
             <strong>Esqueceu sua senha?</strong>
           </Anchor>
         </Center>

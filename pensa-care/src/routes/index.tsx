@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
-import { Login, NewPassword, Recover, Signup } from '../components/forms';
+import { Login, NewPassword, Recover, EmailRecover, Signup } from '../components/forms';
 import { Layout } from '../layouts';
 import { ClientsPage } from '../pages/clients';
 import { ClientDetailsPage } from '../pages/clients/client-details';
@@ -31,6 +31,7 @@ export function Router() {
         <Route element={<Layout.Recovery />}>
           <Route path="/recover" element={<Recover />} />
           <Route path="/new-password" element={<NewPassword />} />
+          <Route path="/email-recover" element={<EmailRecover />} />
         </Route>
         <Route element={<Layout.Dashboard />}>
           <Route path="/dashboard" element={<ProtectedDashboard />} />

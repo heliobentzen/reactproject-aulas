@@ -1,22 +1,40 @@
 import { Anchor, Button, Center, PinInput, Text } from '@mantine/core';
 import axios from 'axios';
-import { FormEvent, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { FormEvent, useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 export function Recover() {
   const [code, setCode] = useState('');
-  // const navigate = useNavigate();
-  code
+  const [codeError, setCodeError] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { email } = location.state || {};
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      await axios.post('/send-code', { email: 'user-email@gmail.com' });
-      console.log('Código enviado');
-    } catch (error) {
-      console.error('Falhou ao enviar código:', error);
+
+    if (code.length < 6) {
+      setCodeError(true);
+    } else {
+      navigate('/new-password')
+      try {
+        await axios.post(`/`);
+        console.log('Código enviado');
+      } catch (error) {
+        console.error('Falhou ao enviar código:', error);
+      }
     }
-    };
+  };
+
+  useEffect(() => {
+    if (code.length == 0) {
+      setCodeError(false);
+    } else if (code.length < 6) {
+      setCodeError(true);
+    } else {
+      setCodeError(false);
+    }
+  }, [code])
 
   // const handleConfirm = async () => {
   //   try {
@@ -28,23 +46,22 @@ export function Recover() {
   //   }
   // };
 
-
   return (
     <>
       <Text size="xl" mb={20}>
         <strong>Recuperação de senha</strong>
       </Text>
       <Text ta={'center'} mb={20}>
-        Enviamos um código de verificação pro email cadastrado
-        (exemplodeemail@gmail.com) para validação e criação de uma nova senha.
-        Verifique sua caixa de email.
+        {`Enviamos um código de verificação pro email cadastrado
+        (${email}) para validação e criação de uma nova senha.
+        Verifique sua caixa de email.`}
       </Text>
       <Text size="sm" mb={20}>
         Código de verificação
       </Text>
 
       <form onSubmit={handleSubmit}>
-        <PinInput size="lg" length={6} type="number" mb={40} onChange={(value: string) => setCode(value)} />
+        <PinInput error={codeError} size="lg" length={6} type="number" mb={40} onChange={(value: string) => setCode(value)} />
         <Center>
           <Button size="md" radius={'md'} maw={'320px'} type="submit">
             Confirmar código

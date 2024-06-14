@@ -6,15 +6,43 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { FormEvent, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export function NewPassword() {
-  const handleSubmit = (event: FormEvent<HTMLElement>) => {
+  const navigate = useNavigate();
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  const handleSubmit = async (event: FormEvent<HTMLElement>) => {
     event.preventDefault();
 
-    console.log('submit - new password');
+    if (password.length < 8) {
+      setPasswordError("A senha deve ter pelo menos 8 caracteres.");
+    } else if (password !== passwordConfirm) {
+      setPasswordError("As senhas não coincidem.");
+    } else {
+      navigate('/login')
+      try {
+        await axios.post(`/`);
+        console.log('nova senha enviada');
+      } catch (error) {
+        console.error('Falhou ao enviar nova senha:', error);
+      }
+    }
   };
+
+  useEffect(() => {
+    if (password !== passwordConfirm) {
+      setPasswordError("As senhas não coincidem.");
+    } else if (password.length < 8) {
+      setPasswordError("A senha deve ter pelo menos 8 caracteres.");
+    } else {
+      setPasswordError("");
+    }
+  }, [password, passwordConfirm]);
 
   const noBorder = {
     input: {
@@ -40,6 +68,8 @@ export function NewPassword() {
           placeholder="Nova senha"
           radius={'md'}
           size="md"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
         ></PasswordInput>
         <PasswordInput
           styles={noBorder}
@@ -49,6 +79,9 @@ export function NewPassword() {
           placeholder="Repetir nova senha"
           radius={'md'}
           size="md"
+          value={passwordConfirm}
+          onChange={(event) => setPasswordConfirm(event.target.value)}
+          error={passwordError}
         ></PasswordInput>
         <Center>
           <Button size="md" radius="md" mt={'md'} type="submit">
