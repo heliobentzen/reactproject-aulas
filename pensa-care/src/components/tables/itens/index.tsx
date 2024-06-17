@@ -30,13 +30,14 @@ export function TableItens({ title }: ITableComponent) {
   const isRefVerMais = useRef(false);
   const [clean, setClean] = useState(false);
   const [query, setQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState(1);
 
 const equipmentPerPage = 12;
 
-const fetchItems = async (query: string) => {
+const fetchItems = async (query: string, sortOrder: number) => {
   try {
 
-      let url = `/api/v1/equipments?page=${currentPage}&size=${equipmentPerPage}&sort=name`;
+      let url = `/api/v1/equipments?page=${currentPage}&size=${equipmentPerPage}&sort=date&direction=${sortOrder == 1 ? 'asc' : 'desc'}`;
 
       if(query && query !== ''){
         url += `&query=${query}`
@@ -54,7 +55,7 @@ const fetchItems = async (query: string) => {
 useEffect(() => {
   if (isRefInicial.current) {
       const fetchAndSetItems = async () => {
-      const data = await fetchItems(query);
+      const data = await fetchItems(query, sortOrder);
       setEquipment(data.content);
       setFilteredEquipment(data.content);
     };
@@ -67,7 +68,7 @@ useEffect(() => {
 useEffect(() => {
   if (isRefVerMais.current) {
     const fetchAndSetServices = async () => {
-      const newEquipment = await fetchItems(query);
+      const newEquipment = await fetchItems(query, sortOrder);
       const all = [...equipment, ...newEquipment.content]
       setFilteredEquipment(all);
       setEquipment(all);
@@ -88,9 +89,10 @@ const handleClick = () => {
 const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
   const { sortOrder, searchValue } = headerChange;
   setQuery(searchValue);
+  setSortOrder(sortOrder);
 
   const fetchAndSetItems = async () => {
-    const data = await fetchItems(searchValue);
+    const data = await fetchItems(searchValue, sortOrder);
     setEquipment(data.content);
     setFilteredEquipment(data.content);
   };
@@ -100,13 +102,13 @@ const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: an
   //   return item.name?.toLowerCase().includes(searchValue?.toLowerCase());
   // }) || [];
   
-  const sortedFilteredItems: IEquipment[] = [...filteredEquipment];
-    if (sortOrder === '1') {
-      sortedFilteredItems.sort((a, b) => a.name.localeCompare(b.name)); 
-    } else {
-      sortedFilteredItems.sort((a, b) => b.name.localeCompare(a.name));
-    }
-    setFilteredEquipment(sortedFilteredItems);
+  // const sortedFilteredItems: IEquipment[] = [...filteredEquipment];
+  //   if (sortOrder === '1') {
+  //     sortedFilteredItems.sort((a, b) => a.name.localeCompare(b.name)); 
+  //   } else {
+  //     sortedFilteredItems.sort((a, b) => b.name.localeCompare(a.name));
+  //   }
+  //   setFilteredEquipment(sortedFilteredItems);
 }
 
   return (

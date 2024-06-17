@@ -30,10 +30,18 @@ export function TableDashboard({ title }: ITableComponent) {
   const isRefVerMais = useRef(false);
   const [clean, setClean] = useState(false);
   const [loading, setLoading] = useState(false);//falta ajustar
+  const [query, setQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState(1);
 
   const leadsPerPage = 12;
-  const fetchLeads = async () => {
-    const response = await api.get(`/api/v1/leads?page=${currentPage}&size=${leadsPerPage}`);
+  const fetchLeads = async (query: string, sortOrder: number) => {
+    let url = `/api/v1/leads?page=${currentPage}&size=${leadsPerPage}&sort=nextService&direction=${sortOrder == 1 ? 'asc' : 'desc'}`;
+
+    if(query && query !== ''){
+      url += `&query=${query}`
+    }
+
+    const response = await api.get(url);
     setTotalElements(response.data.total_elements);
     return response.data;
   };
@@ -42,7 +50,7 @@ export function TableDashboard({ title }: ITableComponent) {
     if (isRefInicial.current) {
         setLoading(true);
         const fetchAndSetLeads = async () => {
-        const data = await fetchLeads();
+        const data = await fetchLeads(query, sortOrder);
         setLeads(data.content);
         setFilteredLeads(data.content);
       };
@@ -55,7 +63,7 @@ export function TableDashboard({ title }: ITableComponent) {
   useEffect(() => {
     if (isRefVerMais.current) {
       const fetchAndSetLeads = async () => {
-        const newLeads = await fetchLeads();
+        const newLeads = await fetchLeads(query, sortOrder);
         const todos = [...leads, ...newLeads.content]
         setFilteredLeads(todos);
         setLeads(todos);
@@ -68,26 +76,36 @@ export function TableDashboard({ title }: ITableComponent) {
 
   const handleClick = () => {
     isRefVerMais.current = true;
-    setClean(true);
+    setClean(false);
     setCurrentPage(prevPage => prevPage + 1);
   };
 
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
+    setQuery(searchValue);
+    setSortOrder(sortOrder);
 
-    const filteredLeads = (leads || []).filter((item: { item: string; }) => {
-      return item.item?.toLowerCase().includes(searchValue?.toLowerCase());
-    }) || [];
+    const fetchAndSetLeads = async () => {
+      const newLeads = await fetchLeads(searchValue, sortOrder);
+      const todos = [...newLeads.content]
+      setFilteredLeads(todos);
+      setLeads(todos);
+    };
+    fetchAndSetLeads(); 
+
+    // const filteredLeads = (leads || []).filter((item: { item: string; }) => {
+    //   return item.item?.toLowerCase().includes(searchValue?.toLowerCase());
+    // }) || [];
     
-    const sortFilteredLeads = filteredLeads.sort((a: { item: string; }, b: { item: string; }) => {        
-      if (sortOrder === '1') {
-        return a.item.localeCompare(b.item);
-      } else {
-        return b.item.localeCompare(a.item);
-      }
-    });
-    console.log(filteredLeads);
-    setFilteredLeads(sortFilteredLeads || []);
+    // const sortFilteredLeads = filteredLeads.sort((a: { item: string; }, b: { item: string; }) => {        
+    //   if (sortOrder === '1') {
+    //     return a.item.localeCompare(b.item);
+    //   } else {
+    //     return b.item.localeCompare(a.item);
+    //   }
+    // });
+    // console.log(filteredLeads);
+    // setFilteredLeads(sortFilteredLeads || []);
   }
 
   return (

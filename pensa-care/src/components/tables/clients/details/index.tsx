@@ -1,13 +1,15 @@
 import { Accordion, Box, Card, Divider, Flex, Modal, Table, Text, Title } from '@mantine/core';
-import { Footer, TableHeader } from '../../components';
+import { Footer, Park, TableHeader } from '../../components';
 import { Maintenance } from '../../components/maintenance';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
-import { IService } from '../../../../interfaces/table/IService';
+// import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
+// import { IService } from '../../../../interfaces/table/IService';
 import ApiService from '../../../../services/ApiService';
-import { Model } from '../../components/model';
+// import { Model } from '../../components/model';
+// import ImageApiService from '../../../../services/ImageApiService';
+import { IEquipment } from '../../../../interfaces/table/IEquipment';
 
 // Create an axios instance
 const api = new ApiService('');
@@ -23,8 +25,9 @@ export function TableDetails({ title, result, client }: any) {
   const [isOpenedView, setIsOpenedView] = useState(false);
   const [sort] = useState('date');
   const isRefVerMais = useRef(false);
-
-
+  // const imageApiService = new ImageApiService();
+  const [query, setQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState(1);
 
   const openModal = (u: any) => {
     setEquipmentView(u);
@@ -42,10 +45,17 @@ export function TableDetails({ title, result, client }: any) {
 
   const equipmentPerPage = 12;
 
-  const fetchItens = useCallback(async () => {
+  const fetchItens = useCallback(async (query: string, sortOrder: number) => {
     if (currentPage <= totalPages) {
       setSearchTerm(searchTerm)
-      api.get(`/api/v1/clients/${cnpj}/services?page=${currentPage - 1}&size=${equipmentPerPage}`)
+
+      let url = `/api/v1/clients/${cnpj}/services?page=${currentPage - 1}&size=${equipmentPerPage}&sort=date&direction=${sortOrder == 1 ? 'asc' : 'desc'}`;
+
+      if(query && query !== ''){
+        url += `&query=${query}`
+      }
+
+      api.get(url)
         .then((response) => {
           setTotalElements(response.data.total_elements);
           setTotalPages(response.data.total_pages);
@@ -64,16 +74,16 @@ export function TableDetails({ title, result, client }: any) {
   }, [currentPage, searchTerm, sort]);
 
   useEffect(() => {
-    fetchItens();
+    fetchItens(query, sortOrder);
   }, []);
 
   useEffect(() => {
-    fetchItens();
+    fetchItens(query, sortOrder);
   }, [currentPage]);
 
-  useEffect(() => {
-    console.log(equipmentView)
-  }, [equipmentView])
+  // useEffect(() => {
+  //   console.log(equipmentView)
+  // }, [equipmentView])
 
   const handleClick = () => {
     setCurrentPage(prevPage => prevPage + 1);
@@ -82,19 +92,25 @@ export function TableDetails({ title, result, client }: any) {
 
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
-    const filteredItens = (equipment || []).filter((item: IService) => {
-      return item.description?.toLowerCase().includes(searchValue?.toLowerCase());
-    }) || [];
+    setQuery(searchValue);
+    setSortOrder(sortOrder);
+    equipment
 
-    const sortFilteredItens = filteredItens.sort((a: IService, b: IService) => {
-      if (sortOrder === '1') {
-        return a.description.localeCompare(b.description);
-      } else {
-        return b.description.localeCompare(a.description);
-      }
-    });
+    fetchItens(searchValue, sortOrder)
 
-    setFilteredEquipment(sortFilteredItens || []);
+    // const filteredItens = (equipment || []).filter((item: IService) => {
+    //   return item.description?.toLowerCase().includes(searchValue?.toLowerCase());
+    // }) || [];
+
+    // const sortFilteredItens = filteredItens.sort((a: IService, b: IService) => {
+    //   if (sortOrder === '1') {
+    //     return a.description.localeCompare(b.description);
+    //   } else {
+    //     return b.description.localeCompare(a.description);
+    //   }
+    // });
+
+    // setFilteredEquipment(sortFilteredItens || []);
   }
 
   const formatarData = (data: any) => {
@@ -135,11 +151,13 @@ export function TableDetails({ title, result, client }: any) {
                 client={d.name}
               />
 
-              <Model
-                image={sulfIcon}
+              {/* <Model
+                image={imageApiService.getEquipmentImageUrl(d.items[0].code)}
                 serial={`S/N: ${d.items[0].serial_number}`}
                 name={d.items[0].model}
-              />
+              /> */}
+
+              <Park parks={(d as IEquipment).items || []} withIndicator />
 
 
               <Table.Td>

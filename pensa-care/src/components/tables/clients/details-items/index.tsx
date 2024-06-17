@@ -6,7 +6,8 @@ import { useParams } from 'react-router-dom';
 import { IEquipment } from '../../../../interfaces/table/IEquipment';
 import ApiService from '../../../../services/ApiService';
 import { Model } from '../../components/model';
-import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
+// import sulfIcon from '../../../../assets/icons/tables/sulf.svg';
+import ImageApiService from '../../../../services/ImageApiService';
 
 // Create an axios instance
 const api = new ApiService('');
@@ -21,6 +22,8 @@ export function TableDetailsItems({ title, result, client }: any) {
   const [itemView, setItemView] = useState<any>();
   const [isOpenedView, setIsOpenedView] = useState(false);
   const isRefVerMais = useRef(false);
+  const imageApiService = new ImageApiService();
+  const [query, setQuery] = useState('');
 
   const { id } = useParams<{ id: string }>();
   const cnpj = id;
@@ -28,10 +31,16 @@ export function TableDetailsItems({ title, result, client }: any) {
   client
   const equipmentPerPage = 12;
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (query: string) => {
     if (currentPage <= totalPages) {
       try {
-        const response = await api.get(`/api/v1/clients/${cnpj}/equipments?page=${currentPage - 1}&size=${equipmentPerPage}`);
+        let url = `/api/v1/clients/${cnpj}/equipments?page=${currentPage - 1}&size=${equipmentPerPage}&sort=name`;
+
+        if(query && query !== ''){
+          url += `&query=${query}`
+        }
+
+        const response = await api.get(url);
         const newItems = response.data.content;
         setTotalElements(response.data.total_elements);
         setTotalPages(response.data.total_pages);
@@ -59,7 +68,7 @@ export function TableDetailsItems({ title, result, client }: any) {
   }
 
   useEffect(() => {
-    fetchData();
+    fetchData(query);
   }, [fetchData]);
 
   const handleClick = () => {
@@ -69,18 +78,24 @@ export function TableDetailsItems({ title, result, client }: any) {
 
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
-    const filteredItems = (equipment || []).filter((item: IEquipment) => {
-      return item.description?.toLowerCase().includes(searchValue?.toLowerCase());
-    }) || [];
+    setQuery(searchValue);
+    sortOrder
+    equipment
 
-    const sortFilteredItens = filteredItems.sort((a: IEquipment, b: IEquipment) => {
-      if (sortOrder === '1') {
-        return a.description.localeCompare(b.description);
-      } else {
-        return b.description.localeCompare(a.description);
-      }
-    });
-    setFilteredEquipment(sortFilteredItens || []);
+    fetchData(searchValue)
+
+    // const filteredItems = (equipment || []).filter((item: IEquipment) => {
+    //   return item.description?.toLowerCase().includes(searchValue?.toLowerCase());
+    // }) || [];
+
+    // const sortFilteredItens = filteredItems.sort((a: IEquipment, b: IEquipment) => {
+    //   if (sortOrder === '1') {
+    //     return a.description.localeCompare(b.description);
+    //   } else {
+    //     return b.description.localeCompare(a.description);
+    //   }
+    // });
+    // setFilteredEquipment(sortFilteredItens || []);
   }
 
   const formatarData = (data: any) => {
@@ -126,7 +141,7 @@ export function TableDetailsItems({ title, result, client }: any) {
               </Table.Td>
 
               <Model
-                image={sulfIcon}
+                image={imageApiService.getEquipmentImageUrl(e.code)}
                 serial={`S/N: ${e.serial_number}`}
                 name={e.model}
               />

@@ -30,10 +30,11 @@ export function TableServices({ title }: ITableComponent) {
   const isRefVerMais = useRef(false);
   const [clean, setClean] = useState(false);
   const [query, setQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState(1);
 
   const servicesPerPage = 12;
-  const fetchServices = async (query: string) => {
-    let url = `/api/v1/services?page=${currentPage}&size=${servicesPerPage}&sort=name`;
+  const fetchServices = async (query: string, sortOrder: number) => {
+    let url = `/api/v1/services?page=${currentPage}&size=${servicesPerPage}&sort=date&direction=${sortOrder == 1 ? 'asc' : 'desc'}`;
 
     if(query && query !== ''){
       url += `&query=${query}`
@@ -47,7 +48,7 @@ export function TableServices({ title }: ITableComponent) {
   useEffect(() => {
     if (isRefInicial.current) {
         const fetchAndSetServices = async () => {
-        const data = await fetchServices(query);
+        const data = await fetchServices(query, sortOrder);
         setService(data.content);
         setFilteredService(data.content);
       };
@@ -59,7 +60,7 @@ export function TableServices({ title }: ITableComponent) {
   useEffect(() => {
     if (isRefVerMais.current) {
       const fetchAndSetServices = async () => {
-        const newServices = await fetchServices(query);
+        const newServices = await fetchServices(query, sortOrder);
         const todos = [...service, ...newServices.content]
         setFilteredService(todos);
         setService(todos);
@@ -79,9 +80,10 @@ export function TableServices({ title }: ITableComponent) {
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
     setQuery(searchValue);
+    setSortOrder(sortOrder);
 
     const fetchAndSetServices = async () => {
-      const data = await fetchServices(searchValue);
+      const data = await fetchServices(searchValue, sortOrder);
       setService(data.content);
       setFilteredService(data.content);
     };
@@ -91,14 +93,14 @@ export function TableServices({ title }: ITableComponent) {
     //   return service.name?.toLowerCase().includes(searchValue?.toLowerCase());
     // }) || [];
 
-    const sortFilteredServices = filteredService.sort((a: IService, b: IService) => {
-      if (sortOrder === '1') {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
-    });
-    setFilteredService(sortFilteredServices || []);
+    // const sortFilteredServices = filteredService.sort((a: IService, b: IService) => {
+    //   if (sortOrder === '1') {
+    //     return a.name.localeCompare(b.name);
+    //   } else {
+    //     return b.name.localeCompare(a.name);
+    //   }
+    // });
+    // setFilteredService(sortFilteredServices || []);
   }
 
   return (
