@@ -3,7 +3,6 @@ import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ApiService from '../../../services/ApiService';
 
-
 export function Signup(props: any) {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -18,7 +17,7 @@ export function Signup(props: any) {
   const navigate = useNavigate();
   const api = new ApiService('');
   
-
+  
 
   useEffect(() => {
     if (props.isEdit) {
@@ -40,17 +39,23 @@ export function Signup(props: any) {
 
 
   useEffect(() => {
-    if (password !== passwordConfirm) {
+    const validarSenha = (password: string) => {
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      return regex.test(password);
+    };
+  
+    if (passwordConfirm && password !== passwordConfirm) {
       setPasswordError("As senhas não coincidem.");
-    } else if (password.length < 8) {
-      setPasswordError("A senha deve ter pelo menos 8 caracteres.");
+    } else if (password && !validarSenha(password)) {
+      setPasswordError("A senha deve ter pelo menos 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial.");
     } else {
       setPasswordError("");
     }
   }, [password, passwordConfirm]);
 
+  
   useEffect(() => {
-    if (user.length < 3) {
+    if (user && user.length < 3) {
       setUserError("O usuário deve ter pelo menos 3 caracteres.");
     } else {
       setUserError("");
