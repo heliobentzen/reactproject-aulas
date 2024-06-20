@@ -32,12 +32,12 @@ export function TableItens({ title }: ITableComponent) {
   const [query, setQuery] = useState('');
   const [sortOrder, setSortOrder] = useState(1);
 
-const equipmentPerPage = 12;
+const equipmentPerPage = 20;
 
 const fetchItems = async (query: string, sortOrder: number) => {
   try {
 
-      let url = `/api/v1/equipments?page=${currentPage}&size=${equipmentPerPage}&sort=date&direction=${sortOrder == 1 ? 'asc' : 'desc'}`;
+      let url = `/api/v1/equipments?page=${currentPage}&size=${equipmentPerPage}&sort=date&direction=${sortOrder == 0 ? 'asc' : 'desc'}`;
 
       if(query && query !== ''){
         url += `&query=${query}`
@@ -72,7 +72,6 @@ useEffect(() => {
       const all = [...equipment, ...newEquipment.content]
       setFilteredEquipment(all);
       setEquipment(all);
-      
     };
     fetchAndSetServices(); 
     isRefVerMais.current = false;

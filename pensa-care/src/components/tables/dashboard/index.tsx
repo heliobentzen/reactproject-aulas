@@ -25,7 +25,10 @@ export function TableDashboard({ title }: ITableComponent) {
   const [leads, setLeads] = useState<any>([]);
   const [filteredLeads, setFilteredLeads] = useState<any>([]);
   const [totalElements, setTotalElements] = useState(1);
+  const [totalPagesAfter, setTotalPagesAfter] = useState(0);
+  const [totalPagesBefore, setTotalPagesBefore] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  const [currentPageBefore, setCurrentPageBefore] = useState(0);
   const isRefInicial = useRef(true);
   const isRefVerMais = useRef(false);
   const [clean, setClean] = useState(false);
@@ -35,15 +38,37 @@ export function TableDashboard({ title }: ITableComponent) {
 
   const leadsPerPage = 12;
   const fetchLeads = async (query: string, sortOrder: number) => {
-    let url = `/api/v1/leads?page=${currentPage}&size=${leadsPerPage}&sort=nextService&direction=${sortOrder == 1 ? 'asc' : 'desc'}`;
+    const today = new Date().toISOString().split('T')[0];
+
+    let urlAfter = `/api/v1/leads?page=${currentPage}&size=${leadsPerPage}&sort=nextService&direction=${sortOrder == 1 ? 'asc' : 'desc'}&after=${today}`;
+    let urlBefore = `/api/v1/leads?page=${currentPageBefore}&size=${leadsPerPage}&sort=nextService&direction=${sortOrder == 1 ? 'asc' : 'desc'}&before=${today}`;
 
     if(query && query !== ''){
-      url += `&query=${query}`
+      urlAfter += `&query=${query}`
+      urlBefore += `&query=${query}`
     }
 
-    const response = await api.get(url);
-    setTotalElements(response.data.total_elements);
-    return response.data;
+    const responseAfter = await api.get(urlAfter);
+    const responseBefore = await api.get(urlBefore);
+
+    setTotalElements(responseAfter.data.total_elements + responseBefore.data.total_elements);
+    setTotalPagesAfter(responseAfter.data.total_pages);
+    setTotalPagesBefore(responseBefore.data.total_pages);
+
+    if(sortOrder == 1) {
+      if(totalPagesAfter >= currentPage){
+        return responseAfter.data;
+      }else{
+        return responseBefore.data;
+      }
+    }
+    else {
+      if(totalPagesBefore >= currentPageBefore){
+        return responseBefore.data;
+      }else{
+        return responseAfter.data;
+      }
+    }
   };
 
   useEffect(() => {
@@ -72,16 +97,32 @@ export function TableDashboard({ title }: ITableComponent) {
       isRefVerMais.current = false;
       setClean(false);
     }
-  }, [currentPage]);
+  }, [currentPage, currentPageBefore]);
 
   const handleClick = () => {
     isRefVerMais.current = true;
     setClean(false);
-    setCurrentPage(prevPage => prevPage + 1);
+
+    if(sortOrder == 1) {
+      if(totalPagesAfter > currentPage){
+        setCurrentPage(prevPage => prevPage + 1);
+      }else{
+        setCurrentPageBefore(prevPage => prevPage + 1);
+      }
+    }
+    else {
+      if(totalPagesBefore > currentPageBefore){
+        setCurrentPageBefore(prevPage => prevPage + 1);
+      }else{
+        setCurrentPage(prevPage => prevPage + 1);
+      }
+    }
   };
 
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
+    setCurrentPage(0);
+    setCurrentPageBefore(0);
     setQuery(searchValue);
     setSortOrder(sortOrder);
 

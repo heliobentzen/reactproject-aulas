@@ -1,6 +1,7 @@
 export interface IItem {
   code: string;
   serial_number: string;
+  factory_serial_number: string;
   model: string;
   description: string;
   last_service?: string;

@@ -178,7 +178,10 @@ export function TableDetailsItems({ title, result, client }: any) {
                     MODELO: {itemView.model || 'Não informado'}
                   </Text>
                   <Text fw="bold" tt="uppercase" size="sm" mt={4}>
-                    SÉRIAL: {itemView.serial_number}
+                    SN: {itemView.serial_number}
+                  </Text>
+                  <Text fw="bold" tt="uppercase" size="sm" mt={4}>
+                    Factory SN: {itemView.factory_serial_number}
                   </Text>
                   <Text fw="bold" tt="uppercase" size="sm" mt={4}>
                     ÚLTIMO SERVIÇO: {formatarData(itemView.last_service)}

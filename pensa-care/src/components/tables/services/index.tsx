@@ -34,7 +34,7 @@ export function TableServices({ title }: ITableComponent) {
 
   const servicesPerPage = 12;
   const fetchServices = async (query: string, sortOrder: number) => {
-    let url = `/api/v1/services?page=${currentPage}&size=${servicesPerPage}&sort=date&direction=${sortOrder == 1 ? 'asc' : 'desc'}`;
+    let url = `/api/v1/services?page=${currentPage}&size=${servicesPerPage}&sort=date&direction=${sortOrder == 0 ? 'asc' : 'desc'}`;
 
     if(query && query !== ''){
       url += `&query=${query}`

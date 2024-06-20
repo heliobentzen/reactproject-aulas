@@ -3,7 +3,7 @@ import { differenceInDays } from 'date-fns';
 
 import { IPreventiveDate } from '../../../../interfaces/table/IClient';
 
-export function PreventiveDate({ preventiveDate, done }: IPreventiveDate) {
+export function PreventiveDate({ preventiveDate, done }: Readonly<IPreventiveDate>) {
   done 
   if (preventiveDate === null || preventiveDate === "N/A") {
     return (

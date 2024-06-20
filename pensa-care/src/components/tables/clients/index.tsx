@@ -30,13 +30,12 @@ export function TableClients({ title }: ITableComponent) {
   const [clean, setClean] = useState(false);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState(1);
 
   const clientsPerPage = 12;
   
-  const fetchClient = async (query: string, sortOrder: number) => {
+  const fetchClient = async (query: string) => {
     try {
-        let url = `/api/v1/clients?page=${currentPage}&size=${clientsPerPage}&sort=name&direction=${sortOrder == 1 ? 'asc' : 'desc'}`;
+        let url = `/api/v1/clients?page=${currentPage}&size=${clientsPerPage}&sort=name`;
 
         if(query && query !== ''){
           url += `&query=${query}`
@@ -44,6 +43,7 @@ export function TableClients({ title }: ITableComponent) {
 
         const response = await api.get(url);
         setTotalElements(response.data.total_elements);
+        
         return response.data;
     } catch (error) {
         console.error('Erro ao buscar clientes:', error);
@@ -55,7 +55,7 @@ export function TableClients({ title }: ITableComponent) {
     if (isRefInicial.current) {
         setLoading(true);
         const fetchAndSetClient = async () => {
-        const data = await fetchClient(query, sortOrder);
+        const data = await fetchClient(query);
         setClient(data.content);
         setFilteredClient(data.content);
       };
@@ -68,7 +68,7 @@ export function TableClients({ title }: ITableComponent) {
   useEffect(() => {
     if (isRefVerMais.current) {
       const fetchAndSetClient = async () => {
-        const newClients = await fetchClient(query, sortOrder);
+        const newClients = await fetchClient(query);
         const all = [...client, ...newClients.content]
         setFilteredClient(all);
         setClient(all);
@@ -88,11 +88,10 @@ export function TableClients({ title }: ITableComponent) {
   const handleTableHeaderChange = (headerChange: { sortOrder: any; searchValue: any; }) => {
     const { sortOrder, searchValue } = headerChange;
     setQuery(searchValue);
-    setSortOrder(sortOrder);
 
     const fetchAndSetClient = async () => {
-      const newClients = await fetchClient(searchValue, sortOrder);
-      const all = [...newClients.content]
+      const newClients = await fetchClient(searchValue);
+      const all = [...client, ...newClients.content]
       setFilteredClient(all);
       setClient(all);
     };
@@ -102,13 +101,15 @@ export function TableClients({ title }: ITableComponent) {
     //   return client.name?.toLowerCase().includes(searchValue?.toLowerCase());
     // }) || [];
     
-    // const sortedFilteredClient: IClient[] = [...filteredClient];
-    // if (sortOrder === '1') {
-    //   sortedFilteredClient.sort((a, b) => a.name.localeCompare(b.name)); 
-    // } else {
-    //   sortedFilteredClient.sort((a, b) => b.name.localeCompare(a.name));
-    // }
-    // setFilteredClient(sortedFilteredClient);
+    const sortedFilteredClient = filteredClient.sort((a: IClient, b: IClient) => {        
+      if (sortOrder === '1') {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
+
+    setFilteredClient(sortedFilteredClient);
   }
 
   return (
@@ -130,7 +131,7 @@ export function TableClients({ title }: ITableComponent) {
         </Table.Thead>
         <Table.Tbody>
           {filteredClient.map((client: IClient, index: any) => {
-          const nextServiceDates = (client as IClient).equipments!
+          const nextServiceDates = (client).equipments!
           .map((equipment : any) => equipment.next_service ? new Date(equipment.next_service) : null)
           .filter(date => date !== null);
         
@@ -142,7 +143,7 @@ export function TableClients({ title }: ITableComponent) {
           minNextServiceDate = 'N/A'; // Or any other default value
         }
           return (
-            <Table.Tr key={(client as IClient).cnpj || index}>
+            <Table.Tr key={(client as IClient).cnpj && (client as IClient).clientName || index}>
               <Client
                 name={(client as IClient).name}
                 cnpj={(client as IClient).cnpj}
