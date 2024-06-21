@@ -29,7 +29,6 @@ export function TableUsers({ title }: ITableComponent) {
   const [isOpenedEdit, setIsOpenedEdit] = useState(false);
   const [isOpenedDelete, setIsOpenedDelete] = useState(false);
 
-
   const editModal = (u: IUser) => {
     setUserEdit(u);
     setIsOpenedEdit(true);
@@ -48,7 +47,7 @@ export function TableUsers({ title }: ITableComponent) {
   const isRefInicial = useRef(true);
   const isRefVerMais = useRef(false);
 
-  const userPerPage = 12;
+  const userPerPage = 20;
   const fetchUser = async () => {
     const response = await api.get(`/api/v1/users?page=${currentPage}&size=${userPerPage}`);
     setTotalElements(response.data.total_elements);
@@ -166,7 +165,7 @@ export function TableUsers({ title }: ITableComponent) {
               <Table.Td>{u.active ? 'Ativo' : 'Inativo'}</Table.Td>
               <Table.Td>
                 <a href="#" onClick={() => { editModal(u) }}> <IconEdit style={{ color: 'gray' }} /></a> 
-                <a href="#" onClick={() => { deleteModal(u) }}><IconTrash style={{ color: 'gray' }} /></a>
+                {u.active ? <a href="#" onClick={() => { deleteModal(u) }}><IconTrash style={{ color: 'gray' }} /></a> : ''}
               </Table.Td>
             </Table.Tr>
           ))}

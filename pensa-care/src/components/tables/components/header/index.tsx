@@ -46,7 +46,7 @@ export function TableHeader({
 
       {columnMode ? (
         <Flex direction={'column'} align={'flex-end'}>
-          <TextInput miw={'260px'} placeholder={searchPlaceholder} />
+          <TextInput miw={'260px'} placeholder={searchPlaceholder} value={searchValue} onChange={onSearchChange}/>
 
           <Flex align={'center'} mt={6}>
             <Text>ordernar por</Text>

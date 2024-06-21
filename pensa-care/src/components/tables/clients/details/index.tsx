@@ -43,7 +43,7 @@ export function TableDetails({ title, result, client }: any) {
   result
   client
 
-  const equipmentPerPage = 12;
+  const equipmentPerPage = 20;
 
   const fetchItens = useCallback(async (query: string, sortOrder: number) => {
     if (currentPage <= totalPages) {
@@ -51,7 +51,7 @@ export function TableDetails({ title, result, client }: any) {
 
       let url = `/api/v1/clients/${cnpj}/services?page=${currentPage - 1}&size=${equipmentPerPage}&sort=date&direction=${sortOrder == 1 ? 'asc' : 'desc'}`;
 
-      if(query && query !== ''){
+      if (query && query !== '') {
         url += `&query=${query}`
       }
 
@@ -81,10 +81,6 @@ export function TableDetails({ title, result, client }: any) {
     fetchItens(query, sortOrder);
   }, [currentPage]);
 
-  // useEffect(() => {
-  //   console.log(equipmentView)
-  // }, [equipmentView])
-
   const handleClick = () => {
     setCurrentPage(prevPage => prevPage + 1);
     isRefVerMais.current = true;
@@ -95,7 +91,6 @@ export function TableDetails({ title, result, client }: any) {
     setQuery(searchValue);
     setSortOrder(sortOrder);
     equipment
-
     fetchItens(searchValue, sortOrder)
 
     // const filteredItens = (equipment || []).filter((item: IService) => {
@@ -114,9 +109,9 @@ export function TableDetails({ title, result, client }: any) {
   }
 
   const formatarData = (data: any) => {
-    if(data === null){
+    if (data === null) {
       return "N/D";
-    }else{
+    } else {
       const dataUTC = new Date(data);
       const dataLocal = new Date(dataUTC.getUTCFullYear(), dataUTC.getUTCMonth(), dataUTC.getUTCDate());
       return dataLocal.toLocaleDateString('pt-BR');
@@ -133,7 +128,7 @@ export function TableDetails({ title, result, client }: any) {
         columnMode
       />
 
-      <Table highlightOnHover style={{cursor: 'pointer'}} mt={16}>
+      <Table highlightOnHover style={{ cursor: 'pointer' }} mt={16}>
         <Table.Thead>
           <Table.Tr>
             <Table.Th style={weightRegular}>Data</Table.Th>
@@ -216,7 +211,7 @@ export function TableDetails({ title, result, client }: any) {
         </Modal>
       )}
 
-      <Footer color={undefined} radius={undefined} onHandleClick={handleClick} />
+      <Footer color={""} radius={""} onHandleClick={handleClick} />
     </Box>
   );
 }

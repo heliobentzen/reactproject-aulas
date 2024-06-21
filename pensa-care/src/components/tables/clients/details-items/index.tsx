@@ -29,7 +29,7 @@ export function TableDetailsItems({ title, result, client }: any) {
   const cnpj = id;
   result
   client
-  const equipmentPerPage = 12;
+  const equipmentPerPage = 20;
 
   const fetchData = useCallback(async (query: string) => {
     if (currentPage <= totalPages) {
@@ -196,7 +196,7 @@ export function TableDetailsItems({ title, result, client }: any) {
           </Flex>
         </Modal>
       )}
-      <Footer color={undefined} radius={undefined} onHandleClick={handleClick} />
+      <Footer color={""} radius={""} onHandleClick={handleClick} />
     </Box>
   );
 }

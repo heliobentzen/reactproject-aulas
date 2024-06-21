@@ -13,37 +13,28 @@ export function Signup(props: any) {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [role, setRole] = useState('ADMIN');
+  const [situacao, setSituacao] = useState('false');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const api = new ApiService('');
-  
-  
 
   useEffect(() => {
+    console.log(props.user.active)
     if (props.isEdit) {
       setNome(props.user.name);
       setEmail(props.user.email);
       setUser(props.user.username);
-      setRole(props.user.role);
-      /*if(props.user.role === undefined){
-        setRole('ADMIN');
-      }else{
-        setRole(props.user.role);
-      }*/
+      setRole(props.user.role.toString());
+      setSituacao(props.user.active.toString());
     }
   }, [])
-
-  useEffect(() => {
-      console.log(role);
-    }, [role,setRole])
-
 
   useEffect(() => {
     const validarSenha = (password: string) => {
       const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       return regex.test(password);
     };
-  
+
     if (passwordConfirm && password !== passwordConfirm) {
       setPasswordError("As senhas não coincidem.");
     } else if (password && !validarSenha(password)) {
@@ -53,7 +44,6 @@ export function Signup(props: any) {
     }
   }, [password, passwordConfirm]);
 
-  
   useEffect(() => {
     if (user && user.length < 3) {
       setUserError("O usuário deve ter pelo menos 3 caracteres.");
@@ -82,30 +72,28 @@ export function Signup(props: any) {
           .catch(error => {
             console.error('Erro ao fazer cadastro:', error);
           });
-      } 
-      else if(props.isEdit){
+      }
+      else if (props.isEdit) {
         const dados = {
           "username": user,
           "fullname": nome,
           "email": email,
           "role": role
         }
-        
+
         const headers = {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         };
 
         api.pacth(`/api/v1/users/${props.user.id}`, dados, { headers })
-        .then(response => {
-          console.log('Resposta da API:', response.data);
-          navigate('/users');
-          //window.location.reload();
-        })
-        .catch(error => {
-          console.error('Erro ao fazer cadastro:', error);
-        });
-
-
+          .then(response => {
+            console.log('Resposta da API:', response.data);
+            navigate('/users');
+            //window.location.reload();
+          })
+          .catch(error => {
+            console.error('Erro ao fazer cadastro:', error);
+          });
       }
       else {
         const dados = {
@@ -279,6 +267,23 @@ export function Signup(props: any) {
                 <Group mt="xs">
                   <Radio value="ADMIN" label="Administrador" />
                   <Radio value="SALES" label="Vendedor" />
+                </Group>
+              </Radio.Group>
+            </Card>
+
+            <Text mt={10} mb={10} size="mg">Situação</Text>
+
+            <Card shadow="sm" padding="sm" radius="md" withBorder>
+              <Radio.Group
+                name="situacao usuario"
+                label="Selecione a situação do usuário"
+                withAsterisk
+                value={situacao}
+                onChange={(event) => setSituacao(event.toString())}
+              >
+                <Group mt="xs">
+                  <Radio value='true' label="Ativo" />
+                  <Radio value='false' label="Inativo" />
                 </Group>
               </Radio.Group>
             </Card>
