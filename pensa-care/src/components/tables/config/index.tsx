@@ -207,7 +207,7 @@ export function TableConfig({ title }: ITableComponent) {
           {filteredUser.map((u: IUser, index: any) => (
             <Table.Tr key={`${u.id}-${index}`}>
               <Table.Td>
-                <Button variant="subtle" size="md" c="#030229" onClick={() => { openModal(u, u.clients) }}>{u.username}</Button>
+                <Button variant="subtle" size="md" c="#030229" onClick={() => { openModal(u, u.clients) }}>{u.name}</Button>
               </Table.Td>
               <Table.Td>
                 {u.clients?.map((client, index) => (

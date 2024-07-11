@@ -1,7 +1,7 @@
 import { Box, Center, ColorSwatch, Flex, Image, Text } from '@mantine/core';
 
 import { useHover } from '@mantine/hooks';
-import { differenceInDays } from 'date-fns';
+import { differenceInCalendarDays } from 'date-fns';
 import sulfIcon from '../../../../../assets/icons/tables/sulf.svg';
 import ImageApiService from '../../../../../services/ImageApiService';
 
@@ -12,7 +12,7 @@ export function GridCard({ open, item }: any) {
   
   const today = new Date();
   const nextService = item.next_service ? new Date(item.next_service) : null;
-  const diffDays = nextService ? differenceInDays(nextService, today) : null;
+  const diffDays = nextService ? differenceInCalendarDays(nextService, today) : null;
   let color = "red";
   if(diffDays){
     if(diffDays > 120){
@@ -58,7 +58,8 @@ export function GridCard({ open, item }: any) {
                 <Text size="11px">
                   Próx.: {item.next_service ? new Date(item.next_service).toLocaleDateString() : 'N/D'}
                 </Text>
-                <Text fw={'bold'}>{diffDays ? `Em ${diffDays} dias` : "N/D"}</Text>
+                <Text fw={'bold'}>{diffDays === 1 ? `Em 1 dia` : diffDays ? `Em ${diffDays} dias` : "N/D"}
+                </Text>
               </Flex>
             </Flex>
           </Flex>

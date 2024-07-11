@@ -19,7 +19,6 @@ export function Signup(props: any) {
   const api = new ApiService('');
 
   useEffect(() => {
-    console.log(props.user.active)
     if (props.isEdit) {
       setNome(props.user.name);
       setEmail(props.user.email);

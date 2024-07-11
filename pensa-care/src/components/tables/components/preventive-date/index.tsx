@@ -1,5 +1,5 @@
 import { Flex, Table, Text } from '@mantine/core';
-import { differenceInDays } from 'date-fns';
+import { differenceInCalendarDays } from 'date-fns';
 
 import { IPreventiveDate } from '../../../../interfaces/table/IClient';
 
@@ -19,14 +19,14 @@ export function PreventiveDate({ preventiveDate, done }: Readonly<IPreventiveDat
   }
   const today = new Date();
   const preventiveDateObj = new Date(preventiveDate as string);
-  const diffDays = differenceInDays(today, preventiveDateObj);
+  const diffDays = differenceInCalendarDays(today, preventiveDateObj);
 
   return (
     <Table.Td>
       <Flex direction={'column'} gap={4}>
         <Text>{preventiveDateObj.toLocaleDateString('pt-BR')}</Text>
         <Text c="#999" size="sm">
-          {diffDays > 0 ? `${diffDays} dias atrás` : `Em ${Math.abs(diffDays)} dias`}
+        {diffDays === -1 ? `Em 1 dia` : diffDays === 1 ? `1 dia atrás` : diffDays >= 0 ? `${diffDays} dias atrás` : `Em ${Math.abs(diffDays)} dias`}
         </Text>
       </Flex>
     </Table.Td>
