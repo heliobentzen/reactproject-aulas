@@ -15,6 +15,7 @@ export function NewPassword() {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [erro, setErro] = useState('');
   const location = useLocation();
   const { dados } = location.state || {};
   const api = new ApiService('');
@@ -27,8 +28,8 @@ export function NewPassword() {
     } else if (password !== passwordConfirm) {
       setPasswordError("As senhas não coincidem.");
     } else {
+      
       try {
-        
         const newDados = {
           "username": dados.username,
           "code": dados.code,
@@ -41,6 +42,7 @@ export function NewPassword() {
         navigate('/login')
       } catch (error) {
         console.error('Falhou ao enviar nova senha:', error);
+        setErro('Erro ao alterar a senha. Verifique se o código informado está correto e tente novamente!')
       }
     }
   };
@@ -50,10 +52,12 @@ export function NewPassword() {
       setPasswordError("As senhas não coincidem.");
     } else if (password.length < 8) {
       setPasswordError("A senha deve ter pelo menos 8 caracteres.");
-    } else {
+    } else if (erro !== '') {
+      setPasswordError(erro);
+    }else {
       setPasswordError("");
     }
-  }, [password, passwordConfirm]);
+  }, [password, passwordConfirm, erro]);
 
   const noBorder = {
     input: {

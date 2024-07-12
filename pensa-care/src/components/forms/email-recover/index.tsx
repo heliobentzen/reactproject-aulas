@@ -16,22 +16,21 @@ export function EmailRecover() {
   const enviarEmail = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (username === '') {
-      setUsernameError('Preencha o nome de usuario');
+    if (!username.trim()) {
+      setUsernameError('Preencha o nome de usuário');
     } else {
+      navigate('/recover', { state: { username: username } });
       try {
         await api.post('/api/v1/auth/password-recovery/request', { username: username });
         console.log('Codigo enviado');
         navigate('/recover', { state: { username } });
       } catch (error) {
-        console.error('Falhou ao enviar codigo:', error);
+        console.error('Falhou ao enviar código:', error);
         setUsernameError('Falha ao enviar código. Tente novamente.');
       }
-
     }
   };
 
-  
   return (
     <>
       <Text size="xl" mb={20}>

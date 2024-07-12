@@ -13,7 +13,7 @@ export function Signup(props: any) {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [role, setRole] = useState('ADMIN');
-  const [situacao, setSituacao] = useState('false');
+  const [status, setStatus] = useState('false');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const api = new ApiService('');
@@ -24,19 +24,19 @@ export function Signup(props: any) {
       setEmail(props.user.email);
       setUser(props.user.username);
       setRole(props.user.role.toString());
-      setSituacao(props.user.active.toString());
+      setStatus(props.user.active.toString());
     }
   }, [])
 
   useEffect(() => {
-    const validarSenha = (password: string) => {
+    const validatePassword = (password: string) => {
       const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       return regex.test(password);
     };
 
     if (passwordConfirm && password !== passwordConfirm) {
       setPasswordError("As senhas não coincidem.");
-    } else if (password && !validarSenha(password)) {
+    } else if (password && !validatePassword(password)) {
       setPasswordError("A senha deve ter pelo menos 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial.");
     } else {
       setPasswordError("");
@@ -51,11 +51,10 @@ export function Signup(props: any) {
     }
   }, [user]);
 
-  const salvar = async (event: FormEvent<HTMLFormElement>) => {
+  const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (validarCampos()) {
+    if (validateFields()) {
       if (props.isLogin) {
-
         const dados = {
           "name": nome,
           "username": user,
@@ -77,18 +76,17 @@ export function Signup(props: any) {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         };
 
-        if(situacao.toString() === "true" && props.user.active.toString() === "false" ){
-          api.pacth(`/api/v1/users/${props.user.id}/activate`, { headers })
-          .then(response => {
-            console.log('(Situação atualizada) Resposta da API:', response.data);
-            navigate('/users');
-            //window.location.reload();
-          })
-          .catch(error => {
-            console.error('Erro ao fazer cadastro:', error);
-          });
+        if (status.toString() === "true" && props.user.active.toString() === "false") {
+          api.patch(`/api/v1/users/${props.user.id}/activate`, { headers })
+            .then(response => {
+              console.log('(Situação atualizada) Resposta da API:', response.data);
+              navigate('/users');
+              window.location.reload();
+            })
+            .catch(error => {
+              console.error('Erro ao fazer cadastro:', error);
+            });
         }
-
         const dados = {
           "fullname": nome,
           "username": user,
@@ -96,7 +94,7 @@ export function Signup(props: any) {
           "role": role
         }
 
-        api.pacth(`/api/v1/users/${props.user.id}`, dados, { headers })
+        api.patch(`/api/v1/users/${props.user.id}`, dados, { headers })
           .then(response => {
             console.log('(User atualizado) Resposta da API:', response.data);
             navigate('/users');
@@ -106,16 +104,16 @@ export function Signup(props: any) {
             console.error('Erro ao fazer cadastro:', error);
           });
 
-        if(situacao.toString() === "true" && props.user.active.toString() === "false"){
-          api.pacth(`/api/v1/users/${props.user.id}/activate`, { headers })
-          .then(response => {
-            console.log('(Situação atualizada) Resposta da API:', response.data);
-            navigate('/users');
-            window.location.reload();
-          })
-          .catch(error => {
-            console.error('Erro ao fazer cadastro:', error);
-          });
+        if (status.toString() === "true" && props.user.active.toString() === "false") {
+          api.patch(`/api/v1/users/${props.user.id}/activate`, { headers })
+            .then(response => {
+              console.log('(Situação atualizada) Resposta da API:', response.data);
+              navigate('/users');
+              window.location.reload();
+            })
+            .catch(error => {
+              console.error('Erro ao fazer cadastro:', error);
+            });
         }
 
       }
@@ -146,7 +144,7 @@ export function Signup(props: any) {
     }
   };
 
-  const validarCampos = () => {
+  const validateFields = () => {
     if (nome == '') {
       setError('Nome vazio, preencha o campo nome.');
       return false;
@@ -210,7 +208,7 @@ export function Signup(props: any) {
 
       <Text size="sm" c="red">{error}</Text>
 
-      <form onSubmit={salvar}>
+      <form onSubmit={save}>
         <TextInput
           variant="filled"
           label="Nome"
@@ -295,15 +293,15 @@ export function Signup(props: any) {
               </Radio.Group>
             </Card>
 
-            <Text mt={10} mb={10} size="mg">Situação</Text>
+            <Text mt={10} mb={10} size="mg">Status</Text>
 
             <Card shadow="sm" padding="sm" radius="md" withBorder>
               <Radio.Group
-                name="situacao usuario"
-                label="Selecione a situação do usuário"
+                name="statusUser"
+                label="Selecione o status do usuário"
                 withAsterisk
-                value={situacao}
-                onChange={(event) => setSituacao(event.toString())}
+                value={status}
+                onChange={(event) => setStatus(event.toString())}
               >
                 <Group mt="xs">
                   <Radio value='true' label="Ativo" />

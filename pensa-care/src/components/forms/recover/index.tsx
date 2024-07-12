@@ -17,7 +17,6 @@ export function Recover() {
     if (code.length < 6) {
       setCodeError(true);
     } else {
-
       const dados = {
         "username": username,
         "code": code,
@@ -26,8 +25,8 @@ export function Recover() {
       }
 
       try {
-        await api.post('/api/v1/auth/password-recovery/verify', { dados });
-        console.log('Código verificado');
+        // await api.post('/api/v1/auth/password-recovery/verify', { dados });
+        // console.log('Código verificado');
         navigate('/new-password',  { state: { dados } })
       } catch (error) {
         console.error('Falhou ao verificar código:', error);
@@ -61,7 +60,7 @@ export function Recover() {
         <strong>Recuperação de senha</strong>
       </Text>
       <Text ta={'center'} mb={20}>
-        {`Enviamos um código de verificação pro email do usuario cadastrado
+        {`Enviamos um código de verificação pro email do usuário cadastrado
         (${username}) para validação e criação de uma nova senha.
         Verifique sua caixa de email.`}
       </Text>
@@ -73,7 +72,7 @@ export function Recover() {
         <PinInput error={codeError} size="lg" length={6} type="number" mb={40} onChange={(value: string) => setCode(value)} />
         <Center>
           <Button size="md" radius={'md'} maw={'320px'} type="submit">
-            Confirmar código
+            Próximo
           </Button>
         </Center>
       </form>

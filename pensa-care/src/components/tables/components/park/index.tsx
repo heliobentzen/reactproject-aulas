@@ -36,7 +36,7 @@ export function Park({ parks, withIndicator }: ParkProps) {
               <Avatar src={imageApiService.getEquipmentImageUrl(park.code)} size="lg" />
             )}
             <Text size="sm" truncate>
-              {park.serial_number}
+              {park.factory_serial_number}
             </Text>
             <Text size="sm" truncate>
               {park.description}

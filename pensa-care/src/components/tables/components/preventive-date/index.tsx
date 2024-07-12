@@ -3,8 +3,7 @@ import { differenceInCalendarDays } from 'date-fns';
 
 import { IPreventiveDate } from '../../../../interfaces/table/IClient';
 
-export function PreventiveDate({ preventiveDate, done }: Readonly<IPreventiveDate>) {
-  done 
+export function PreventiveDate({ preventiveDate }: Readonly<IPreventiveDate>) {
   if (preventiveDate === null || preventiveDate === "N/A") {
     return (
       <Table.Td>
@@ -26,7 +25,15 @@ export function PreventiveDate({ preventiveDate, done }: Readonly<IPreventiveDat
       <Flex direction={'column'} gap={4}>
         <Text>{preventiveDateObj.toLocaleDateString('pt-BR')}</Text>
         <Text c="#999" size="sm">
-        {diffDays === -1 ? `Em 1 dia` : diffDays === 1 ? `1 dia atrás` : diffDays >= 0 ? `${diffDays} dias atrás` : `Em ${Math.abs(diffDays)} dias`}
+          {diffDays === -1
+            ? 'Em 1 dia'
+            : diffDays === 1
+              ? '1 dia atrás'
+              : diffDays === 0
+                ? 'Hoje'
+                : diffDays > 0
+                  ? `${diffDays} dias atrás`
+                  : `Em ${Math.abs(diffDays)} dias`}
         </Text>
       </Flex>
     </Table.Td>

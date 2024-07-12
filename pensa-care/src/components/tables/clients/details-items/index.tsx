@@ -142,7 +142,7 @@ export function TableDetailsItems({ title, result, client }: any) {
 
               <Model
                 image={imageApiService.getEquipmentImageUrl(e.code)}
-                serial={`S/N: ${e.serial_number}`}
+                serial={`S/N: ${e.factory_serial_number}`}
                 name={e.model}
               />
               <Table.Td >
@@ -181,7 +181,7 @@ export function TableDetailsItems({ title, result, client }: any) {
                     SN: {itemView.serial_number}
                   </Text>
                   <Text fw="bold" tt="uppercase" size="sm" mt={4}>
-                    Factory SN: {itemView.factory_serial_number}
+                    FACTORY SN: {itemView.factory_serial_number}
                   </Text>
                   <Text fw="bold" tt="uppercase" size="sm" mt={4}>
                     ÚLTIMO SERVIÇO: {formatarData(itemView.last_service)}

@@ -92,20 +92,6 @@ export function TableDetails({ title, result, client }: any) {
     setSortOrder(sortOrder);
     equipment
     fetchItens(searchValue, sortOrder)
-
-    // const filteredItens = (equipment || []).filter((item: IService) => {
-    //   return item.description?.toLowerCase().includes(searchValue?.toLowerCase());
-    // }) || [];
-
-    // const sortFilteredItens = filteredItens.sort((a: IService, b: IService) => {
-    //   if (sortOrder === '1') {
-    //     return a.description.localeCompare(b.description);
-    //   } else {
-    //     return b.description.localeCompare(a.description);
-    //   }
-    // });
-
-    // setFilteredEquipment(sortFilteredItens || []);
   }
 
   const formatarData = (data: any) => {

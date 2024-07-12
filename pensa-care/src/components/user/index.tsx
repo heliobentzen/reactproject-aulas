@@ -1,8 +1,8 @@
 import { Avatar, Button, Center, Flex, HoverCard, Text } from '@mantine/core';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import logoutIco from '../../assets/icons/logout.svg';
 import ApiService from '../../services/ApiService';
-import { useEffect, useRef, useState } from 'react';
 import ImageApiService from '../../services/ImageApiService';
 
 const logout = () => {
@@ -33,7 +33,7 @@ export function User() {
         });
         console.log('Imagem salva com sucesso!');
 
-        await api.pacth('/api/v1/users/me/image',
+        await api.patch('/api/v1/users/me/image',
           {
             'image_id': `${resUpload.data.id}`,
           }

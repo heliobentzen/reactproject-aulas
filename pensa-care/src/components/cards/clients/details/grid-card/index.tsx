@@ -9,15 +9,15 @@ const imageApiService = new ImageApiService();
 
 export function GridCard({ open, item }: any) {
   const { hovered, ref } = useHover();
-  
+
   const today = new Date();
   const nextService = item.next_service ? new Date(item.next_service) : null;
   const diffDays = nextService ? differenceInCalendarDays(nextService, today) : null;
   let color = "red";
-  if(diffDays){
-    if(diffDays > 120){
+  if (diffDays) {
+    if (diffDays > 120) {
       color = "green"
-    }else if(diffDays >= 90){
+    } else if (diffDays >= 90) {
       color = "yellow"
     }
   }
@@ -42,23 +42,32 @@ export function GridCard({ open, item }: any) {
           onClick={() => open(item)}
         >
           <Image src={imageApiService.getEquipmentImageUrl(item.code) || sulfIcon} maw={'70px'}
-          alt="Equipment Image"
-          onError={(e) => {
-            const imgElement = e.target as HTMLImageElement;
-            imgElement.src = sulfIcon
-          }} />
+            alt="Equipment Image"
+            onError={(e) => {
+              const imgElement = e.target as HTMLImageElement;
+              imgElement.src = sulfIcon
+            }} />
           <Flex direction={'column'} align={'center'} gap={10}>
             <Text ta={'center'} size="md" lh={'16px'}>
               {item.description}
             </Text>
-            <Text size="10px">S/N: {item.serial_number}</Text>
+            <Text size="10px">S/N: {item.factory_serial_number}</Text>
             <Flex mt={8} align={'center'} gap={10} mr={16}>
               <ColorSwatch size="16px" color={color} />
               <Flex direction={'column'} align={'center'}>
                 <Text size="11px">
                   Próx.: {item.next_service ? new Date(item.next_service).toLocaleDateString() : 'N/D'}
                 </Text>
-                <Text fw={'bold'}>{diffDays === 1 ? `Em 1 dia` : diffDays ? `Em ${diffDays} dias` : "N/D"}
+                <Text fw={'bold'}>
+                  {diffDays === 1
+                    ? 'Em 1 dia'
+                    : diffDays === -1
+                      ? 'Há 1 dia'
+                      : diffDays && diffDays > 0
+                        ? `Em ${diffDays} dias`
+                        : diffDays && diffDays < 0
+                          ? `Há ${Math.abs(diffDays)} dias`
+                          : 'N/D'}
                 </Text>
               </Flex>
             </Flex>

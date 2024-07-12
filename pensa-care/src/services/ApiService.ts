@@ -47,7 +47,7 @@ export default class ApiService {
     return httpClient.put(url, params)
   }
 
-  pacth(url: string, params: any, options?: any) {
+  patch(url: string, params: any, options?: any) {
     url = this.buildUrl(url)
     return httpClient.patch(url, params, options)
   }
