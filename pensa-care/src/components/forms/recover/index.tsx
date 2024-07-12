@@ -1,14 +1,15 @@
 import { Anchor, Button, Center, PinInput, Text } from '@mantine/core';
-import axios from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import ApiService from '../../../services/ApiService';
 
 export function Recover() {
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState<boolean>(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { email } = location.state || {};
+  const { username } = location.state || {};
+  const api = new ApiService('');
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -16,12 +17,20 @@ export function Recover() {
     if (code.length < 6) {
       setCodeError(true);
     } else {
-      navigate('/new-password')
+
+      const dados = {
+        "username": username,
+        "code": code,
+        "password": "12345678",
+        "password_confirmation": "12345678"
+      }
+
       try {
-        await axios.post(`/`);
-        console.log('Código enviado');
+        await api.post('/api/v1/auth/password-recovery/verify', { dados });
+        console.log('Código verificado');
+        navigate('/new-password',  { state: { dados } })
       } catch (error) {
-        console.error('Falhou ao enviar código:', error);
+        console.error('Falhou ao verificar código:', error);
       }
     }
   };
@@ -52,8 +61,8 @@ export function Recover() {
         <strong>Recuperação de senha</strong>
       </Text>
       <Text ta={'center'} mb={20}>
-        {`Enviamos um código de verificação pro email cadastrado
-        (${email}) para validação e criação de uma nova senha.
+        {`Enviamos um código de verificação pro email do usuario cadastrado
+        (${username}) para validação e criação de uma nova senha.
         Verifique sua caixa de email.`}
       </Text>
       <Text size="sm" mb={20}>

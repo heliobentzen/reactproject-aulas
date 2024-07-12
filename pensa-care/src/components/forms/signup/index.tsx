@@ -73,26 +73,51 @@ export function Signup(props: any) {
           });
       }
       else if (props.isEdit) {
-        const dados = {
-          "username": user,
-          "fullname": nome,
-          "email": email,
-          "role": role
-        }
-
         const headers = {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         };
 
-        api.pacth(`/api/v1/users/${props.user.id}`, dados, { headers })
+        if(situacao.toString() === "true" && props.user.active.toString() === "false" ){
+          api.pacth(`/api/v1/users/${props.user.id}/activate`, { headers })
           .then(response => {
-            console.log('Resposta da API:', response.data);
+            console.log('(Situação atualizada) Resposta da API:', response.data);
             navigate('/users');
             //window.location.reload();
           })
           .catch(error => {
             console.error('Erro ao fazer cadastro:', error);
           });
+        }
+
+        const dados = {
+          "fullname": nome,
+          "username": user,
+          "email": email,
+          "role": role
+        }
+
+        api.pacth(`/api/v1/users/${props.user.id}`, dados, { headers })
+          .then(response => {
+            console.log('(User atualizado) Resposta da API:', response.data);
+            navigate('/users');
+            window.location.reload();
+          })
+          .catch(error => {
+            console.error('Erro ao fazer cadastro:', error);
+          });
+
+        if(situacao.toString() === "true" && props.user.active.toString() === "false"){
+          api.pacth(`/api/v1/users/${props.user.id}/activate`, { headers })
+          .then(response => {
+            console.log('(Situação atualizada) Resposta da API:', response.data);
+            navigate('/users');
+            window.location.reload();
+          })
+          .catch(error => {
+            console.error('Erro ao fazer cadastro:', error);
+          });
+        }
+
       }
       else {
         const dados = {

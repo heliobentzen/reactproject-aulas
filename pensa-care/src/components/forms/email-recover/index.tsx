@@ -1,12 +1,13 @@
 import { Anchor, Button, Center, Text, TextInput } from '@mantine/core';
-import axios from 'axios';
 import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ApiService from '../../../services/ApiService';
 
 export function EmailRecover() {
   const [username, setUsername] = useState('');
   const [usernameError, setUsernameError] = useState('');
   const navigate = useNavigate();
+  const api = new ApiService('');
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -16,16 +17,17 @@ export function EmailRecover() {
     event.preventDefault();
 
     if (username === '') {
-      setUsernameError('Preencha o E-mail');
+      setUsernameError('Preencha o nome de usuario');
     } else {
-      navigate('/recover', { state: { username: username } });
       try {
-        await axios.post('/api/v1/auth/password-recovery/request', { username: username });
-        console.log('E-mail enviado');
+        await api.post('/api/v1/auth/password-recovery/request', { username: username });
+        console.log('Codigo enviado');
+        navigate('/recover', { state: { username } });
       } catch (error) {
-        console.error('Falhou ao enviar e-mail:', error);
-        setUsernameError('Falha ao enviar e-mail. Tente novamente.');
+        console.error('Falhou ao enviar codigo:', error);
+        setUsernameError('Falha ao enviar código. Tente novamente.');
       }
+
     }
   };
 

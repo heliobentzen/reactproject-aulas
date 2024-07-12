@@ -7,14 +7,17 @@ import {
   Title,
 } from '@mantine/core';
 import { FormEvent, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import ApiService from '../../../services/ApiService';
 
 export function NewPassword() {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const location = useLocation();
+  const { dados } = location.state || {};
+  const api = new ApiService('');
 
   const handleSubmit = async (event: FormEvent<HTMLElement>) => {
     event.preventDefault();
@@ -24,10 +27,18 @@ export function NewPassword() {
     } else if (password !== passwordConfirm) {
       setPasswordError("As senhas não coincidem.");
     } else {
-      navigate('/login')
       try {
-        await axios.post(`/`);
+        
+        const newDados = {
+          "username": dados.username,
+          "code": dados.code,
+          "password": password,
+          "password_confirmation": passwordConfirm
+        }
+        
+        await api.post('/api/v1/auth/password-recovery/verify', { newDados });
         console.log('nova senha enviada');
+        navigate('/login')
       } catch (error) {
         console.error('Falhou ao enviar nova senha:', error);
       }
